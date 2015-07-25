@@ -1,5 +1,4 @@
-var _ = require("underscore"),
-  Promise = require('promise');
+var _ = require("underscore");
 
 exports.interpretRoutes = function(raw) {
   var regex = /routes\/(.+)/;
