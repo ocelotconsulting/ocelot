@@ -1,11 +1,22 @@
 var props = require('deep-property'),
-    postman = require('./postman');
+    postman = require('./postman'),
+    redirect = require('./redirect');
 
-exports.token = function (req, route) {
+function tryToken (req, route) {
     var refreshToken = parseCookies(req)[props.get(route, 'authentication.cookie-name') + '_RT'];
     var refreshQuery = 'grant_type=refresh_token&refresh_token=' + refreshToken;
 
     return postman.post(refreshQuery, route);
+}
+
+exports.token = function(req, res, route){
+    tryToken(req, route).then(function(result){
+        res.setHeader('Set-Cookie', [route.authentication['cookie-name'] + '=' + result.access_token + '; path=/' + route.route, route.authentication['cookie-name'] + '_RT=' + result.refresh_token + '; path=/' + route.route]);
+        redirect.refreshPage(req, res);
+    }, function(error){
+        console.log(error);
+        redirect.toAuthServer(req, res, route);
+    });
 };
 
 function parseCookies(req) {

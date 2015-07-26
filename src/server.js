@@ -5,8 +5,9 @@ var http = require('http'),
     validate = require('./auth/validate.js'),
     proxy = require('./proxy.js'),
     exchange = require('./auth/exchange.js'),
-    uri = require('url'),
-    refresh = require('./auth/refresh');
+    refresh = require('./auth/refresh'),
+    response = require('./response.js'),
+    redirect = require('./auth/redirect.js');
 
 var px = httpProxy.createProxyServer({
     hostRewrite: true,
@@ -17,9 +18,7 @@ var px = httpProxy.createProxyServer({
 var server = http.createServer(function (req, res) {
     var route = resolver.resolveRoute(req.url);
     if (route == null) {
-        res.statusCode = 404;
-        res.write("Route not found");
-        res.end();
+        response.respond(res, 404, "Route not found");
     }
     else if (req.url.indexOf('receive-auth-token') > -1) {
         exchange.code(req, res, route);
@@ -27,74 +26,18 @@ var server = http.createServer(function (req, res) {
     else {
         var url = rewrite.mapRoute(req.url, route);
         if (url == null) {
-            res.statusCode = 404;
-            res.write("No active URL for route");
-            res.end();
+            response.respond(res, 404, "No active URL for route");
         }
         else{
             validate.authentication(req, route).then(function (authentication) {
                 if (authentication.refresh) {
-                    refresh.token(req, route).then(function(result){
-                        var origUrl = 'http://' + req.headers.host + req.url;
-                        res.setHeader('Location', origUrl);
-                        res.setHeader('Set-Cookie', [route.authentication['cookie-name'] + '=' + result.access_token + '; path=/' + route.route, route.authentication['cookie-name'] + '_RT=' + result.refresh_token + '; path=/' + route.route]);
-                        res.statusCode = 307;
-                        res.end();
-                    }, function(error){
-                        console.log(error);
-                        res.statusCode = 307;
-
-                        //todo: allow host override for aws used in redirect uri
-
-                        var reqUrl = req.url;
-                        if (reqUrl.charAt(reqUrl.length - 1) === '/') {
-                            reqUrl = reqUrl.substring(0, reqUrl.length - 1);
-                        }
-
-                        var origUrl = 'http://' + req.headers.host + reqUrl;
-                        var redirectBack = origUrl + '/receive-auth-token';
-
-                        if (redirectBack.indexOf('?') > -1) {
-                            redirectBack = redirectBack.substring(redirectBack.indexOf('?'));
-                        }
-                        redirectBack = encodeURIComponent(redirectBack);
-
-                        var state = new Buffer(origUrl).toString('base64');
-
-                        var location = 'https://test.amp.monsanto.com/as/authorization.oauth2?client_id=TPS_TEST&response_type=code&redirect_uri=' + redirectBack + '&state=' + state;
-                        res.setHeader('Location', location);
-                        res.end();
-                    });
+                    refresh.token(req, res, route);
                 }
                 else if (authentication.redirect) {
-                    //todo: same as refresh
-                    res.statusCode = 307;
-
-                    //todo: allow host override for aws used in redirect uri
-
-                    var reqUrl = req.url;
-                    if (reqUrl.charAt(reqUrl.length - 1) === '/') {
-                        reqUrl = reqUrl.substring(0, reqUrl.length - 1);
-                    }
-
-                    var origUrl = 'http://' + req.headers.host + reqUrl;
-                    var redirectBack = origUrl + '/receive-auth-token';
-
-                    if (redirectBack.indexOf('?') > -1) {
-                        redirectBack = redirectBack.substring(redirectBack.indexOf('?'));
-                    }
-                    redirectBack = encodeURIComponent(redirectBack);
-
-                    var state = new Buffer(origUrl).toString('base64');
-
-                    var location = 'https://test.amp.monsanto.com/as/authorization.oauth2?client_id=TPS_TEST&response_type=code&redirect_uri=' + redirectBack + '&state=' + state;
-                    res.setHeader('Location', location);
-                    res.end();
+                    redirect.toAuthServer(req, res, route);
                 }
                 else if (authentication.required && !authentication.valid) {
-                    res.statusCode = 403;
-                    res.write("Authorization missing or invalid");
-                    res.end();
+                    response.respond(res, 403, "Authorization missing or invalid");
                 }
                 else {
                     if (authentication.required && authentication.valid) {
