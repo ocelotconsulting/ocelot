@@ -23,7 +23,7 @@ var server = http.createServer(function (req, res) {
         return;
     }
     else if (req.url.indexOf('receive-auth-token') > -1) {
-        exchange.code(req.url).then(function (result) {
+        exchange.code(req, route).then(function (result) {
             var url_parts = uri.parse(req.url, true);
             var query = url_parts.query;
             var state = query.state;
