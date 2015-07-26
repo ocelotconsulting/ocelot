@@ -17,8 +17,6 @@ exports.code = function(reqUrl) {
         pingRedirect = pingRedirect + "/receive-auth-token";
         pingRedirect=encodeURIComponent(pingRedirect);
 
-        console.log("redirect 2: " + pingRedirect);
-
         var payload = 'grant_type=authorization_code&code=' + code + '&redirect_uri=' + pingRedirect;
         var basicAuth = 'basic VFBTX1RFU1Q6VFBTX1RFU1Q=';
 

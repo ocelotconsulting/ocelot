@@ -12,7 +12,7 @@ function findClosestRoute(url) {
     path = path.substring(1);
   }
   for (pathDepth = 3; pathDepth > 0; pathDepth--) {
-    var routePath = path.split('/', pathDepth).join('/')
+    var routePath = path.split('/', pathDepth).join('/');
     var foundRoute = _.find(cache.getRoutes(), function(route) {
       return route.route === routePath;
     });

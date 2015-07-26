@@ -11,11 +11,18 @@ exports.authentication = function(req, route) {
     }
 
     var token = null;
+    var canRefresh = false;
     var requiresCookie = props.has(route, 'authentication.cookie-name');
 
     if (props.has(route, 'authentication.cookie-name')) {
       token = parseCookies(req)[props.get(route, 'authentication.cookie-name')];
     }
+    if (props.has(route, 'authentication.cookie-name')) {
+      if(parseCookies(req)[props.get(route, 'authentication.cookie-name') + '_RT']){
+        canRefresh = true;
+      }
+    }
+
     if (props.has(req.headers['Authorization'])) {
       // matches 'Bearer <token>'
     }
@@ -24,6 +31,7 @@ exports.authentication = function(req, route) {
       resolve({
         required: true,
         valid: false,
+        refresh: canRefresh,
         redirect: requiresCookie
       });
     }
@@ -62,6 +70,7 @@ exports.authentication = function(req, route) {
           required: true,
           valid: false,
           error: error,
+          refresh: canRefresh,
           redirect: requiresCookie
         });
       });
