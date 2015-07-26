@@ -42,13 +42,11 @@ exports.code = function(reqUrl) {
                 var result = JSON.parse(data);
                 resolve(result);
             });
-
-            postres.on('error', function(error) {
-                console.log(error);
-                reject(error);
-            });
         });
-
+        post_req.on('error', function(error) {
+            console.log(error);
+            reject(error);
+        });
         // post the data
         post_req.end();
     });

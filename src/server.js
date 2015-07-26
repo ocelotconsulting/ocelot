@@ -8,15 +8,13 @@ var http = require('http'),
     uri = require('url'),
     refresh = require('./auth/refresh');
 
-var httpProxy = httpProxy.createProxyServer({
+var px = httpProxy.createProxyServer({
     hostRewrite: true,
     autoRewrite: true,
     changeOrigin: true
 });
 
 var server = http.createServer(function (req, res) {
-
-    console.log("ahhh");
     var route = resolver.resolveRoute(req.url);
     if (route == null) {
         res.statusCode = 404;
@@ -62,6 +60,7 @@ var server = http.createServer(function (req, res) {
                     res.end();
                     return;
                 }, function(error){
+                    console.log(error);
                     res.statusCode = 307;
 
                     //todo: allow host override for aws used in redirect uri
@@ -119,9 +118,8 @@ var server = http.createServer(function (req, res) {
             else {
                 if (authentication.required && authentication.valid) {
                     // set additional headers here
-
                 }
-                proxy.request(httpProxy, req, res, url);
+                proxy.request(px, req, res, url);
             }
         }, function (error, authentication) {
             console.log(error);

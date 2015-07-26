@@ -9,6 +9,9 @@ exports.request = function(proxy, req, res, url) {
 
   proxy.on('error', function(e) {
     // try moment
-    console.log(new Date().toJSON().slice(0, 19) + "  Error running " + url.href + " " + JSON.stringify(e));
+    res.statusCode = 500;
+    res.write(e);
+    res.end();
+    return;
   });
-}
+};
