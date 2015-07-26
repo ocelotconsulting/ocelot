@@ -4,6 +4,9 @@ var props = require('deep-property'),
 
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
+
+        //todo: clean this crap up
+
         if (props.get(route, 'authentication.disabled') === true) {
             resolve({
                 required: false
@@ -37,10 +40,8 @@ exports.authentication = function (req, route) {
         }
 
         var validateQuery = 'grant_type=' + encodeURIComponent('urn:pingidentity.com:oauth2:grant_type:validate_bearer') + '&token=' + token;
-        var clientId = props.get(route, 'authentication.client-id');
-        var clientSecret = props.get(route, 'authentication.client-secret');
 
-        postman.post(validateQuery, clientId, clientSecret).then(function(result){
+        postman.post(validateQuery, route).then(function(result){
             result.required = true;
             result.valid = true;
             resolve(result);

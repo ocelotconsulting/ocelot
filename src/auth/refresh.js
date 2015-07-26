@@ -4,10 +4,8 @@ var props = require('deep-property'),
 exports.token = function (req, route) {
     var refreshToken = parseCookies(req)[props.get(route, 'authentication.cookie-name') + '_RT'];
     var refreshQuery = 'grant_type=refresh_token&refresh_token=' + refreshToken;
-    var clientId = props.get(route, 'authentication.client-id');
-    var clientSecret = props.get(route, 'authentication.client-secret');
 
-    return postman.post(refreshQuery, clientId, clientSecret);
+    return postman.post(refreshQuery, route);
 };
 
 function parseCookies(req) {

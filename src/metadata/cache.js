@@ -17,13 +17,13 @@ function loadData() {
 exports.initCache = function initCron() {
   loadData();
   cron.scheduleJob('*/20 * * * * *', loadData);
-}
+};
 
 function loadJsonMetadata(url) {
   return new Promise(function(resolve, reject) {
     http.get(url, function(res) {
       if (('' + res.statusCode).match(/^2\d\d$/)) {
-        var data = ''
+        var data = '';
         res.on('data', function(chunk) {
           data += chunk;
         });
@@ -40,8 +40,8 @@ function loadJsonMetadata(url) {
 
 exports.getRoutes = function(url) {
   return routes;
-}
+};
 
 exports.getServices = function(url) {
   return services;
-}
+};
