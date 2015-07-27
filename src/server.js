@@ -10,9 +10,6 @@ var http = require('http'),
     redirect = require('./auth/redirect.js');
 
 var px = httpProxy.createProxyServer({
-    hostRewrite: true,
-    autoRewrite: true,
-    changeOrigin: true
 });
 
 var server = http.createServer(function (req, res) {
@@ -57,4 +54,9 @@ var server = http.createServer(function (req, res) {
 });
 
 console.log("listening on port 8080");
-server.listen(8080);
+
+var port = 8080;
+if(process.env.PORT){
+    port = process.env.PORT;
+}
+server.listen(port);

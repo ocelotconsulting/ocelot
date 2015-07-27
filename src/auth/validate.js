@@ -5,7 +5,7 @@ var props = require('deep-property'),
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
         //todo: clean this crap up
-        if (props.get(route, 'authentication.disabled') === true) {
+        if (props.get(route, 'authentication.required') === false) {
             resolve({
                 required: false
             });
