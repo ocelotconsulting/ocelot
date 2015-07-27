@@ -10,6 +10,8 @@ var http = require('http'),
     redirect = require('./auth/redirect.js');
 
 var px = httpProxy.createProxyServer({
+    changeOrigin: true,
+    autoRewrite: true
 });
 
 var server = http.createServer(function (req, res) {
