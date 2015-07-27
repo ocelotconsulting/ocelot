@@ -1,5 +1,6 @@
 var https = require('https'),
-    props = require('deep-property');
+    props = require('deep-property'),
+    url = require('url');
 
 exports.post = function (query, route) {
     var client = props.get(route, 'authentication.client-id');
@@ -7,9 +8,10 @@ exports.post = function (query, route) {
 
     return new Promise(function(resolve, reject) {
         var basicAuth = 'basic ' + new Buffer(client + ':' + secret, 'utf8').toString('base64');
+        var authServer = url.parse(props.get(route, 'authentication.auth-server'));
 
         var options = {
-            host: 'test.amp.monsanto.com',
+            host: authServer.host,
             path: '/as/token.oauth2?' + query,
             method: 'POST',
             headers: {

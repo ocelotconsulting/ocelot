@@ -8,7 +8,7 @@ exports.interpretRoutes = function(raw) {
     decoded["route"] = match[1];
     return decoded;
   });
-}
+};
 
 exports.interpretServices = function(raw) {
   var regex = /services\/(.+)\/(.+)/;
@@ -26,4 +26,4 @@ exports.interpretServices = function(raw) {
     return obj !== null;
   });
   return _.groupBy(filtered, 'name');
-}
+};

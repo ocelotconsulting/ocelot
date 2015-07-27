@@ -7,14 +7,14 @@ function tryCode (req, route) {
     var code = query.code;
     var state = query.state;
 
-    var pingRedirect = new Buffer(state, 'base64').toString('utf8');
-    if (pingRedirect.indexOf('?') > -1) {
-        pingRedirect = pingRedirect.substring(pingRedirect.indexOf('?'));
+    var redirectUrl = new Buffer(state, 'base64').toString('utf8');
+    if (redirectUrl.indexOf('?') > -1) {
+        redirectUrl = redirectUrl.substring(redirectUrl.indexOf('?'));
     }
-    pingRedirect = pingRedirect + "/receive-auth-token";
-    pingRedirect = encodeURIComponent(pingRedirect);
+    redirectUrl = redirectUrl + "/receive-auth-token";
+    redirectUrl = encodeURIComponent(redirectUrl);
 
-    var exchangeQuery = 'grant_type=authorization_code&code=' + code + '&redirect_uri=' + pingRedirect;
+    var exchangeQuery = 'grant_type=authorization_code&code=' + code + '&redirect_uri=' + redirectUrl;
 
     return postman.post(exchangeQuery, route);
 }
