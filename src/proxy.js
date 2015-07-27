@@ -8,10 +8,6 @@ exports.request = function(proxy, req, res, url) {
   });
 
   proxy.on('error', function(e) {
-    // try moment
-    res.statusCode = 500;
-    res.write(e);
-    res.end();
-    return;
+    console.log(url.href + ": " +  e.toString());
   });
 };

@@ -32,7 +32,6 @@ exports.code = function(req, res, route){
     }, function (error) {
         console.log(error);
         res.statusCode = 500;
-        res.write(error);
         res.end();
     });
 };
