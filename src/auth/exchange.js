@@ -26,7 +26,7 @@ exports.code = function(req, res, route){
         var state = query.state;
         var origUrl = new Buffer(state, 'base64').toString('utf8');
         res.setHeader('Location', origUrl);
-        res.setHeader('Set-Cookie', [route.authentication['cookie-name'] + '=' + result.access_token, route.authentication['cookie-name'] + '_RT=' + result.refresh_token]);
+        res.setHeader('Set-Cookie', [route.authentication['cookie-name'] + '=' + result.access_token, route.authentication['cookie-name'] + '_RT=' + result.refresh_token, route.authentication['oidc-cookie-name'] + '=' + result.id_token]);
         res.statusCode = 307;
         res.end();
     }, function (error) {

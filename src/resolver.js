@@ -1,5 +1,4 @@
 var http = require('http'),
-  httpProxy = require('http-proxy'),
   cache = require('./metadata/cache.js'),
   uri = require('url'),
   _ = require("underscore");
@@ -7,7 +6,7 @@ var http = require('http'),
 cache.initCache();
 
 function findClosestRoute(url) {
-  path = uri.parse(url).pathname;
+  var path = uri.parse(url).pathname;
   if (path.indexOf('/') === 0) {
     path = path.substring(1);
   }

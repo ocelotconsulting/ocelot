@@ -21,8 +21,9 @@ exports.toAuthServer = function(req, res, route){
     var state = new Buffer(origUrl).toString('base64');
     var client = props.get(route, 'authentication.client-id');
     var authServer = props.get(route, 'authentication.auth-server');
+    var scope = props.get(route, 'authentication.scope');
 
-    var location = authServer + '/as/authorization.oauth2?client_id=' + client + '&response_type=code&redirect_uri=' + redirectUrl + '&state=' + state;
+    var location = authServer + '/as/authorization.oauth2?client_id=' + client + '&response_type=code&scope=' + encodeURIComponent(scope) + '&redirect_uri=' + redirectUrl + '&state=' + state;
     res.setHeader('Location', location);
     response.send(res, 307);
 };
