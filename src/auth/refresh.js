@@ -11,7 +11,14 @@ function tryToken (req, route) {
 
 exports.token = function(req, res, route){
     tryToken(req, route).then(function(result){
-        res.setHeader('Set-Cookie', [route.authentication['cookie-name'] + '=' + result.access_token + '; path=/' + route.route, route.authentication['cookie-name'] + '_RT=' + result.refresh_token + '; path=/' + route.route, route.authentication['oidc-cookie-name'] + '_RT=' + result.id_token + '; path=/' + route.route]);
+
+        var cookieArray = [route.authentication['cookie-name'] + '=' + result.access_token + '; path=/' + route.route,
+            route.authentication['cookie-name'] + '_RT=' + result.refresh_token + '; path=/' + route.route];
+
+        if (result.id_token) { cookieArray.concat(route.authentication['oidc-cookie-name'] + '_RT=' + result.id_token + '; path=/' + route.route); }
+
+        res.setHeader('Set-Cookie', [cookieArray]);
+
         redirect.refreshPage(req, res);
     }, function(error){
         console.log(error);
