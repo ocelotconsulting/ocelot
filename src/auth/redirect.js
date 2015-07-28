@@ -17,16 +17,22 @@ exports.toAuthServer = function(req, res, route){
     if (redirectUrl.indexOf('?') > -1) {
         redirectUrl = redirectUrl.substring(redirectUrl.indexOf('?'));
     }
-    redirectUrl = encodeURIComponent(redirectUrl);
     var state = new Buffer(origUrl).toString('base64');
     var client = props.get(route, 'authentication.client-id');
     var authServer = props.get(route, 'authentication.auth-server');
     var scope = props.get(route, 'authentication.scope');
 
-    var location = authServer + '/as/authorization.oauth2?client_id=' + client + '&response_type=code&scope=' + encodeURIComponent(scope) + '&redirect_uri=' + redirectUrl + '&state=' + state;
+    var location = authServer + '/as/authorization.oauth2?' +
+        'response_type=code' +
+        addQueryParam("client_id", client) +
+        addQueryParam("redirect_uri", redirectUrl) +
+        addQueryParam("state", state) +
+        addQueryParam("scope", scope);
     res.setHeader('Location', location);
     response.send(res, 307);
 };
+
+var addQueryParam = function(key, value) { return ((value) ? "&" + key + "=" + encodeURIComponent(value) : "")};
 
 exports.refreshPage = function(req, res){
     var origUrl = 'http://' + req.headers.host + req.url;
