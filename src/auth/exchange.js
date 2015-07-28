@@ -29,7 +29,7 @@ exports.code = function(req, res, route){
         var cookieArray = [route.authentication['cookie-name'] + '=' + result.access_token,
             route.authentication['cookie-name'] + '_RT=' + result.refresh_token];
 
-        if (result.id_token) { cookieArray.concat(route.authentication['oidc-cookie-name'] + '=' + result.id_token); }
+        if (result.id_token) { cookieArray = cookieArray.concat(route.authentication['oidc-cookie-name'] + '=' + result.id_token); }
 
         res.setHeader('Set-Cookie', cookieArray);
 

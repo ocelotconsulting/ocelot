@@ -15,7 +15,7 @@ exports.token = function(req, res, route){
         var cookieArray = [route.authentication['cookie-name'] + '=' + result.access_token + '; path=/' + route.route,
             route.authentication['cookie-name'] + '_RT=' + result.refresh_token + '; path=/' + route.route];
 
-        if (result.id_token) { cookieArray.concat(route.authentication['oidc-cookie-name'] + '_RT=' + result.id_token + '; path=/' + route.route); }
+        if (result.id_token) { cookieArray = cookieArray.concat(route.authentication['oidc-cookie-name'] + '_RT=' + result.id_token + '; path=/' + route.route); }
 
         res.setHeader('Set-Cookie', [cookieArray]);
 
