@@ -7,7 +7,8 @@ var http = require('http'),
     exchange = require('./auth/exchange.js'),
     refresh = require('./auth/refresh'),
     response = require('./response.js'),
-    redirect = require('./auth/redirect.js');
+    redirect = require('./auth/redirect.js'),
+    config = require('config');
 
 var px = httpProxy.createProxyServer({
     changeOrigin: true,
@@ -15,6 +16,7 @@ var px = httpProxy.createProxyServer({
 });
 
 var server = http.createServer(function (req, res) {
+    overrideHost(req);
     var route = resolver.resolveRoute(req.url);
     if (route == null) {
         response.send(res, 404, "Route not found");
@@ -54,6 +56,14 @@ var server = http.createServer(function (req, res) {
         }
     }
 });
+
+// in some cases, as in aws, the host is overwritten by a different revere proxy.  since ping redirects
+// are based on the host, we need to reset the host header to what it should be.
+function overrideHost(req){
+    if (config.get('route.host') !== "auto"){
+        req.headers.host = config.get('route.host');
+    }
+}
 
 console.log("listening on port 8080");
 

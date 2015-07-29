@@ -32,4 +32,4 @@ exports.resolveRoute = function(url) {
     });
   }
   return closestRoute;
-}
+};

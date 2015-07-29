@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cron": "^1.0.9",
+    "config": "^1.14.0",
     "http": "0.0.0",
     "http-proxy": "^1.11.1",
     "node-crontab": "0.0.8",

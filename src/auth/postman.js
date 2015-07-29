@@ -2,10 +2,7 @@ var https = require('https'),
     props = require('deep-property'),
     url = require('url');
 
-exports.post = function (query, route) {
-    var client = props.get(route, 'authentication.client-id');
-    var secret = props.get(route, 'authentication.client-secret');
-
+function doPost(query, route, client, secret) {
     return new Promise(function(resolve, reject) {
         var basicAuth = 'basic ' + new Buffer(client + ':' + secret, 'utf8').toString('base64');
         var authServer = url.parse(props.get(route, 'authentication.auth-server'));
@@ -44,4 +41,13 @@ exports.post = function (query, route) {
         });
         httpsReq.end();
     });
+}
+
+exports.post = doPost;
+
+exports.post = function (query, route) {
+    var client = props.get(route, 'authentication.client-id');
+    var secret = props.get(route, 'authentication.client-secret');
+
+    return doPost(query, route, client, secret);
 };

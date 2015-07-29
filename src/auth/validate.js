@@ -1,6 +1,10 @@
 var props = require('deep-property'),
     Promise = require('promise'),
-    postman = require('./postman');
+    postman = require('./postman'),
+    config = require('config');
+
+var client = config.get("authentication.ping.validate.client");
+var secret = config.get("authentication.ping.validate.secret");
 
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
@@ -36,7 +40,7 @@ exports.authentication = function (req, route) {
             }
             else {
                 var validateQuery = 'grant_type=' + encodeURIComponent('urn:pingidentity.com:oauth2:grant_type:validate_bearer') + '&token=' + token;
-                postman.post(validateQuery, route).then(function (result) {
+                postman.post(validateQuery, route, client, secret).then(function (result) {
                     result.required = true;
                     result.valid = true;
                     resolve(result);

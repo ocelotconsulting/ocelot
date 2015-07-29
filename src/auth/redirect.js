@@ -8,9 +8,6 @@ exports.toAuthServer = function(req, res, route){
     }
 
     var host = req.headers.host;
-    if (props.has(route, 'authentication.redirect-host')){
-        host = props.get(route, 'authentication.redirect-host');
-    }
 
     var origUrl = 'http://' + host + req.url;
     var redirectUrl = origUrl + '/receive-auth-token';
