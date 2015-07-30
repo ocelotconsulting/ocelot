@@ -29,7 +29,7 @@ var server = http.createServer(function (req, res) {
         if (url == null) {
             response.send(res, 404, "No active URL for route");
         }
-        else{
+        else {
             validate.authentication(req, route).then(function (authentication) {
                 if (authentication.refresh) {
                     refresh.token(req, res, route);
@@ -42,10 +42,10 @@ var server = http.createServer(function (req, res) {
                 }
                 else {
                     if (authentication.valid && route.authentication['user-header']) {
-                        req.headers[route.authentication['user-header']]= authentication.access_token.user_id;
+                        req.headers[route.authentication['user-header']] = authentication.access_token.user_id;
                     }
                     if (authentication.valid && route.authentication['client-header']) {
-                        req.headers[route.authentication['client-header']]= authentication.client_id;
+                        req.headers[route.authentication['client-header']] = authentication.client_id;
                     }
                     proxy.request(px, req, res, url);
                 }
@@ -57,10 +57,8 @@ var server = http.createServer(function (req, res) {
     }
 });
 
-// in some cases, as in aws, the host is overwritten by a different revere proxy.  since ping redirects
-// are based on the host, we need to reset the host header to what it should be.
-function overrideHost(req){
-    if (config.get('route.host') !== "auto"){
+function overrideHost(req) {
+    if (config.get('route.host') !== "auto") {
         req.headers.host = config.get('route.host');
     }
 }
@@ -68,7 +66,7 @@ function overrideHost(req){
 console.log("listening on port 8080");
 
 var port = 8080;
-if(process.env.PORT){
+if (process.env.PORT) {
     port = process.env.PORT;
 }
 server.listen(port);

@@ -45,7 +45,7 @@ exports.authentication = function (req, route) {
                     result.valid = true;
                     resolve(result);
                 }, function (error) {
-                    reject({
+                    reject(error, {
                         required: true,
                         valid: false,
                         error: error,
