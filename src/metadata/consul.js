@@ -1,83 +1,64 @@
 var cron = require('node-crontab'),
-    http = require('http'),
+    jsonLoader = require('./json'),
     _ = require("underscore"),
     config = require('config');
 
 var routes, services, routeUrl, serviceUrl;
 
 function loadData() {
-    loadJsonMetadata(routeUrl).then(function (data) {
-        routes = interpretRoutes(data);
+    jsonLoader.get(routeUrl).then(function (data) {
+        routes = parseRoutes(data);
     }, function (error) {
         console.log("could not load routes: " + error)
     });
-    loadJsonMetadata(serviceUrl).then(function (data) {
-        services = interpretServices(data);
+    jsonLoader.get(serviceUrl).then(function (data) {
+        services = parseServices(data);
     }, function (error) {
         console.log("could not load services: " + error)
     });
 }
 
-function loadJsonMetadata(url) {
-    return new Promise(function (resolve, reject) {
-        http.get(url, function (res) {
-            if (('' + res.statusCode).match(/^2\d\d$/)) {
-                var data = '';
-                res.on('data', function (chunk) {
-                    data += chunk;
-                });
-                res.on('end', function () {
-                    var routes = JSON.parse(data);
-                    resolve(routes);
-                });
-            } else {
-                reject('error calling ' + url)
-            }
-        }).end();
-    });
-}
-
-interpretRoutes = function (raw) {
-    var regex = /routes\/(.+)/;
-    return _.filter(_.map(raw, function (obj) {
+parseConsul = function (consulJson, keyRegex, mutate) {
+    return _.filter(_.map(consulJson, function (item) {
         try {
-            var decoded = JSON.parse(new Buffer(obj.Value, 'base64').toString('utf8'));
-            var match = regex.exec(obj.Key);
-            decoded["route"] = match[1];
-            return decoded;
+            if (keyRegex.test(item.Key)) {
+                var decodedValue = JSON.parse(new Buffer(item.Value, 'base64').toString('utf8'));
+                    var match = keyRegex.exec(item.Key);
+                return mutate(decodedValue, match);
+            }
+            else {
+                return null;
+            }
         } catch (e) {
+            console.log('error parsing: ' + item.Key);
             return null;
         }
+
     }), function (obj) {
         return obj !== null;
     });
 };
 
-interpretServices = function (raw) {
-    var regex = /services\/(.+)\/(.+)/;
-    var filtered = _.filter(_.map(raw, function (obj) {
-        if (regex.test(obj.Key)) {
-            try {
-                var decoded = JSON.parse(new Buffer(obj.Value, 'base64').toString('utf8'));
-                var match = regex.exec(obj.Key);
-                decoded["name"] = match[1];
-                decoded["id"] = match[2];
-                return decoded;
-            } catch (e) {
-                return null;
-            }
-        } else {
-            return null
-        }
-    }), function (obj) {
-        return obj !== null;
+parseRoutes = function (consulJson) {
+    var regex = /routes\/(.+)/;
+    return parseConsul(consulJson, regex, function (value, match) {
+        value.route = match[1];
+        return value;
     });
-    return _.groupBy(filtered, 'name');
+};
+
+parseServices = function (consulJson) {
+    var regex = /services\/(.+)\/(.+)/;
+    return _.groupBy(parseConsul(consulJson, regex, function (value, match) {
+        value.name = match[1];
+        value.id = match[2];
+        return value;
+    }), 'name');
 };
 
 exports.initCache = function initCron() {
     if (!config.has("backend.consul.routes") || !config.has("backend.consul.services")) {
-        console.log("configuration backend.consul.routes and backend.consul.services are required when using consul as the backend");
+        throw("consul backend misconfigured");
     }
     routeUrl = config.get("backend.consul.routes");
     serviceUrl = config.get("backend.consul.services");

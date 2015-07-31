@@ -37,7 +37,7 @@ function doPost(query, route, client, secret) {
         });
         httpsReq.on('error', function (error) {
             console.log(error);
-            resolve(error);
+            reject(error);
         });
         httpsReq.end();
     });

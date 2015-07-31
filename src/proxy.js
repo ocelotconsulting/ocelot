@@ -1,13 +1,9 @@
 var Promise = require('promise');
 
-exports.request = function(proxy, req, res, url) {
+exports.request = function(px, req, res, url) {
   req.url = url.path;
 
-  proxy.web(req, res, {
+  px.web(req, res, {
     target: url.protocol + "//" + url.host
-  });
-
-  proxy.on('error', function(e) {
-    console.log(url.href + ": " +  e.toString());
   });
 };

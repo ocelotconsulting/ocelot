@@ -74,17 +74,15 @@ describe('cache', function () {
     });
 
     afterEach(function () {
-        if (config.has.restore) {
-            config.has.restore();
-        }
-        if (consul.initCache.restore) {
-            consul.initCache.restore();
-        }
-        if (consul.getRoutes.restore) {
-            consul.getRoutes.restore();
-        }
-        if (consul.getServices.restore) {
-            consul.getServices.restore();
-        }
+        restore(config.has);
+        restore(consul.initCache);
+        restore(consul.getRoutes);
+        restore(consul.getServices);
     });
+
+    function restore(mockFunc) {
+        if (mockFunc.restore) {
+            mockFunc.restore();
+        }
+    }
 });

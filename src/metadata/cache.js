@@ -3,16 +3,14 @@ var consul = require('./consul.js'),
 
 var backend;
 
-exports.initCache = function() {
+exports.initCache = function () {
     if (config.has('backend.consul')) {
         backend = consul;
     }
-    else{
+    else {
         throw "no backend found in configuration";
     }
-    if(backend){
-        backend.initCache();
-    }
+    backend.initCache();
 };
 
 exports.getRoutes = function () {
