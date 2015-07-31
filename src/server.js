@@ -15,7 +15,7 @@ var px = httpProxy.createProxyServer({
     autoRewrite: true
 });
 
-px.on('error', function(err, req, res) {
+px.on('error', function (err, req, res) {
     response.send(res, 500, err.toString());
 });
 

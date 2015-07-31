@@ -1,5 +1,6 @@
 var url = require('url'),
-    postman = require('./postman');
+    postman = require('./postman'),
+    _ = require('underscore');
 
 function tryCode (req, route) {
     var url_parts = url.parse(req.url, true);
@@ -33,6 +34,13 @@ exports.code = function(req, res, route){
             route.authentication['cookie-name'] + '_RT=' + result.refresh_token];
 
         if (result.id_token) { cookieArray = cookieArray.concat(route.authentication['oidc-cookie-name'] + '=' + result.id_token); }
+
+        var cookiePath = route.authentication['cookie-path'];
+        if(cookiePath){
+            cookieArray = _.map(cookieArray, function(item){
+               return item + "; path=" + cookiePath;
+            });
+        }
 
         res.setHeader('Set-Cookie', cookieArray);
         res.statusCode = 307;
