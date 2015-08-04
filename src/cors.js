@@ -10,6 +10,7 @@ exports.setCorsHeaders = function (req, res) {
     if (typeof origin !== 'undefined') {
         res.setHeader('Access-Control-Allow-Origin', origin || '*');
         res.setHeader('Access-Control-Max-Age', '1728000');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
 
     if (headers)

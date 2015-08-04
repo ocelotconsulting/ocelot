@@ -1,9 +1,6 @@
 var assert = require("assert"),
-    config = require("config"),
-    sinon = require("sinon"),
-    consul = require('../src/metadata/consul.js'),
-    cache = require('../src/metadata/cache.js'),
-    cors = require('../src/cors.js');
+    cache = require('../src/metadata/cache'),
+    cors = require('../src/cors');
 
 describe('cors', function () {
     describe('preflight', function () {
@@ -45,6 +42,7 @@ describe('cors', function () {
 
             assert.equal(res['Access-Control-Allow-Origin'], "abc.monsanto.com");
             assert.equal(res['Access-Control-Max-Age'], "1728000");
+            assert.equal(res['Access-Control-Allow-Credentials'], "true");
         });
 
         it('sets origin to * if empty', function () {

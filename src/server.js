@@ -26,7 +26,7 @@ var server = http.createServer(function (req, res) {
     if (cors.preflight(req))
         response.send(res, 204);
 
-    hijackHost(req);
+    presumeHost(req);
 
     var route = resolver.resolveRoute(req.url);
 
@@ -69,7 +69,7 @@ var server = http.createServer(function (req, res) {
     }
 });
 
-function hijackHost(req) {
+function presumeHost(req) {
     if (config.get('route.host') !== "auto") {
         req.headers.host = config.get('route.host');
     }
