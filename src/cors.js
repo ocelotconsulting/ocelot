@@ -1,4 +1,4 @@
-exports.preflight = function (req, res) {
+exports.preflight = function (req) {
     return typeof req.headers.origin !== 'undefined' && req.method === 'OPTIONS';
 };
 

@@ -23,7 +23,7 @@ px.on('error', function (err, req, res) {
 var server = http.createServer(function (req, res) {
     cors.setCorsHeaders(req, res);
 
-    if (cors.preflight(req, res))
+    if (cors.preflight(req))
         response.send(res, 204);
 
     hijackHost(req);

@@ -1,0 +1,84 @@
+var assert = require("assert"),
+    config = require("config"),
+    sinon = require("sinon"),
+    consul = require('../src/metadata/consul.js'),
+    cache = require('../src/metadata/cache.js'),
+    cors = require('../src/cors.js');
+
+describe('cors', function () {
+    describe('preflight', function () {
+        it('is in effect when origin header present and is options request', function () {
+            var req = {};
+            req.headers = {};
+            req.headers.origin = "abc.monsanto.com";
+            req.method = "OPTIONS";
+
+            assert.equal(cors.preflight(req), true);
+        });
+
+        it('is not in effect if not options method', function () {
+            var req = {};
+            req.headers = {};
+            req.headers.origin = "abc.monsanto.com";
+            req.method = "GET";
+
+            assert.equal(cors.preflight(req), false);
+        });
+
+        it('is not in effect if origin not set', function () {
+            var req = {};
+            req.headers = {};
+            req.method = "OPTIONS";
+
+            assert.equal(cors.preflight(req), false);
+        });
+    });
+
+    describe('headers', function () {
+
+        var req, res = {};
+
+        it('sets standard ac origin headers for cors', function () {
+            req.headers.origin = "abc.monsanto.com";
+
+            cors.setCorsHeaders(req, res);
+
+            assert.equal(res['Access-Control-Allow-Origin'], "abc.monsanto.com");
+            assert.equal(res['Access-Control-Max-Age'], "1728000");
+        });
+
+        it('sets origin to * if empty', function () {
+            req.headers.origin = "";
+
+            cors.setCorsHeaders(req, res);
+
+            assert.equal(res['Access-Control-Allow-Origin'], "*");
+        });
+
+        it('sets allowed headers if required', function () {
+            req.headers['access-control-req-headers'] = "abc";
+
+            cors.setCorsHeaders(req, res);
+
+            assert.equal(res['Access-Control-Allow-Headers'], "abc");
+        });
+
+        it('sets req method header if required', function () {
+            req.headers['access-control-req-method'] = "abc";
+
+            cors.setCorsHeaders(req, res);
+
+            assert.equal(res['Access-Control-Allow-Methods'], "abc");
+        });
+
+        beforeEach(function () {
+            req = {};
+            req.headers = {};
+
+            res = {};
+            res.setHeader = function (header, value) {
+                this[header] = value;
+            };
+        });
+    });
+});
