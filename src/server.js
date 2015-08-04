@@ -8,7 +8,8 @@ var http = require('http'),
     refresh = require('./auth/refresh'),
     response = require('./response.js'),
     redirect = require('./auth/redirect.js'),
-    config = require('config');
+    config = require('config'),
+    cors = require('./cors');
 
 var px = httpProxy.createProxyServer({
     changeOrigin: true,
@@ -16,12 +17,19 @@ var px = httpProxy.createProxyServer({
 });
 
 px.on('error', function (err, req, res) {
-    response.send(res, 500, err.toString());
+    response.send(res, 500, "Error during proxy");
 });
 
 var server = http.createServer(function (req, res) {
-    overrideHost(req);
+    cors.setCorsHeaders(req, res);
+
+    if (cors.preflight(req, res))
+        response.send(res, 204);
+
+    hijackHost(req);
+
     var route = resolver.resolveRoute(req.url);
+
     if (route == null) {
         response.send(res, 404, "Route not found");
     }
@@ -61,16 +69,11 @@ var server = http.createServer(function (req, res) {
     }
 });
 
-function overrideHost(req) {
+function hijackHost(req) {
     if (config.get('route.host') !== "auto") {
         req.headers.host = config.get('route.host');
     }
 }
 
 console.log("listening on port 8080");
-
-var port = 8080;
-if (process.env.PORT) {
-    port = process.env.PORT;
-}
-server.listen(port);
+server.listen(process.env.PORT || 8080);
