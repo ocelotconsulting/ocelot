@@ -8,8 +8,8 @@
   "authentication": {
     "ping": {
       "validate": {
-        "client": "TPS_USER",
-        "secret": "TPS_USER"
+        "client": "TPS_VALIDATOR",
+        "secret": "TPS_VALIDATOR"
       },
       "host": "test.amp.monsanto.com"
     }
