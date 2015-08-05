@@ -33,7 +33,6 @@ exports.resolveRoute = function (url) {
     if (closestRoute != null) {
         closestRoute['instances'] = {};
         _.each(closestRoute.services, function (service) {
-            console.log("<<<<<< " + service);
             closestRoute['instances'][service] = cache.getServices()[service];
         });
     }
