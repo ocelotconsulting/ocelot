@@ -23,8 +23,10 @@ px.on('error', function (err, req, res) {
 var server = http.createServer(function (req, res) {
     cors.setCorsHeaders(req, res);
 
-    if (cors.preflight(req))
+    if (cors.preflight(req)) {
         response.send(res, 204);
+        return;
+    }
 
     presumeHost(req);
 
@@ -53,12 +55,7 @@ var server = http.createServer(function (req, res) {
                     response.send(res, 403, "Authorization missing or invalid");
                 }
                 else {
-                    if (authentication.valid && route.authentication['user-header']) {
-                        req.headers[route.authentication['user-header']] = authentication.access_token.user_id;
-                    }
-                    if (authentication.valid && route.authentication['client-header']) {
-                        req.headers[route.authentication['client-header']] = authentication.client_id;
-                    }
+                    addAuthenticationHeaders(req, route, authentication);
                     proxy.request(px, req, res, url);
                 }
             }, function (error, authentication) {
@@ -68,6 +65,17 @@ var server = http.createServer(function (req, res) {
         }
     }
 });
+
+function addAuthenticationHeaders(req, route, authentication) {
+    var userHeader = route.authentication['user-header'];
+    var clientHeader = route.authentication['client-header'];
+    if (authentication.valid && userHeader) {
+        req.headers[userHeader] = authentication.access_token.user_id;
+    }
+    if (authentication.valid && clientHeader) {
+        req.headers[clientHeader] = authentication.client_id;
+    }
+}
 
 function presumeHost(req) {
     if (config.get('route.host') !== "auto") {

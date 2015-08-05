@@ -1,11 +1,12 @@
 var https = require('https'),
     props = require('deep-property'),
-    url = require('url');
+    url = require('url'),
+    config = require('config');
 
 function doPost(query, route, client, secret) {
     return new Promise(function(resolve, reject) {
         var basicAuth = 'basic ' + new Buffer(client + ':' + secret, 'utf8').toString('base64');
-        var authServer = url.parse(props.get(route, 'authentication.auth-server'));
+        var authServer = url.parse(config.get('authentication.ping.host'));
 
         var options = {
             host: authServer.host,

@@ -1,12 +1,8 @@
 var props = require('deep-property'),
-    response = require('../response');
+    response = require('../response'),
+    config = require('config');
 
 exports.toAuthServer = function(req, res, route){
-    var reqUrl = req.url;
-    if (reqUrl.charAt(reqUrl.length - 1) === '/') {
-        reqUrl = reqUrl.substring(0, reqUrl.length - 1);
-    }
-
     var host = req.headers.host;
 
     var origUrl = 'http://' + host + req.url;
@@ -16,7 +12,7 @@ exports.toAuthServer = function(req, res, route){
     }
     var state = new Buffer(origUrl).toString('base64');
     var client = props.get(route, 'authentication.client-id');
-    var authServer = props.get(route, 'authentication.auth-server');
+    var authServer = config.get('authentication.ping.host');
     var scope = props.get(route, 'authentication.scope');
 
     var location = authServer + '/as/authorization.oauth2?' +
