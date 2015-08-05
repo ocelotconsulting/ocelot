@@ -4,10 +4,11 @@ var assert = require("assert"),
 
 describe('cors', function () {
     describe('preflight', function () {
-        it('is in effect when origin header present and is options request', function () {
+        it('is in effect when origin header present, req method present,  and is options request', function () {
             var req = {};
             req.headers = {};
             req.headers.origin = "abc.monsanto.com";
+            req.headers['access-control-req-method'] = "PUT";
             req.method = "OPTIONS";
 
             assert.equal(cors.preflight(req), true);
@@ -17,6 +18,7 @@ describe('cors', function () {
             var req = {};
             req.headers = {};
             req.headers.origin = "abc.monsanto.com";
+            req.headers['access-control-req-method'] = "PUT";
             req.method = "GET";
 
             assert.equal(cors.preflight(req), false);
@@ -25,6 +27,16 @@ describe('cors', function () {
         it('is not in effect if origin not set', function () {
             var req = {};
             req.headers = {};
+            req.headers['access-control-req-method'] = "PUT";
+            req.method = "OPTIONS";
+
+            assert.equal(cors.preflight(req), false);
+        });
+
+        it('is not in effect if req method not set', function () {
+            var req = {};
+            req.headers = {};
+            req.headers.origin = "abc.monsanto.com";
             req.method = "OPTIONS";
 
             assert.equal(cors.preflight(req), false);

@@ -1,5 +1,5 @@
 exports.preflight = function (req) {
-    return typeof req.headers.origin !== 'undefined' && req.method === 'OPTIONS';
+    return typeof req.headers.origin !== 'undefined' && typeof req.headers['access-control-req-method'] !== 'undefined' && req.method === 'OPTIONS';
 };
 
 exports.setCorsHeaders = function (req, res) {

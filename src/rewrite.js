@@ -1,20 +1,22 @@
 var Url = require('url');
 
-exports.mapRoute = function (url, route) {
+exports.mapRoute = function (urlStr, route) {
     var capture = new RegExp(route['capture-pattern']);
     var rewrite = route['rewrite-pattern'];
-    var match = capture.exec(url);
+
+    var match = capture.exec(urlStr);
     var rewritten = rewrite;
 
-    if (capture.test(url) === false) {
-        console.log("capture pattern " + route['capture-pattern'] + " does not match: " + url);
+    if (capture.test(urlStr) === false) {
+        console.log("capture pattern " + route['capture-pattern'] + " does not match: " + urlStr);
         return null;
     }
 
     for (i = 1; i <= match.length; i++) {
         rewritten = rewritten.replace('$' + i, match[i]);
     }
-    if (rewritten.indexOf('/') === 0) {
+
+    while (rewritten.indexOf('/') === 0) {
         rewritten = rewritten.substring(1);
     }
 
@@ -27,8 +29,13 @@ exports.mapRoute = function (url, route) {
         return null;
     }
 
-    var instance = allInstances[getRandomInt(0, allInstances.length - 1)];
-    return Url.parse(instance.url + rewritten);
+    // url usually adds trailing slash to host, so this is not usually necessary
+    var instanceUrlStr = allInstances[getRandomInt(0, allInstances.length - 1)].url;
+    if (instanceUrlStr.indexOf("/" !== instanceUrlStr.length - 1)) {
+        instanceUrlStr = instanceUrlStr + "/";
+    }
+
+    return Url.parse(instanceUrlStr + rewritten);
 };
 
 function getRandomInt(min, max) {
