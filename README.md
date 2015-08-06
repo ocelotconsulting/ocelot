@@ -25,9 +25,7 @@ the json contained in the config file.  The env var contains the actual json con
 
 Therefore, to run the router with docker and a custom config you might do something like...
 
-`sudo docker run -d --restart always -p 80:8080 
-
--e NODE_CONFIG='{
+`sudo docker run -d --restart always -p 80:8080 -e NODE_CONFIG='{
     "backend": {
         "consul": {
             "routes": "http://stludockersbx01.monsanto.com:8500/v1/kv/np-routes?recurse",
@@ -46,9 +44,7 @@ Therefore, to run the router with docker and a custom config you might do someth
     "route": {
         "host": "auto"
     }
-}'
-
---name ocelot-np dockerc01.monsanto.com:5000/ocelot:1.3`
+}'  --name ocelot-np dockerc01.monsanto.com:5000/ocelot:1.3`
 
 ## Where does ocelot run?
 Ocelot is currently deployed to stludockerprd01 - 03.  The first node is mapped to pd-tools-np domain, the second two nodes are mapped to the pd-tools domain.
