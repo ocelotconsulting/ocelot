@@ -11,5 +11,10 @@ The Ocelot router is a lightweight reverse proxy written in Node.js and it serve
 ## Why Node.js?
 The Node.js router is super lightweight and fast. The NPM repo already has widely used reverse proxy dependencies, the one I chose was https://www.npmjs.com/package/http-proxy.
 
-## How to run
+## How to run the code
 `npm start` or `node src/server.js`
+
+## How to release
+I'm using Docker to release the code.  To build the latest image run `docker build -t dockerc01.monsanto.com:5000/ocelot:<version goes here> .`
+
+## How to configure
