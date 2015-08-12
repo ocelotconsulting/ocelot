@@ -1,5 +1,5 @@
 {
-  "name": "ocelot",
+  "name": "ocelot-proxy",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,6 +8,9 @@
     "test:dev": "mocha --recursive --colors --watch --reporter nyan test"
   },
   "author": "",
+  "publishConfig": {
+   "registry": "http://dockers05.monsanto.com:40000/registry/_design/app/_rewrite"
+   },
   "license": "ISC",
   "dependencies": {
     "config": "^1.14.0",
