@@ -4,7 +4,7 @@ var props = require('deep-property'),
     cookies = require('./cookies');
 
 function tryToken(req, route) {
-    var refreshToken = parseCookies(req)[props.get(route, 'authentication.cookie-name') + '_RT'];
+    var refreshToken = parseCookies(req)[route['cookie-name'] + '_RT'];
     var refreshQuery = 'grant_type=refresh_token&refresh_token=' + refreshToken;
 
     return postman.post(refreshQuery, route);

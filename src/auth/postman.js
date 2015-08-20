@@ -3,7 +3,7 @@ var https = require('https'),
     url = require('url'),
     config = require('config');
 
-function doPost(query, route, client, secret) {
+function doPost(query, client, secret) {
     return new Promise(function(resolve, reject) {
         var basicAuth = 'basic ' + new Buffer(client + ':' + secret, 'utf8').toString('base64');
         var authServer = url.parse(config.get('authentication.ping.host'));
@@ -47,8 +47,8 @@ function doPost(query, route, client, secret) {
 exports.post = doPost;
 
 exports.post = function (query, route) {
-    var client = props.get(route, 'authentication.client-id');
-    var secret = props.get(route, 'authentication.client-secret');
+    var client = route['client-id'];
+    var secret = route['client-secret'];
 
-    return doPost(query, route, client, secret);
+    return doPost(query, client, secret);
 };

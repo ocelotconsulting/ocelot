@@ -9,7 +9,7 @@ var secret = config.get("authentication.ping.validate.secret");
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
         //todo: clean this crap up
-        if (props.get(route, 'authentication.required') === false) {
+        if (route['require-auth'] === false) {
             resolve({
                 required: false
             });
@@ -17,13 +17,11 @@ exports.authentication = function (req, route) {
         else {
             var token = null;
             var canRefresh = false;
-            var requiresCookie = props.has(route, 'authentication.cookie-name');
+            var requiresCookie = route['cookie-name'];
             var cookies = parseCookies(req);
-            if (props.has(route, 'authentication.cookie-name')) {
-                token = cookies[props.get(route, 'authentication.cookie-name')];
-            }
-            if (props.has(route, 'authentication.cookie-name')) {
-                if (cookies[props.get(route, 'authentication.cookie-name') + '_RT']) {
+            if (route['cookie-name']) {
+                token = cookies[route['cookie-name']];
+                if (cookies[route['cookie-name'] + '_RT']) {
                     canRefresh = true;
                 }
             }
@@ -45,7 +43,7 @@ exports.authentication = function (req, route) {
                     result.valid = true;
                     resolve(result);
                 }, function (error) {
-                    reject(error, {
+                    resolve(error, {
                         required: true,
                         valid: false,
                         error: error,

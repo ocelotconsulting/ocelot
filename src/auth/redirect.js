@@ -11,9 +11,9 @@ exports.toAuthServer = function(req, res, route){
         redirectUrl = redirectUrl.substring(redirectUrl.indexOf('?'));
     }
     var state = new Buffer(origUrl).toString('base64');
-    var client = props.get(route, 'authentication.client-id');
+    var client = route['client-id'];
     var authServer = config.get('authentication.ping.host');
-    var scope = props.get(route, 'authentication.scope');
+    var scope = route['oidc-scope'];
 
     var location = authServer + '/as/authorization.oauth2?' +
         'response_type=code' +

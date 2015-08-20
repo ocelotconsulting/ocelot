@@ -17,7 +17,7 @@ var px = httpProxy.createProxyServer({
 });
 
 px.on('error', function (err, req, res) {
-    response.send(res, 500, "Error during proxy");
+    response.send(res, 500, "Error during proxy " + err.stack);
 });
 
 var server = http.createServer(function (req, res) {
@@ -58,17 +58,14 @@ var server = http.createServer(function (req, res) {
                     addAuthenticationHeaders(req, route, authentication);
                     proxy.request(px, req, res, url);
                 }
-            }, function (error, authentication) {
-                console.log(error);
-                console.log(authentication);
             });
         }
     }
 });
 
 function addAuthenticationHeaders(req, route, authentication) {
-    var userHeader = route.authentication['user-header'];
-    var clientHeader = route.authentication['client-header'];
+    var userHeader = route['user-header'];
+    var clientHeader = route['client-header'];
     if (authentication.valid && userHeader) {
         req.headers[userHeader] = authentication.access_token.user_id;
     }

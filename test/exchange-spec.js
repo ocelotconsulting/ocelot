@@ -1,29 +1,37 @@
 var assert = require("assert"),
-    config = require("config"),
-    sinon = require("sinon"),
-    consul = require('../src/metadata/consul.js'),
-    cache = require('../src/metadata/cache.js');
+    exchange = require("../src/auth/exchange"),
+    postman = require("../src/auth/postman"),
+    sinon = require("sinon");
 
 describe('exchange', function () {
+    it('validates token and sets up a redirect to original url encoded in state', function () {
+        var resolveIt;
+        var rejectIt;
+        var thisQuery;
+        var thisRoute;
+        var req = {};
+        var res = {};
+        var route = {};
 
-    it('initializes consul backend when configured', function () {
-        var called = false;
+        var promise = new Promise(function(resolve, reject){
+            resolveIt = resolve;
+            rejectIt = reject;
+        });
 
-        sinon.stub(config, "has", function (type) {
-            return type === "backend.consul";
+        sinon.stub(postman, "post", function (query, route) {
+            thisQuery = query;
+            thisRoute = route;
+            return promise;
         });
-        sinon.stub(consul, "initCache", function () {
-            called = true;
-        });
-        cache.initCache();
-        assert.equal(called, true);
+
+        req.url = "www.monsanto.com/abc";
+        exchange.code(req, res, route);
+
+        resolveIt({});
     });
 
     afterEach(function () {
-        restore(config.has);
-        restore(consul.initCache);
-        restore(consul.getRoutes);
-        restore(consul.getServices);
+        restore(postman.post);
     });
 
     function restore(mockFunc) {
