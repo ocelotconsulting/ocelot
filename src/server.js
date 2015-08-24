@@ -80,5 +80,6 @@ function presumeHost(req) {
     }
 }
 
-console.log("listening on port 8080");
-server.listen(process.env.PORT || 8080);
+var port = process.env.PORT || 8080;
+console.log("listening on port " + port);
+server.listen(port);
