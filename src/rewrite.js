@@ -1,4 +1,5 @@
-var Url = require('url');
+var Url = require('url'),
+    _ = require('underscore');
 
 exports.mapRoute = function (urlStr, route) {
     var capture = new RegExp(route['capture-pattern']);
@@ -24,6 +25,7 @@ exports.mapRoute = function (urlStr, route) {
     for (i = 0; i < route.services.length; i++) {
         allInstances = allInstances.concat(route.instances[route.services[i]]);
     }
+    allInstances = _.filter(allInstances, function(instance){return typeof instance !== 'undefined';});
 
     if (allInstances.length === 0) {
         return null;
