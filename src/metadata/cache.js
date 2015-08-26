@@ -20,3 +20,7 @@ exports.getRoutes = function () {
 exports.getServices = function () {
     return backend.getServices();
 };
+
+exports.reloadData = function(){
+    return backend.reloadData();
+};

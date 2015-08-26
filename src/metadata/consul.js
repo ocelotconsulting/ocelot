@@ -7,7 +7,7 @@ var routes, services, routeUrl, serviceUrl;
 var routeRegex =  /[^/]+[/](.+)/;
 var servicesRegex = /[^/]+[/](.+)\/(.+)/;
 
-function loadData() {
+function reloadData() {
     jsonLoader.get(routeUrl).then(function (data) {
         routes = parseRoutes(data);
     }, function (error) {
@@ -63,8 +63,8 @@ exports.initCache = function initCron() {
     routeUrl = config.get("backend.consul.routes");
     serviceUrl = config.get("backend.consul.services");
 
-    loadData();
-    cron.scheduleJob('*/20 * * * * *', loadData);
+    reloadData();
+    cron.scheduleJob('*/20 * * * * *', reloadData);
 };
 
 exports.getRoutes = function () {
@@ -74,3 +74,5 @@ exports.getRoutes = function () {
 exports.getServices = function () {
     return services;
 };
+
+exports.reloadData = reloadData;
