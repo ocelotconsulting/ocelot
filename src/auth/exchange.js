@@ -1,6 +1,6 @@
 var url = require('url'),
     postman = require('./postman'),
-    cookies = require('./cookies');
+    headers = require('./headers');
 
 function tryCode (req, route) {
     var url_parts = url.parse(req.url, true);
@@ -29,7 +29,7 @@ exports.code = function(req, res, route){
         var origUrl = new Buffer(state, 'base64').toString('utf8');
 
         res.setHeader('Location', origUrl);
-        cookies.set(res, route, result);
+        headers.setAuthCookies(res, route, result);
         res.statusCode = 307;
         res.end();
     }, function (error) {

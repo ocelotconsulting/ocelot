@@ -25,12 +25,17 @@ function doPost(query, client, secret) {
             });
 
             postres.on('end', function () {
-                var result = JSON.parse(data);
-                if (!result.error) {
-                    resolve(result);
+                try {
+                    var result = JSON.parse(data);
+                    if (!result.error) {
+                        resolve(result);
+                    }
+                    else {
+                        reject(result.error);
+                    }
                 }
-                else {
-                    reject(result.error);
+                catch(err){
+                    reject('could not parse JSON response: ' + data);
                 }
             });
         });

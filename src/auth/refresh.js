@@ -1,6 +1,6 @@
 var postman = require('./postman'),
     redirect = require('./redirect'),
-    cookies = require('./cookies');
+    headers = require('./headers');
 
 function tryToken(req, route) {
     var refreshToken = parseCookies(req)[route['cookie-name'] + '_rt'];
@@ -11,7 +11,7 @@ function tryToken(req, route) {
 
 exports.token = function (req, res, route) {
     tryToken(req, route).then(function (result) {
-        cookies.set(res, route, result);
+        headers.setAuthCookies(res, route, result);
         redirect.refreshPage(req, res);
     }, function (error) {
         console.log(error);

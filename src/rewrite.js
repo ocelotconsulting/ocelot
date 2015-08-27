@@ -37,7 +37,13 @@ exports.mapRoute = function (urlStr, route) {
         instanceUrlStr = instanceUrlStr + "/";
     }
 
-    return Url.parse(instanceUrlStr + rewritten);
+    try{
+        return Url.parse(instanceUrlStr + rewritten);
+    }
+    catch(err){
+        console.log('could not parse url: ' + instanceUrlStr + rewritten)
+        return null;
+    }
 };
 
 function getRandomInt(min, max) {
