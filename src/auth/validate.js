@@ -1,10 +1,20 @@
 var Promise = require('promise'),
     postman = require('./postman'),
-    config = require('config'),
-    cookies = require('./auth/cookies');;
+    config = require('config');
 
 var client = config.get("authentication.ping.validate.client");
 var secret = config.get("authentication.ping.validate.secret");
+
+function parseCookies(req) {
+    var list = {},
+        rc = req.headers.cookie;
+
+    rc && rc.split(';').forEach(function (cookie) {
+        var parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
+    return list;
+};
 
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
@@ -17,8 +27,8 @@ exports.authentication = function (req, route) {
         else {
             var token = null;
             var canRefresh = false;
-            var requiresCookie = route['cookie-name'];
-            var cookies = cookies.parse(req);
+            var requiresCookie = typeof route['cookie-name'] !== 'undefined' && route['cookie-name'].length > 0;
+            var cookies = parseCookies(req);
             if (route['cookie-name']) {
                 token = cookies[route['cookie-name']];
                 if (cookies[route['cookie-name'] + '_rt']) {

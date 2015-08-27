@@ -9,8 +9,7 @@ var http = require('http'),
     response = require('./response.js'),
     redirect = require('./auth/redirect.js'),
     config = require('config'),
-    cors = require('./cors'),
-    cookies = require('./auth/cookies');
+    cors = require('./cors');
 
 var px = httpProxy.createProxyServer({
     changeOrigin: true,
@@ -69,12 +68,14 @@ function addAuthenticationHeaders(req, route, authentication) {
         var userHeader = route['user-header'];
         var clientHeader = route['client-header'];
 
-        var cookies = cookies.parseCookies(req);
+        var cookies = parseCookies(req);
         var oidc = cookies[route['cookie-name'] + '_oidc'];
 
         if (authentication.valid && userHeader && oidc) {
+
             var oidcDecoded = JSON.parse(new Buffer(oidc.split('.')[1], 'base64').toString('utf8'));
             req.headers[userHeader] = oidcDecoded.sub;
+            console.log(oidcDecoded.sub);
         }
         if (authentication.valid && clientHeader) {
             req.headers[clientHeader] = authentication.client_id;
@@ -84,6 +85,17 @@ function addAuthenticationHeaders(req, route, authentication) {
         console.log('error adding user/client header: ' + ex + '; ' + ex.stack);
     }
 }
+
+function parseCookies(req) {
+    var list = {},
+        rc = req.headers.cookie;
+
+    rc && rc.split(';').forEach(function (cookie) {
+        var parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
+    return list;
+};
 
 function presumeHost(req) {
     if (config.get('route.host') !== "auto") {
