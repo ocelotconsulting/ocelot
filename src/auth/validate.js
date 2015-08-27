@@ -38,12 +38,12 @@ exports.authentication = function (req, route) {
             }
             else {
                 var validateQuery = 'grant_type=' + encodeURIComponent('urn:pingidentity.com:oauth2:grant_type:validate_bearer') + '&token=' + token;
-                postman.post(validateQuery, route, client, secret).then(function (result) {
+                postman.postAs(validateQuery, client, secret).then(function (result) {
                     result.required = true;
                     result.valid = true;
                     resolve(result);
                 }, function (error) {
-                    resolve(error, {
+                    resolve({
                         required: true,
                         valid: false,
                         error: error,

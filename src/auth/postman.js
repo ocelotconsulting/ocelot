@@ -52,3 +52,7 @@ exports.post = function (query, route) {
 
     return doPost(query, client, secret);
 };
+
+exports.postAs = function (query, client, secret) {
+    return doPost(query, client, secret);
+};
