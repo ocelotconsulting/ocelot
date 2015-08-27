@@ -33,7 +33,7 @@ exports.code = function(req, res, route){
         res.statusCode = 307;
         res.end();
     }, function (error) {
-        console.log(error);
+        console.log("Error during code exchange: " + error + "; for url: " + req.url);
         res.statusCode = 500;
         res.end();
     });

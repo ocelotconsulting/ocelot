@@ -1,5 +1,4 @@
-var props = require('deep-property'),
-    response = require('../response'),
+var response = require('../response'),
     config = require('config');
 
 exports.toAuthServer = function(req, res, route){

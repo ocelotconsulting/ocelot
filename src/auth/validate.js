@@ -1,7 +1,7 @@
-var props = require('deep-property'),
-    Promise = require('promise'),
+var Promise = require('promise'),
     postman = require('./postman'),
-    config = require('config');
+    config = require('config'),
+    cookies = require('./auth/cookies');;
 
 var client = config.get("authentication.ping.validate.client");
 var secret = config.get("authentication.ping.validate.secret");
@@ -18,10 +18,10 @@ exports.authentication = function (req, route) {
             var token = null;
             var canRefresh = false;
             var requiresCookie = route['cookie-name'];
-            var cookies = parseCookies(req);
+            var cookies = cookies.parse(req);
             if (route['cookie-name']) {
                 token = cookies[route['cookie-name']];
-                if (cookies[route['cookie-name'] + '_RT']) {
+                if (cookies[route['cookie-name'] + '_rt']) {
                     canRefresh = true;
                 }
             }
@@ -29,7 +29,7 @@ exports.authentication = function (req, route) {
                 token = req.headers.authorization.split(' ')[1];
             }
             if (!token) {
-                resolve({
+                reject({
                     required: true,
                     valid: false,
                     refresh: canRefresh,
@@ -43,7 +43,7 @@ exports.authentication = function (req, route) {
                     result.valid = true;
                     resolve(result);
                 }, function (error) {
-                    resolve({
+                    reject({
                         required: true,
                         valid: false,
                         error: error,
@@ -55,15 +55,3 @@ exports.authentication = function (req, route) {
         }
     });
 };
-
-function parseCookies(req) {
-    var list = {},
-        rc = req.headers.cookie;
-
-    rc && rc.split(';').forEach(function (cookie) {
-        var parts = cookie.split('=');
-        list[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-
-    return list;
-}

@@ -1,5 +1,4 @@
 var https = require('https'),
-    props = require('deep-property'),
     url = require('url'),
     config = require('config');
 
@@ -31,13 +30,11 @@ function doPost(query, client, secret) {
                     resolve(result);
                 }
                 else {
-                    console.log(result.error);
                     reject(result.error);
                 }
             });
         });
         httpsReq.on('error', function (error) {
-            console.log(error);
             reject(error);
         });
         httpsReq.end();

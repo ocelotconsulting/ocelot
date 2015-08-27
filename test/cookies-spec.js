@@ -12,8 +12,7 @@ describe('cookies', function () {
         var route = {};
         var authentication = {};
 
-        route.authentication = {};
-        route.authentication['cookie-name'] = "mycookie";
+        route['cookie-name'] = "mycookie";
         route.route = "abc";
 
         authentication['refresh_token'] = "abc123";
@@ -21,8 +20,10 @@ describe('cookies', function () {
 
         cookies.set(res, route, authentication);
 
+        console.log('>> ' + res['Set-Cookie']);
+
         assert.equal(res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true);
-        assert.equal(res['Set-Cookie'].indexOf('mycookie_RT=abc123; path=/abc') > -1, true);
+        assert.equal(res['Set-Cookie'].indexOf('mycookie_rt=abc123; path=/abc') > -1, true);
     });
 
     it('overrides the route key if you have a cookie path on your route', function () {
@@ -35,9 +36,8 @@ describe('cookies', function () {
         var route = {};
         var authentication = {};
 
-        route.authentication = {};
-        route.authentication['cookie-name'] = "mycookie";
-        route.authentication['cookie-path'] = "/zzz";
+        route['cookie-name'] = "mycookie";
+        route['cookie-path'] = "/zzz";
         route.route = "abc";
 
         authentication['refresh_token'] = "abc123";
@@ -46,6 +46,6 @@ describe('cookies', function () {
         cookies.set(res, route, authentication);
 
         assert.equal(res['Set-Cookie'].indexOf('mycookie=def123; path=/zzz') > -1, true);
-        assert.equal(res['Set-Cookie'].indexOf('mycookie_RT=abc123; path=/zzz') > -1, true);
+        assert.equal(res['Set-Cookie'].indexOf('mycookie_rt=abc123; path=/zzz') > -1, true);
     });
 });

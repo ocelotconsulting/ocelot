@@ -9,7 +9,8 @@ var http = require('http'),
     response = require('./response.js'),
     redirect = require('./auth/redirect.js'),
     config = require('config'),
-    cors = require('./cors');
+    cors = require('./cors'),
+    cookies = require('./auth/cookies');
 
 var px = httpProxy.createProxyServer({
     changeOrigin: true,
@@ -45,20 +46,20 @@ var server = http.createServer(function (req, res) {
         }
         else {
             validate.authentication(req, route).then(function (authentication) {
-                if (authentication.refresh) {
-                    refresh.token(req, res, route);
-                }
-                else if (authentication.redirect) {
-                    redirect.toAuthServer(req, res, route);
-                }
-                else if (authentication.required && !authentication.valid) {
-                    response.send(res, 403, "Authorization missing or invalid");
-                }
-                else {
                     addAuthenticationHeaders(req, route, authentication);
                     proxy.request(px, req, res, url);
-                }
-            });
+                },
+                function (authentication) {
+                    if (authentication.refresh) {
+                        refresh.token(req, res, route);
+                    }
+                    else if (authentication.redirect) {
+                        redirect.toAuthServer(req, res, route);
+                    }
+                    else {
+                        response.send(res, 403, "Authorization missing or invalid");
+                    }
+                });
         }
     }
 });
@@ -68,7 +69,7 @@ function addAuthenticationHeaders(req, route, authentication) {
         var userHeader = route['user-header'];
         var clientHeader = route['client-header'];
 
-        var cookies = parseCookies(req);
+        var cookies = cookies.parseCookies(req);
         var oidc = cookies[route['cookie-name'] + '_oidc'];
 
         if (authentication.valid && userHeader && oidc) {
@@ -82,17 +83,6 @@ function addAuthenticationHeaders(req, route, authentication) {
     catch (ex) {
         console.log('error adding user/client header: ' + ex + '; ' + ex.stack);
     }
-}
-
-function parseCookies(req) {
-    var list = {},
-        rc = req.headers.cookie;
-
-    rc && rc.split(';').forEach(function (cookie) {
-        var parts = cookie.split('=');
-        list[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-    return list;
 }
 
 function presumeHost(req) {

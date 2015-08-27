@@ -27,7 +27,6 @@ describe('exchange', function () {
         req.url = "www.monsanto.com/abc";
         exchange.code(req, res, route);
 
-        resolveIt({});
     });
 
     afterEach(function () {
