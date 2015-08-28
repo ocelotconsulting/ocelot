@@ -1,6 +1,6 @@
 var assert = require('assert'),
     sinon = require('sinon'),
-    cache = require('../src/metadata/cache'),
+    cache = require('../src/backend/cache'),
     resolver = require('../src/resolver');
 
 describe('resolver', function () {

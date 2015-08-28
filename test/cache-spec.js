@@ -1,8 +1,8 @@
 var assert = require("assert"),
     config = require("config"),
     sinon = require("sinon"),
-    consul = require('../src/metadata/consul.js'),
-    cache = require('../src/metadata/cache.js');
+    consul = require('../src/backend/consul.js'),
+    cache = require('../src/backend/cache.js');
 
 describe('cache', function () {
 

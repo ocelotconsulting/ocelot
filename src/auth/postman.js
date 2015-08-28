@@ -3,9 +3,11 @@ var https = require('https'),
     config = require('config');
 
 function doPost(query, client, secret) {
-    return new Promise(function(resolve, reject) {
-        var basicAuth = 'basic ' + new Buffer(client + ':' + secret, 'utf8').toString('base64');
-        var authServer = url.parse(config.get('authentication.ping.host'));
+    return new Promise(function (resolve, reject) {
+        var basicAuth, authServer;
+
+        basicAuth = 'basic ' + new Buffer(client + ':' + secret, 'utf8').toString('base64');
+        authServer = url.parse(config.get('authentication.ping.host'));
 
         var options = {
             host: authServer.host,
@@ -34,7 +36,7 @@ function doPost(query, client, secret) {
                         reject(result.error);
                     }
                 }
-                catch(err){
+                catch (err) {
                     reject('could not parse JSON response: ' + data);
                 }
             });

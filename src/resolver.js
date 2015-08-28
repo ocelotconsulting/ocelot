@@ -1,5 +1,5 @@
 var http = require('http'),
-    cache = require('./metadata/cache'),
+    cache = require('./backend/cache'),
     uri = require('url'),
     _ = require("underscore");
 

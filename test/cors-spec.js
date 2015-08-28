@@ -1,5 +1,5 @@
 var assert = require("assert"),
-    cache = require('../src/metadata/cache'),
+    cache = require('../src/backend/cache'),
     cors = require('../src/cors');
 
 describe('cors', function () {
