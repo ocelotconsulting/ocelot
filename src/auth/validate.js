@@ -14,16 +14,18 @@ function parseCookies(req) {
         list[parts.shift().trim()] = decodeURI(parts.join('='));
     });
     return list;
-};
+}
 
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
+
         //todo: clean this crap up
         if (route['require-auth'] === false) {
             resolve({
                 required: false
             });
         }
+
         else {
             var token = null;
             var canRefresh = false;
