@@ -13,7 +13,7 @@ beforeEach(function(){
     auth = {};
 });
 
-describe('cookies', function () {
+describe('headers', function () {
 
     it('returns tokens with path equal to route key', function () {
         res.setHeader = function(name, value){

@@ -1,7 +1,7 @@
 var assert = require("assert"),
     rewrite = require('../src/rewrite');
 
-describe('response', function () {
+describe('rewrite', function () {
     it('rewrites url, one capture group', function () {
         var route = {};
         route['capture-pattern'] = "(.*)";

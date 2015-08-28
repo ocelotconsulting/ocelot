@@ -59,13 +59,6 @@ describe('exchange', function () {
         assert.equal(res.headers[0].value, "test");
     });
 
-    /*
-     res.setHeader('Location', origUrl);
-     headers.setAuthCookies(res, route, result);
-     res.statusCode = 307;
-     res.end();
-     */
-
     afterEach(function () {
         restore(postmanMock);
         restore(headerMock);

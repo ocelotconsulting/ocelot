@@ -20,6 +20,7 @@ exports.toAuthServer = function(req, res, route){
         addQueryParam("redirect_uri", redirectUrl) +
         addQueryParam("state", state) +
         addQueryParam("scope", scope);
+
     res.setHeader('Location', location);
     response.send(res, 307);
 };

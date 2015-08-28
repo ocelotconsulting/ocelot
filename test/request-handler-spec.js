@@ -30,7 +30,7 @@ beforeEach(function () {
     handler = requestHandler.create(px, presumeHost);
 });
 
-describe('server', function () {
+describe('request handler', function () {
     it('delegates cors requests', function () {
 
         preflightMock = sinon.stub(cors, "preflight");
