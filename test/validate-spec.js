@@ -46,10 +46,12 @@ describe('validate', function () {
 
         req.headers.authorization = 'bearer abc';
 
-        postmanMock = sinon.stub(postman, 'postAs', function(query, client, secret){
-            return {then: function(s, f){
-                s(auth);
-            }};
+        postmanMock = sinon.stub(postman, 'postAs', function (query, client, secret) {
+            return {
+                then: function (s, f) {
+                    s(auth);
+                }
+            };
         });
 
         validate.authentication(req, route).then(function (returnedAuth) {
@@ -69,10 +71,12 @@ describe('validate', function () {
 
         route['cookie-name'] = 'mycookie';
 
-        postmanMock = sinon.stub(postman, 'postAs', function(query, client, secret){
-            return {then: function(s, f){
-                s(auth);
-            }};
+        postmanMock = sinon.stub(postman, 'postAs', function (query, client, secret) {
+            return {
+                then: function (s, f) {
+                    s(auth);
+                }
+            };
         });
 
         validate.authentication(req, route).then(function (returnedAuth) {
@@ -92,10 +96,12 @@ describe('validate', function () {
 
         route['cookie-name'] = 'mycookie';
 
-        postmanMock = sinon.stub(postman, 'postAs', function(query, client, secret){
-            return {then: function(s, f){
-                f('you suck');
-            }};
+        postmanMock = sinon.stub(postman, 'postAs', function (query, client, secret) {
+            return {
+                then: function (s, f) {
+                    f('you suck');
+                }
+            };
         });
 
         validate.authentication(req, route).then(function (returnedAuth) {
@@ -109,7 +115,6 @@ describe('validate', function () {
                 done();
             });
     });
-
 
 
     afterEach(function () {
