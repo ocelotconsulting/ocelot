@@ -2,15 +2,8 @@ var postman = require('./postman'),
     redirect = require('./redirect'),
     headers = require('./headers');
 
-function tryToken(req, route) {
-    var refreshToken = parseCookies(req)[route['cookie-name'] + '_rt'];
-    var refreshQuery = 'grant_type=refresh_token&refresh_token=' + refreshToken;
-
-    return postman.post(refreshQuery, route);
-}
-
 exports.token = function (req, res, route) {
-    tryToken(req, route).then(function (result) {
+    tryRefresh(req, route).then(function (result) {
         headers.setAuthCookies(res, route, result);
         redirect.refreshPage(req, res);
     }, function (error) {
@@ -28,4 +21,11 @@ function parseCookies(req) {
         list[parts.shift().trim()] = decodeURI(parts.join('='));
     });
     return list;
-};
+}
+
+function tryRefresh(req, route) {
+    var refreshToken = parseCookies(req)[route['cookie-name'] + '_rt'];
+    var refreshQuery = 'grant_type=refresh_token&refresh_token=' + refreshToken;
+
+    return postman.post(refreshQuery, route);
+}

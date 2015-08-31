@@ -13,7 +13,7 @@ function parse(req) {
         console.log("invalid cookie format: " + req.headers.cookie);
     }
     return list;
-};
+}
 
 exports.setAuthCookies = function (res, route, authentication) {
     //todo: maybe hash incoming ip address along with cookie to prevent cross site scripting

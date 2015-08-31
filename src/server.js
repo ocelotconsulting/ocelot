@@ -12,7 +12,7 @@ px.on('error', function (err, req, res) {
     response.send(res, 500, "Error during proxy: " + err + ":" + err.stack);
 });
 
-var server = http.createServer(requestHandler.create(px, presumeHost()));
+var server = http.createServer(requestHandler.create(px));
 
 var port = process.env.PORT || 8080;
 console.log("listening on port " + port);
