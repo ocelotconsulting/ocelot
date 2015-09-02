@@ -22,7 +22,7 @@ exports.setAuthCookies = function (res, route, authentication) {
     res.setHeader('Set-Cookie', cookieArray);
 };
 
-((exports.addAuth = function (req, route, authentication) {
+exports.addAuth = function (req, route, authentication) {
     try {
         var userHeader = route['user-header'];
         var clientHeader = route['client-header'];
@@ -41,4 +41,4 @@ exports.setAuthCookies = function (res, route, authentication) {
     catch (ex) {
         console.log('error adding user/client header: ' + ex + '; ' + ex.stack);
     }
-}));
+};
