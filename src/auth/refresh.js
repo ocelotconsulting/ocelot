@@ -1,5 +1,6 @@
 var postman = require('./postman'),
     redirect = require('./redirect'),
+    cookies = require('../cookies'),
     headers = require('./headers');
 
 exports.token = function (req, res, route) {
@@ -12,19 +13,8 @@ exports.token = function (req, res, route) {
     });
 };
 
-function parseCookies(req) {
-    var list = {},
-        rc = req.headers.cookie;
-
-    rc && rc.split(';').forEach(function (cookie) {
-        var parts = cookie.split('=');
-        list[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-    return list;
-}
-
 function tryRefresh(req, route) {
-    var refreshToken = parseCookies(req)[route['cookie-name'] + '_rt'];
+    var refreshToken = cookies.parse(req)[route['cookie-name'] + '_rt'];
     var refreshQuery = 'grant_type=refresh_token&refresh_token=' + refreshToken;
 
     return postman.post(refreshQuery, route);

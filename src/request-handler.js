@@ -13,9 +13,10 @@ var resolver = require('./resolver.js'),
 exports.create = function (px) {
 
     var host = config.get('route.host');
-    var presumeHost = function(req){};
-    if(host !== "auto") {
-        presumeHost = function(req){
+    var presumeHost = function (req) {
+    };
+    if (host !== "auto") {
+        presumeHost = function (req) {
             req.headers.host = host;
         }
     }

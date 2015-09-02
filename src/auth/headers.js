@@ -1,19 +1,5 @@
-var _ = require('underscore');
-
-function parse(req) {
-    var list = {},
-        rc = req.headers.cookie;
-    try {
-        rc && rc.split(';').forEach(function (cookie) {
-            var parts = cookie.split('=');
-            list[parts.shift().trim()] = decodeURI(parts.join('='));
-        });
-    }
-    catch (err) {
-        console.log("invalid cookie format: " + req.headers.cookie);
-    }
-    return list;
-}
+var _ = require('underscore'),
+    cookies = require('../cookies');
 
 exports.setAuthCookies = function (res, route, authentication) {
     //todo: maybe hash incoming ip address along with cookie to prevent cross site scripting
@@ -36,14 +22,11 @@ exports.setAuthCookies = function (res, route, authentication) {
     res.setHeader('Set-Cookie', cookieArray);
 };
 
-exports.parse = parse;
-
-exports.addAuth = function (req, route, authentication) {
+((exports.addAuth = function (req, route, authentication) {
     try {
         var userHeader = route['user-header'];
         var clientHeader = route['client-header'];
-        var cookies = parse(req);
-        var oidc = cookies[route['cookie-name'] + '_oidc'];
+        var oidc = cookies.parse(req)[route['cookie-name'] + '_oidc'];
 
         if (authentication.valid && userHeader && oidc) {
             var stringToParse = new Buffer(oidc.split('.')[1], 'base64').toString('utf8');
@@ -58,4 +41,4 @@ exports.addAuth = function (req, route, authentication) {
     catch (ex) {
         console.log('error adding user/client header: ' + ex + '; ' + ex.stack);
     }
-};
+}));
