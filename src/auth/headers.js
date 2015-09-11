@@ -1,5 +1,6 @@
 var _ = require('underscore'),
-    cookies = require('../cookies');
+    cookies = require('../cookies'),
+    crypt = require('./crypt');
 
 exports.setAuthCookies = function (res, route, authentication) {
     //todo: maybe hash incoming ip address along with cookie to prevent cross site scripting
@@ -7,7 +8,7 @@ exports.setAuthCookies = function (res, route, authentication) {
     var cookieArray = [cookieName + '=' + authentication.access_token];
 
     if(authentication.refresh_token){
-        cookieArray[cookieArray.length] = cookieName + '_rt=' + authentication.refresh_token;
+        cookieArray[cookieArray.length] = cookieName + '_rt=' + crypt.encrypt(authentication.refresh_token, route['client-secret']);
     }
 
     if(authentication.id_token){

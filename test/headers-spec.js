@@ -1,5 +1,6 @@
 var assert = require("assert"),
-    headers = require('../src/auth/headers');
+    headers = require('../src/auth/headers'),
+    crypt = require('../src/auth/crypt');
 
 var res = {};
 var route = {};
@@ -20,7 +21,8 @@ describe('headers', function () {
             this[name] = value;
         };
         route['cookie-name'] = "mycookie";
-        route.route = "abc";
+        route['route'] = "abc";
+        route['client-secret'] = "secret";
         authentication['refresh_token'] = "abc123";
         authentication['access_token'] = "def123";
         authentication['id_token'] = "ghi123";
@@ -28,7 +30,7 @@ describe('headers', function () {
         headers.setAuthCookies(res, route, authentication);
 
         assert.equal(res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true);
-        assert.equal(res['Set-Cookie'].indexOf('mycookie_rt=abc123; path=/abc') > -1, true);
+        assert.equal(res['Set-Cookie'].indexOf('mycookie_rt='+ crypt.encrypt(authentication.refresh_token, route['client-secret']) + '; path=/abc') > -1, true);
         assert.equal(res['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, true);
     });
 
@@ -52,14 +54,16 @@ describe('headers', function () {
         };
         route['cookie-name'] = "mycookie";
         route['cookie-path'] = "/zzz";
-        route.route = "abc";
+        route['route'] = "abc";
+        route['client-secret'] = "secret";
+
         authentication['refresh_token'] = "abc123";
         authentication['access_token'] = "def123";
 
         headers.setAuthCookies(res, route, authentication);
 
         assert.equal(res['Set-Cookie'].indexOf('mycookie=def123; path=/zzz') > -1, true);
-        assert.equal(res['Set-Cookie'].indexOf('mycookie_rt=abc123; path=/zzz') > -1, true);
+        assert.equal(res['Set-Cookie'].indexOf('mycookie_rt='+ crypt.encrypt(authentication.refresh_token, route['client-secret']) + '; path=/zzz') > -1, true);
     });
 });
 
