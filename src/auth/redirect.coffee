@@ -10,8 +10,6 @@ module.exports =
         origUrl = 'http://' + req.headers.host + req.url
         redirectUrl = origUrl + '/receive-auth-token'
         redirectUrl = redirectUrl.split('?')[0]
-        if redirectUrl.indexOf('?') > -1
-            redirectUrl = redirectUrl.substring(redirectUrl.indexOf('?'))
         state = new Buffer(origUrl).toString('base64')
         client = route['client-id']
         authServer = config.get('authentication.ping.host')
