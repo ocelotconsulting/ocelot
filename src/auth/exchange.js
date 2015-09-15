@@ -5,13 +5,12 @@ var url = require('url'),
 // todo: delegate to backend
 
 function tryCode (req, route) {
-    var url_parts = url.parse(req.url, true);
-    var query = url_parts.query;
-    var code = query.code;
-    var state = query.state;
+    var parsedUrl = url.parse(req.url, true);
+    var code = parsedUrl.query.code;
+    var state = parsedUrl.query.state;
+
     var redirectUrl = new Buffer(state, 'base64').toString('utf8');
 
-    // todo: remove ?recurse from consul base property
     if (redirectUrl.indexOf('?') > -1) {
         redirectUrl = redirectUrl.substring(redirectUrl.indexOf('?'));
     }
@@ -20,15 +19,12 @@ function tryCode (req, route) {
     redirectUrl = encodeURIComponent(redirectUrl);
 
     var exchangeQuery = 'grant_type=authorization_code&code=' + code + '&redirect_uri=' + redirectUrl;
-
     return postman.post(exchangeQuery, route);
 }
 
 exports.code = function(req, res, route){
     tryCode(req, route).then(function (result) {
-        var url_parts = url.parse(req.url, true);
-        var query = url_parts.query;
-        var state = query.state;
+        var state = url.parse(req.url, true).query.state;
         var origUrl = new Buffer(state, 'base64').toString('utf8');
 
         res.setHeader('Location', origUrl);

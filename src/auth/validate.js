@@ -11,51 +11,44 @@ var secret = config.get("authentication.ping.validate.secret");
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
 
-        //todo: clean this crap up
         if (route['require-auth'] === false) {
-            resolve({
-                required: false
-            });
+            resolve({});
         }
 
         else {
-            var token = null;
-            var canRefresh = false;
-            var requiresCookie = typeof route['cookie-name'] !== 'undefined' && route['cookie-name'].length > 0;
-            var myCookies = cookies.parse(req);
-            if (route['cookie-name']) {
-                token = myCookies[route['cookie-name']];
-                if (myCookies[route['cookie-name'] + '_rt']) {
-                    canRefresh = true;
-                }
-            s}
-            if (req.headers.authorization && req.headers.authorization.toLowerCase().indexOf('bearer') > -1) {
-                token = req.headers.authorization.split(' ')[1];
-            }
+            var token = getToken(req, route);
+            var refreshTokenPresent = typeof cookies.parse(req)[route['cookie-name'] + '_rt'] !== 'undefined';
+            var cookieAuthEnabled = route['cookie-name'] && route['cookie-name'].length > 0;
+
             if (!token) {
                 reject({
-                    required: true,
-                    valid: false,
-                    refresh: canRefresh,
-                    redirect: requiresCookie
+                    refresh: refreshTokenPresent,
+                    redirect: cookieAuthEnabled
                 });
             }
             else {
                 var validateQuery = 'grant_type=' + encodeURIComponent('urn:pingidentity.com:oauth2:grant_type:validate_bearer') + '&token=' + token;
                 postman.postAs(validateQuery, client, secret).then(function (result) {
-                    result.required = true;
                     result.valid = true;
                     resolve(result);
-                }, function (error) {
+                }, function () {
                     reject({
-                        required: true,
-                        valid: false,
-                        error: error,
-                        refresh: canRefresh,
-                        redirect: requiresCookie
+                        refresh: refreshTokenPresent,
+                        redirect: cookieAuthEnabled
                     });
                 });
             }
         }
     });
 };
+
+function getToken(req, route){
+    var token = null;
+    if (route['cookie-name']) {
+        token = cookies.parse(req)[route['cookie-name']];
+    }
+    if (req.headers.authorization && req.headers.authorization.toLowerCase().indexOf('bearer') > -1) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    return token;
+}
