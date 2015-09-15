@@ -5,19 +5,44 @@ var http = require('http'),
 
 cache.initCache();
 
-function findClosestRoute(url) {
+exports.resolveRoute = function (url, host) {
+    var closestRoute = findRouteByHost(host) || findRouteByPath(url);
+    if (closestRoute != null) {
+        closestRoute.instances = {};
+        _.each(closestRoute.services, function (service) {
+            closestRoute.instances[service] = cache.getServices()[service];
+        });
+    }
+    return closestRoute;
+};
+
+function findRouteByHost(host){
+    if(host.indexOf(".") > 0){
+        var subdomain = host.split(".")[0];
+        var route = findRoute(subdomain);
+        if (typeof route !== "undefined") {
+            return route;
+        }
+    }
+    return null;
+}
+
+function findRouteByPath(url) {
     var path = getUrlStrStripLeadingSlash(url);
     for (pathDepth = 3; pathDepth >= 0; pathDepth--) {
         var routePath = pathDepth === 0 ? "root" : path.split('/', pathDepth).join('/');
-        var foundRoute = _.find(cache.getRoutes(), function (route) {
-            return route.route === routePath;
-        });
-        if (typeof foundRoute !== "undefined") {
-            return foundRoute;
+        var route = findRoute(routePath);
+        if (typeof route !== "undefined") {
+            return route;
         }
     }
-    console.log("no matching service found for " + url);
     return null;
+}
+
+function findRoute(key){
+    return _.find(cache.getRoutes(), function (route) {
+        return route.route === key;
+    });
 }
 
 function getUrlStrStripLeadingSlash(urlStr) {
@@ -27,14 +52,3 @@ function getUrlStrStripLeadingSlash(urlStr) {
     }
     return path;
 }
-
-exports.resolveRoute = function (url) {
-    var closestRoute = findClosestRoute(url);
-    if (closestRoute != null) {
-        closestRoute['instances'] = {};
-        _.each(closestRoute.services, function (service) {
-            closestRoute['instances'][service] = cache.getServices()[service];
-        });
-    }
-    return closestRoute;
-};

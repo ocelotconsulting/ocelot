@@ -38,7 +38,7 @@ describe('rewrite', function () {
         assert.equal(url.href, "abc.monsanto.com/def/123")
     });
 
-    it('you can have a leading slash on the rewrite l without a problem', function () {
+    it('can have a leading slash on the rewrite without a problem', function () {
         var route = {};
         route['capture-pattern'] = "abc/(.*)";
         route['rewrite-pattern'] = "/def/$1";
@@ -48,5 +48,17 @@ describe('rewrite', function () {
 
         var url = rewrite.mapRoute("abc/123", route);
         assert.equal(url.href, "abc.monsanto.com/def/123")
+    });
+
+    it('rewrites a url with only a slash', function () {
+        var route = {};
+        route['capture-pattern'] = "(.*)";
+        route['rewrite-pattern'] = "$1";
+        route.services = ['service1'];
+        route.instances = {};
+        route.instances.service1 = [{url: 'abc.monsanto.com'}];
+
+        var url = rewrite.mapRoute("/", route);
+        assert.equal(url.href, "abc.monsanto.com/")
     });
 });

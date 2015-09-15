@@ -4,6 +4,7 @@ var postman = require('./postman'),
     headers = require('./headers'),
     crypt = require('./crypt');
 
+//todo: call backend for url composition
 exports.token = function (req, res, route) {
     tryRefresh(req, route).then(function (result) {
         headers.setAuthCookies(res, route, result);
