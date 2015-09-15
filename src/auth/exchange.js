@@ -2,6 +2,8 @@ var url = require('url'),
     postman = require('./postman'),
     headers = require('./headers');
 
+// todo: delegate to backend
+
 function tryCode (req, route) {
     var url_parts = url.parse(req.url, true);
     var query = url_parts.query;
@@ -9,6 +11,7 @@ function tryCode (req, route) {
     var state = query.state;
     var redirectUrl = new Buffer(state, 'base64').toString('utf8');
 
+    // todo: remove ?recurse from consul base property
     if (redirectUrl.indexOf('?') > -1) {
         redirectUrl = redirectUrl.substring(redirectUrl.indexOf('?'));
     }

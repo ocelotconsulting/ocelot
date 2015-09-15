@@ -2,6 +2,8 @@ var https = require('https'),
     url = require('url'),
     config = require('config');
 
+// todo: delegate to auth backend for url composition
+
 function doPost(query, client, secret) {
     return new Promise(function (resolve, reject) {
         var basicAuth, authServer;

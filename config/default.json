@@ -1,20 +1,17 @@
 {
   "backend": {
     "consul": {
-      "routes": "http://stludockersbx01.monsanto.com:8500/v1/kv/routes/?recurse",
-      "services": "http://stludockersbx01.monsanto.com:8500/v1/kv/services/?recurse"
+      "routes": "http://stludockersbx01.monsanto.com:8500/v1/kv/routes-np/?recurse",
+      "services": "http://stludockersbx01.monsanto.com:8500/v1/kv/services-np/?recurse"
     }
   },
   "authentication": {
     "ping": {
       "validate": {
         "client": "TPS_VALIDATOR",
-        "secret": "TPS_VALIDATOR"
+        "secret": "I7PM4yBf"
       },
       "host": "https://test.amp.monsanto.com"
     }
-  },
-  "route": {
-    "host": "auto"
   }
 }

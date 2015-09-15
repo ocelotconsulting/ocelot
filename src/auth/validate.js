@@ -6,6 +6,8 @@ var Promise = require('promise'),
 var client = config.get("authentication.ping.validate.client");
 var secret = config.get("authentication.ping.validate.secret");
 
+// todo: call backend for url composition
+
 exports.authentication = function (req, route) {
     return new Promise(function (resolve, reject) {
 
@@ -26,7 +28,7 @@ exports.authentication = function (req, route) {
                 if (myCookies[route['cookie-name'] + '_rt']) {
                     canRefresh = true;
                 }
-            }
+            s}
             if (req.headers.authorization && req.headers.authorization.toLowerCase().indexOf('bearer') > -1) {
                 token = req.headers.authorization.split(' ')[1];
             }

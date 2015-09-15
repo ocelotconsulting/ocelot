@@ -49,7 +49,7 @@ describe('request handler', function () {
     });
 
     it('returns 404 on missing route', function () {
-        req = {url: "http://someurl"};
+        req = {url: "http://someurl", headers: {host: ""}};
 
         preflightMock = sinon.stub(cors, "preflight");
         preflightMock.withArgs(req).returns(false);
@@ -69,7 +69,7 @@ describe('request handler', function () {
     });
 
     it('performs token exchange if url ends with receive-auth-token', function () {
-        req = {url: "http://someurl/receive-auth-token"};
+        req = {url: "http://someurl/receive-auth-token", headers: {host: ""}};
         var route = {id: "my route"};
 
         preflightMock = sinon.stub(cors, "preflight");
@@ -89,7 +89,7 @@ describe('request handler', function () {
     });
 
     it('returns 404 if url not found', function () {
-        req = {url: "http://someurl"};
+        req = {url: "http://someurl", headers: {host: ""}};
         var route = {id: "my route"};
 
         preflightMock = sinon.stub(cors, "preflight");
@@ -111,7 +111,7 @@ describe('request handler', function () {
     });
 
     it('tries refresh if auth fails and refresh is possible', function () {
-        req = {url: "http://someurl"};
+        req = {url: "http://someurl", headers: {host: ""}};
         var route = {id: "my route"};
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: true};
@@ -141,7 +141,7 @@ describe('request handler', function () {
     });
 
     it('tries redirect if auth fails and refresh not possible', function () {
-        req = {url: "http://someurl"};
+        req = {url: "http://someurl", headers: {host: ""}};
         var route = {id: "my route"};
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: false, redirect: true};
@@ -171,7 +171,7 @@ describe('request handler', function () {
     });
 
     it('returns error if auth fails, no possible refresh or redirect', function () {
-        req = {url: "http://someurl"};
+        req = {url: "http://someurl", headers: {host: ""}};
         var route = {id: "my route"};
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: false, redirect: false};
@@ -201,7 +201,7 @@ describe('request handler', function () {
     });
 
     it('has a happy path through proxy land', function () {
-        req = {url: "http://someurl"};
+        req = {url: "http://someurl", headers: {host: ""}};
         var route = {id: "my route"};
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: false, redirect: false};

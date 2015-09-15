@@ -12,15 +12,6 @@ var resolver = require('./resolver.js'),
 
 exports.create = function (px) {
 
-    var host = config.get('route.host');
-    var presumeHost = function (req) {
-    };
-    if (host !== "auto") {
-        presumeHost = function (req) {
-            req.headers.host = host;
-        }
-    }
-
     return function (req, res) {
         cors.setCorsHeaders(req, res);
         if (cors.preflight(req)) {
@@ -28,9 +19,7 @@ exports.create = function (px) {
             return;
         }
 
-        presumeHost(req);
-
-        var route = resolver.resolveRoute(req.url);
+        var route = resolver.resolveRoute(req.url, req.headers.host);
 
         if (route == null) {
             response.send(res, 404, "Route not found");

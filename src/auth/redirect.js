@@ -1,6 +1,8 @@
 var response = require('../response'),
     config = require('config');
 
+// todo: remove references to ping, call auth backend
+
 exports.toAuthServer = function(req, res, route){
     var host = req.headers.host;
 
