@@ -3,20 +3,23 @@ var assert = require("assert"),
     postman = require("../src/auth/postman"),
     redirect = require("../src/auth/redirect"),
     headers = require("../src/auth/headers.js"),
-    refresh = require("../src/auth/refresh");
+    refresh = require("../src/auth/refresh"),
+    crypt = require("../src/auth/crypt");
 
 var postmanMock, headersMock, redirectMock;
 
 describe('refresh', function () {
     it('refreshes if post is successful', function () {
-        var req = {headers: {cookie: "something_rt=abc"}};
+        var secret = "secret", unencrypted_refresh = "abc";;
+        var req = {headers: {cookie: "something_rt=" + crypt.encrypt(unencrypted_refresh, secret)}};
         var res = {id: 'res'};
         var route = {id: 'route'};
         var auth = {id: 'auth'};
         route['cookie-name'] = 'something';
+        route['client-secret'] = secret;
 
         postmanMock = sinon.stub(postman, 'post');
-        postmanMock.withArgs('grant_type=refresh_token&refresh_token=abc', route).returns(
+        postmanMock.withArgs('grant_type=refresh_token&refresh_token=' + unencrypted_refresh, route).returns(
             {then: function(s, f){
                 s(auth);
             }}
@@ -36,14 +39,16 @@ describe('refresh', function () {
     });
 
     it('redirects if post is unsuccessful', function () {
-        var req = {headers: {cookie: "something_rt=abc"}};
+        var secret = "secret", unencrypted_refresh = "abc";
+        var req = {headers: {cookie: "something_rt=" + crypt.encrypt(unencrypted_refresh, secret)}};
         var res = {id: 'res'};
         var route = {id: 'route'};
         var auth = {id: 'auth'};
         route['cookie-name'] = 'something';
+        route['client-secret'] = secret;
 
         postmanMock = sinon.stub(postman, 'post');
-        postmanMock.withArgs('grant_type=refresh_token&refresh_token=abc', route).returns(
+        postmanMock.withArgs('grant_type=refresh_token&refresh_token=' + unencrypted_refresh, route).returns(
             {then: function(s, f){
                 f(auth);
             }}
