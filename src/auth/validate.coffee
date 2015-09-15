@@ -11,7 +11,7 @@ getToken = (req, route) ->
         req.headers.authorization.split(' ')[1]
     else if route['cookie-name']
         cookies.parse(req)[route['cookie-name']]
-    null
+    else null
 
 module.exports =
     authentication: (req, route) ->
