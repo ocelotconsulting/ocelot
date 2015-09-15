@@ -3,7 +3,6 @@ var assert = require("assert"),
     headers = require("../src/auth/headers"),
     postman = require("../src/auth/postman"),
     exchange = require("../src/auth/exchange"),
-    https = require("https"),
     validate = require("../src/auth/validate");
 
 var postmanMock;
@@ -121,4 +120,3 @@ function restore(mockFunc) {
         mockFunc.restore();
     }
 }
-

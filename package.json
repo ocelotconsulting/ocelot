@@ -2,10 +2,9 @@
   "name": "ocelot-proxy",
   "version": "1.0.2",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
-    "test:dev": "mocha --recursive --colors --watch --reporter nyan test",
+    "start": "node src/bin/www",
+    "test:dev": "mocha --compilers coffee:coffee-script/register --recursive --colors --watch --reporter nyan test",
     "test:coverage": "istanbul cover _mocha -- -R spec"
   },
   "author": "",
@@ -15,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "config": "^1.14.0",
+    "coffee-script": "^1.9.3",
     "http": "0.0.0",
     "http-cors": "^1.0.1",
     "http-proxy": "^1.11.1",

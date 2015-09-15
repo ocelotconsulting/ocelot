@@ -2,7 +2,7 @@ var assert = require("assert"),
     sinon = require("sinon"),
     postman = require("../src/auth/postman"),
     redirect = require("../src/auth/redirect"),
-    headers = require("../src/auth/headers.js"),
+    headers = require("../src/auth/headers"),
     refresh = require("../src/auth/refresh"),
     crypt = require("../src/auth/crypt");
 
