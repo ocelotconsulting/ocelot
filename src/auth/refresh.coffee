@@ -9,7 +9,7 @@ tryRefresh = (req, route) ->
     refreshQuery = 'grant_type=refresh_token&refresh_token=' + crypt.decrypt(cookies.parse(req)[route['cookie-name'] + '_rt'], route['client-secret'])
     postman.post refreshQuery, route
 
-module.exports
+module.exports =
     token: (req, res, route) ->
         tryRefresh(req, route).then ((result) ->
             headers.setAuthCookies res, route, result
