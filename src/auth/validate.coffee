@@ -4,6 +4,7 @@ config = require 'config'
 cookies = require '../cookies'
 client = config.get 'authentication.ping.validate.client'
 secret = config.get 'authentication.ping.validate.secret'
+_ = require 'underscore'
 
 # todo: call backend for url composition
 getToken = (req, route) ->
@@ -22,17 +23,13 @@ module.exports =
                 token = getToken(req, route)
                 refreshTokenPresent = typeof cookies.parse(req)[route['cookie-name'] + '_rt'] != 'undefined'
                 cookieAuthEnabled = route['cookie-name'] and route['cookie-name'].length > 0
+                rejectData = {refresh: refreshTokenPresent, redirect: cookieAuthEnabled}
                 if !token
-                    reject
-                        refresh: refreshTokenPresent
-                        redirect: cookieAuthEnabled
+                    reject rejectData
                 else
                     validateQuery = 'grant_type=' + encodeURIComponent('urn:pingidentity.com:oauth2:grant_type:validate_bearer') + '&token=' + token
                     postman.postAs(validateQuery, client, secret).then ((result) ->
-                        result.valid = true
-                        resolve result
+                        resolve _.extend(result, {valid: true})
                     ), ->
-                        reject
-                            refresh: refreshTokenPresent
-                            redirect: cookieAuthEnabled
+                        reject rejectData
         )

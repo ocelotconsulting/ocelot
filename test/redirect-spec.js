@@ -41,7 +41,7 @@ describe('redirect', function () {
         configMock = sinon.mock(config, 'get');
         configMock.expects('get').withArgs('authentication.ping.host').once().returns('http://myauthhost');
 
-        redirect.toAuthServer(req, res, route);
+        redirect.startAuthCode(req, res, route);
 
         var expectedUrl =
             "http://myauthhost/as/authorization.oauth2?response_type=code&client_id=abc123&redirect_uri=http%3A%2F%2Fmyhost%2Fmy%2Furl%2Freceive-auth-token&state=aHR0cDovL215aG9zdC9teS91cmw%3D";

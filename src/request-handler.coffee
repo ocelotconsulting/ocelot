@@ -10,6 +10,18 @@ redirect = require './auth/redirect'
 cors = require './cors'
 headers = require './auth/headers'
 
+authFulfilled = (authentication) ->
+    headers.addAuth this.req, this.route, authentication
+    proxy.request this.px, this.req, this.res, this.url
+
+authRejected = (authentication) ->
+    if authentication.refresh
+        refresh.token this.req, this.res, this.route
+    else if authentication.redirect
+        redirect.startAuthCode this.req, this.res, this.route
+    else
+        response.send this.res, 403, 'Authorization missing or invalid'
+
 module.exports =
     create: (px) ->
         (req, res) ->
@@ -21,19 +33,11 @@ module.exports =
             if route == null
                 response.send res, 404, 'Route not found'
             else if req.url.indexOf('receive-auth-token') > -1
-                exchange.code req, res, route
+                exchange.authCodeFlow req, res, route
             else
                 url = rewrite.mapRoute(req.url, route)
                 if url == null
                     response.send res, 404, 'No active URL for route'
                 else
-                    validate.authentication(req, route).then ((authentication) ->
-                        headers.addAuth req, route, authentication
-                        proxy.request px, req, res, url
-                    ), (authentication) ->
-                        if authentication.refresh
-                            refresh.token req, res, route
-                        else if authentication.redirect
-                            redirect.toAuthServer req, res, route
-                        else
-                            response.send res, 403, 'Authorization missing or invalid'
+                    newThis = { req: req, res: res, route: route, px: px, url: url }
+                    validate.authentication(req, route).then authFulfilled.bind(newThis), authRejected.bind(newThis)
