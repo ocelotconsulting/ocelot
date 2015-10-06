@@ -21,7 +21,7 @@ describe('exchange', function () {
             }}
         );
 
-        exchange.code(req, res, route);
+        exchange.authCodeFlow(req, res, route);
 
         assert.equal(res.statusCode, 500);
         assert.equal(res.ended, true);
@@ -48,7 +48,7 @@ describe('exchange', function () {
             }}
         );
 
-        exchange.code(req, res, route);
+        exchange.authCodeFlow(req, res, route);
 
         headerMock.verify();
 
