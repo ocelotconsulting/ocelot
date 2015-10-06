@@ -6,7 +6,7 @@ addQueryParam = (key, value) ->
 
 module.exports =
     # todo: remove references to ping, call auth backend
-    toAuthServer: (req, res, route) ->
+    startAuthCode: (req, res, route) ->
         origUrl = 'http://' + req.headers.host + req.url
         redirectUrl = origUrl + '/receive-auth-token'
         redirectUrl = redirectUrl.split('?')[0]

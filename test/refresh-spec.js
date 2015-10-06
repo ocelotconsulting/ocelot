@@ -54,7 +54,7 @@ describe('refresh', function () {
             }}
         );
 
-        redirectMock = sinon.stub(redirect, 'toAuthServer');
+        redirectMock = sinon.stub(redirect, 'startAuthCode');
         redirectMock.withArgs(req, res, route);
 
         refresh.token(req, res, route);

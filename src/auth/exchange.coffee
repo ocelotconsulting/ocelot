@@ -2,22 +2,26 @@ url = require 'url'
 postman = require './postman'
 headers = require './headers'
 
-tryCode = (req, route) ->
+requestAuthCode = (req, route) ->
     query = url.parse(req.url, true).query
     redirectUrl = new Buffer(query.state, 'base64').toString('utf8').split('?')[0] + '/receive-auth-token'
     redirectUrl = encodeURIComponent(redirectUrl)
     exchangeQuery = 'grant_type=authorization_code&code=' + query.code + '&redirect_uri=' + redirectUrl
     postman.post exchangeQuery, route
 
+redirectToOriginalUri = (result) ->
+    query = url.parse(this.req.url, true).query
+    this.res.setHeader 'Location', new Buffer(query.state, 'base64').toString('utf8')
+    headers.setAuthCookies this.res, this.route, result
+    this.res.statusCode = 307
+    this.res.end()
+
+authCodeExchangeError = (error) ->
+    console.log 'Error during code exchange: ' + error + '; for url: ' + this.req.url
+    this.res.statusCode = 500
+    this.res.end()
+
 module.exports =
-    code: (req, res, route) ->
-        tryCode(req, route).then ((result) ->
-            query = url.parse(req.url, true).query
-            res.setHeader 'Location', new Buffer(query.state, 'base64').toString('utf8')
-            headers.setAuthCookies res, route, result
-            res.statusCode = 307
-            res.end()
-        ), (error) ->
-            console.log 'Error during code exchange: ' + error + '; for url: ' + req.url
-            res.statusCode = 500
-            res.end()
+    authCodeFlow: (req, res, route) ->
+        newThis = {req: req, res: res, route: route}
+        requestAuthCode(req, route).then redirectToOriginalUri.bind(newThis), authCodeExchangeError.bind(newThis)

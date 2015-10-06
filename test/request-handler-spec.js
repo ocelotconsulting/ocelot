@@ -80,7 +80,7 @@ describe('request handler', function () {
         resolverMock.withArgs(req.url).returns(route);
 
         exchangeMock = sinon.mock(exchange);
-        exchangeMock.expects("code").once().withArgs(req, res, route).returns(route);
+        exchangeMock.expects("authCodeFlow").once().withArgs(req, res, route).returns(route);
 
         handler(req, res);
 
@@ -163,7 +163,7 @@ describe('request handler', function () {
         );
 
         redirectMock = sinon.mock(redirect);
-        redirectMock.expects("toAuthServer").once().withArgs(req, res, route);
+        redirectMock.expects("startAuthCode").once().withArgs(req, res, route);
 
         handler(req, res);
 
