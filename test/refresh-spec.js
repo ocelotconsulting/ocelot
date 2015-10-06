@@ -10,7 +10,7 @@ var postmanMock, headersMock, redirectMock;
 
 describe('refresh', function () {
     it('refreshes if post is successful', function () {
-        var secret = "secret", unencrypted_refresh = "abc";;
+        var secret = "secret", unencrypted_refresh = "abc";
         var req = {headers: {cookie: "something_rt=" + crypt.encrypt(unencrypted_refresh, secret)}};
         var res = {id: 'res'};
         var route = {id: 'route'};

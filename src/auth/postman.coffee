@@ -3,22 +3,20 @@ url = require 'url'
 config = require 'config'
 _ = require 'underscore'
 
-finishPromise = ->
-    try
-        result = JSON.parse(this.data)
-        if !result.error
-            this.resolve result
-        else
-            this.reject result.error
-    catch err
-        this.reject 'could not parse JSON response: ' + this.data
-
 processResult = (postres) ->
     data = ''
     postres.setEncoding 'utf8'
     postres.on 'data', (chunk) ->
         data = data + chunk
-    postres.on 'end', finishPromise.bind(_.extend this, {data: data})
+    postres.on 'end', =>
+        try
+            result = JSON.parse(data)
+            if !result.error
+                this.resolve result
+            else
+                this.reject result.error
+        catch err
+            this.reject 'could not parse JSON response: ' + data
 
 #todo: delegate to auth backend for url composition
 doPost = (query, client, secret) ->
@@ -28,7 +26,7 @@ doPost = (query, client, secret) ->
             path: '/as/token.oauth2?' + query
             method: 'POST'
             headers: Authorization: 'basic ' + new Buffer(client + ':' + secret, 'utf8').toString('base64')
-        httpsReq = https.request options, processResult.bind(_.extend {}, {resolve: resolve, reject: reject})
+        httpsReq = https.request(options, processResult.bind({resolve: resolve, reject: reject}))
         httpsReq.on 'error', (error) ->
             reject error
         httpsReq.end()
