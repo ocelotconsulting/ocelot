@@ -13,8 +13,10 @@ redirectToOriginalUri = (result) ->
     query = url.parse(this.req.url, true).query
     this.res.setHeader 'Location', new Buffer(query.state, 'base64').toString('utf8')
     headers.setAuthCookies this.res, this.route, result
-    this.res.statusCode = 307
-    this.res.end()
+    .then(=>
+        this.res.statusCode = 307
+        this.res.end()
+    )
 
 authCodeExchangeError = (error) ->
     console.log 'Error during code exchange: ' + error + '; for url: ' + this.req.url

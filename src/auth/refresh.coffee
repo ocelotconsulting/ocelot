@@ -12,7 +12,9 @@ tryRefresh = (req, route) ->
 
 doRefresh = (result) ->
     headers.setAuthCookies this.res, this.route, result
-    redirect.refreshPage this.req, this.res
+    .then(=>
+      redirect.refreshPage this.req, this.res
+    )
 
 refreshError = (error) ->
     console.log error
