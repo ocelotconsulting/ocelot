@@ -1,9 +1,12 @@
 http = require 'http'
+https = require 'https'
+url = require 'url'
 
 module.exports =
-    get: (url) ->
+    get: (urlToGet) ->
         new Promise((resolve, reject) ->
-            http.get(url, (res) ->
+            proto = if url.parse(urlToGet).protocol == 'https:' then https else http
+            proto.get(urlToGet, (res) ->
                 if ('' + res.statusCode).match(/^2\d\d$/)
                     data = ''
                     res.on 'data', (chunk) ->
@@ -12,8 +15,8 @@ module.exports =
                         routes = JSON.parse(data)
                         resolve routes
                 else
-                    reject 'error calling ' + url
+                    reject 'error calling ' + urlToGet
             ).on('error', (e) ->
-                reject 'error calling: ' + url + ', ' + e.message
+                reject 'error calling: ' + urlToGet + ', ' + e.message
             ).end()
         )

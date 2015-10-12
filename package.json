@@ -9,19 +9,25 @@
   },
   "author": "",
   "publishConfig": {
-   "registry": "http://dockers05.monsanto.com:40000/registry/_design/app/_rewrite"
-   },
+    "registry": "http://dockers05.monsanto.com:40000/registry/_design/app/_rewrite"
+  },
   "license": "ISC",
   "dependencies": {
-    "config": "^1.14.0",
+    "bluebird": "^2.9.34",
     "coffee-script": "^1.9.3",
-    "http": "0.0.0",
+    "config": "^1.14.0",
+    "gulp": "^3.9.0",
+    "gulp-supervisor": "^0.1.2",
     "http-cors": "^1.0.1",
     "http-proxy": "^1.11.1",
+    "httpplease": "^0.16.4",
+    "httpplease-promises": "^0.3.0",
     "mocha": "^2.2.5",
     "node-crontab": "0.0.8",
+    "node-forge": "^0.6.34",
     "promise": "^7.0.3",
     "sinon": "^1.15.4",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "xml2js": "^0.4.9"
   }
 }

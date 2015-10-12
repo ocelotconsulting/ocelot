@@ -28,16 +28,16 @@ module.exports =
             cors.setCorsHeaders req, res
             if cors.preflight(req)
                 response.send res, 204
-                return
-            route = resolver.resolveRoute(req.url, req.headers.host)
-            if route == null
-                response.send res, 404, 'Route not found'
-            else if req.url.indexOf('receive-auth-token') > -1
-                exchange.authCodeFlow req, res, route
             else
-                url = rewrite.mapRoute(req.url, route)
-                if url == null
-                    response.send res, 404, 'No active URL for route'
+                route = resolver.resolveRoute(req.url, req.headers.host)
+                if route == null
+                    response.send res, 404, 'Route not found'
+                else if req.url.indexOf('receive-auth-token') > -1
+                    exchange.authCodeFlow req, res, route
                 else
-                    newThis = { req: req, res: res, route: route, px: px, url: url }
-                    validate.authentication(req, route).then authFulfilled.bind(newThis), authRejected.bind(newThis)
+                    url = rewrite.mapRoute(req.url, route)
+                    if url == null
+                        response.send res, 404, 'No active URL for route'
+                    else
+                        newThis = { req: req, res: res, route: route, px: px, url: url }
+                        validate.authentication(req, route).then authFulfilled.bind(newThis), authRejected.bind(newThis)
