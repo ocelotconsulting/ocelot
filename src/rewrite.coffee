@@ -3,7 +3,6 @@ _ = require 'underscore'
 
 pickRandomEndpoint = (allEndpoints) ->
     instanceUrlStr = allEndpoints[getRandomInt(0, allEndpoints.length - 1)].url
-    # url usually adds trailing slash to host, so this is not usually necessary
     if instanceUrlStr.charAt(instanceUrlStr.length - 1) != '/'
         instanceUrlStr + '/'
     else instanceUrlStr
@@ -17,35 +16,34 @@ getAllEndpoints = (route) ->
     _.filter allInstances, (instance) ->
         typeof instance != 'undefined'
 
-rewriteUrl = (urlStr, route) ->
+rewriteUrl = (targetHost, incomingPath, route) ->
     capture = new RegExp(route['capture-pattern'])
-    match = capture.exec(urlStr)
-    if capture.test(urlStr) == false
-        return null
-    rewritten = route['rewrite-pattern']
-    i = 1
-    while i <= match.length
-        rewritten = rewritten.replace('$' + i, match[i])
-        i++
-    while rewritten.indexOf('/') == 0
-        rewritten = rewritten.substring(1)
-    rewritten
+    rewrittenPath = route['rewrite-pattern']
+
+    if capture.test(incomingPath)
+        match = capture.exec(incomingPath)
+        rewrittenPath = rewrittenPath.replace('$' + i, match[i]) for i in [1 ... match.length]
+        targetHost = targetHost.replace('$' + i, match[i]) for i in [1 ... match.length]
+
+    while rewrittenPath.indexOf('/') == 0
+        rewrittenPath = rewrittenPath.substring(1)
+
+    return targetHost + rewrittenPath
 
 getRandomInt = (min, max) ->
     Math.floor(Math.random() * (max - min + 1)) + min
 
 module.exports =
-    mapRoute: (urlStr, route) ->
-        rewritten = rewriteUrl(urlStr, route)
-        if rewritten == null
-            console.log 'capture pattern ' + route['capture-pattern'] + ' does not match: ' + urlStr
-            return null
+    mapRoute: (incomingPath, route) ->
         allEndpoints = getAllEndpoints(route)
         if allEndpoints.length == 0
             return null
-        instanceUrlStr = pickRandomEndpoint(allEndpoints)
+
+        targetHost = pickRandomEndpoint(allEndpoints)
+        rewritten = rewriteUrl(targetHost, incomingPath, route)
+
         try
-            return Url.parse(instanceUrlStr + rewritten)
+            Url.parse(rewritten)
         catch err
             console.log 'could not parse url: ' + instanceUrlStr + rewritten
             return null

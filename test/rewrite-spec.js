@@ -61,4 +61,28 @@ describe('rewrite', function () {
         var url = rewrite.mapRoute("/", route);
         assert.equal(url.href, "abc.monsanto.com/")
     });
+
+    it('rewrites url, two capture groups', function () {
+        var route = {};
+        route['capture-pattern'] = "this/(.*)/that/(.*)";
+        route['rewrite-pattern'] = "$1/$2";
+        route.services = ['service1'];
+        route.instances = {};
+        route.instances.service1 = [{url: 'abc.monsanto.com'}];
+
+        var url = rewrite.mapRoute("this/abc/that/def", route);
+        assert.equal(url.href, "abc.monsanto.com/abc/def")
+    });
+
+    it('allows capture in path to be used in host', function () {
+        var route = {};
+        route['capture-pattern'] = "this/(.*)/that/(.*)";
+        route['rewrite-pattern'] = "$1/$2";
+        route.services = ['service1'];
+        route.instances = {};
+        route.instances.service1 = [{url: '$2.monsanto.com'}];
+
+        var url = rewrite.mapRoute("this/abc/that/def", route);
+        assert.equal(url.href, "def.monsanto.com/abc/def")
+    });
 });
