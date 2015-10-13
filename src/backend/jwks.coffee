@@ -54,7 +54,6 @@ validateToken = (token) ->
 module.exports =
     initCache: ->
         jwksUrl = config.get('jwks.url')
-        console.log "InitCache with #{jwksUrl}"
         reloadData()
         cron.scheduleJob '*/20 * * * * *', reloadData
     getKeys: ->

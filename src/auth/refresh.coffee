@@ -11,14 +11,14 @@ tryRefresh = (req, route) ->
     postman.post refreshQuery, route
 
 doRefresh = (result) ->
-    headers.setAuthCookies this.res, this.route, result
-    .then(=>
-      redirect.refreshPage this.req, this.res
+    headers.setAuthCookies @res, @route, result
+    .then((reslt) =>
+        redirect.refreshPage @req, reslt
     )
 
 refreshError = (error) ->
     console.log error
-    redirect.startAuthCode this.req, this.res, this.route
+    redirect.startAuthCode @req, @res, @route
 
 module.exports =
     token: (req, res, route) ->

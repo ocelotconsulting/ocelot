@@ -12,11 +12,11 @@ processResult = (postres) ->
         try
             result = JSON.parse(data)
             if !result.error
-                this.resolve result
+                @resolve result
             else
-                this.reject result.error
+                @reject result.error
         catch err
-            this.reject 'could not parse JSON response: ' + data
+            @reject 'could not parse JSON response: ' + data
 
 #todo: delegate to auth backend for url composition
 doPost = (query, client, secret) ->

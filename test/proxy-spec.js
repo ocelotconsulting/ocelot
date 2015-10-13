@@ -13,7 +13,6 @@ describe('proxy request', function () {
         url.host = "monsanto";
 
         px.web = function(req, res, config){
-            console.log('req');
             this['req'] = req;
             this['res'] = res;
             this['config'] = config;

@@ -11,16 +11,16 @@ cors = require './cors'
 headers = require './auth/headers'
 
 authFulfilled = (authentication) ->
-    headers.addAuth this.req, this.route, authentication
-    proxy.request this.px, this.req, this.res, this.url
+    headers.addAuth @req, @route, authentication
+    proxy.request @px, @req, @res, @url
 
 authRejected = (authentication) ->
     if authentication.refresh
-        refresh.token this.req, this.res, this.route
+        refresh.token @req, @res, @route
     else if authentication.redirect
-        redirect.startAuthCode this.req, this.res, this.route
+        redirect.startAuthCode @req, @res, @route
     else
-        response.send this.res, 403, 'Authorization missing or invalid'
+        response.send @res, 403, 'Authorization missing or invalid'
 
 module.exports =
     create: (px) ->

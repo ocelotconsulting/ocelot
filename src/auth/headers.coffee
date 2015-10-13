@@ -13,7 +13,7 @@ module.exports =
             if wamResult
                 cookieArray[cookieArray.length] = "AXMSESSION=#{wamResult}"
             if authentication.refresh_token
-                cookieArray[cookieArray.length] = "#{cookieName}_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])}"
+                cookieArray[cookieArray.length] = "#{cookieName}_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly"
             if authentication.id_token
                 cookieArray[cookieArray.length] = "#{cookieName}_oidc=#{authentication.id_token}"
 
@@ -22,6 +22,7 @@ module.exports =
                 "#{item}; path=#{cookiePath}"
             )
             res.setHeader 'Set-Cookie', cookieArray
+            res
         )
     addAuth: (req, route, authentication) ->
         try
