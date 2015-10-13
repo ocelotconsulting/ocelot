@@ -10,9 +10,7 @@ pickRandomEndpoint = (allEndpoints) ->
 getAllEndpoints = (route) ->
     allInstances = []
     i = 0
-    while i < route.services.length
-        allInstances = allInstances.concat(route.instances[route.services[i]])
-        i++
+    allInstances = allInstances.concat(route.instances[route.services[i]]) for i in [0 .. route.services.length]
     _.filter allInstances, (instance) ->
         typeof instance != 'undefined'
 
