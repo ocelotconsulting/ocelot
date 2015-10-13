@@ -65,6 +65,11 @@ describe 'validate', ->
         route = {}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
+        postmanMock = sinon.stub(postman, 'postAs', (query, client, secret) ->
+            { then: (s, f) ->
+                Promise.reject 'you suck'
+            }
+        )
         validate.authentication(req, route).then ((returnedAuth) ->
             assert.fail 'should fail!'
             done()
