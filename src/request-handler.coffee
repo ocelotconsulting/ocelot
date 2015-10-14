@@ -25,6 +25,8 @@ authRejected = (authentication) ->
 module.exports =
     create: (px) ->
         (req, res) ->
+            console.log req.headers
+
             cors.setCorsHeaders req, res
             if cors.preflight(req)
                 response.send res, 204

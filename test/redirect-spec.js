@@ -26,7 +26,7 @@ describe('redirect', function () {
     });
 
     it('can redirect to oauth server', function () {
-        var req = {headers: {host: "myhost/"}, url: "my/url"};
+        var req = {headers: {host: "myhost/"}, url: "my/url", protocol: "http:"};
         var res = {};
         var route = {};
         route['client-id'] = 'abc123';
