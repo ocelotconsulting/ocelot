@@ -37,9 +37,11 @@ module.exports =
 #                    oidcValidated = jwks.validateToken(token['OIDC'])
                 oidcValidated = false
                 validateQuery = 'grant_type=' + encodeURIComponent('urn:pingidentity.com:oauth2:grant_type:validate_bearer') + '&token=' + token['OAuth']
-                postman.postAs(validateQuery, client, secret).then((oAuthValidateResult) ->
+                postman.postAs(validateQuery, client, secret)
+                .then((oAuthValidateResult) ->
                     Promise.resolve(_.extend(oAuthValidateResult, {valid: true, oidcValid: oidcValidated}))
-                    .catch((err) ->
-                        console.log "Had an error #{err}"
-                        Promise.reject _.extend(rejectData, {oidcValid: oidcValidated})
-                    ))
+                )
+                .catch((err) ->
+                  console.log "Had an error #{err}"
+                  Promise.reject _.extend(rejectData, {oidcValid: oidcValidated})
+                )
