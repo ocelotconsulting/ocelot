@@ -1,10 +1,13 @@
 module.exports =
     preflight: (req) ->
-        typeof req.headers.origin != 'undefined' and typeof req.headers['access-control-req-method'] != 'undefined' and req.method == 'OPTIONS'
+        if(req.headers.origin and req.headers['access-control-request-method'] and req.method == 'OPTIONS')
+            true
+        else
+            false
     setCorsHeaders: (req, res) ->
         origin = req.headers.origin
-        headers = req.headers['access-control-req-headers']
-        method = req.headers['access-control-req-method']
+        headers = req.headers['access-control-request-headers']
+        method = req.headers['access-control-request-method']
         if typeof origin != 'undefined'
             res.setHeader 'Access-Control-Allow-Origin', origin or '*'
             res.setHeader 'Access-Control-Max-Age', '1728000'

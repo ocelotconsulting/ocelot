@@ -8,7 +8,7 @@ describe('cors', function () {
             var req = {};
             req.headers = {};
             req.headers.origin = "abc.monsanto.com";
-            req.headers['access-control-req-method'] = "PUT";
+            req.headers['access-control-request-method'] = "PUT";
             req.method = "OPTIONS";
 
             assert.equal(cors.preflight(req), true);
@@ -18,7 +18,7 @@ describe('cors', function () {
             var req = {};
             req.headers = {};
             req.headers.origin = "abc.monsanto.com";
-            req.headers['access-control-req-method'] = "PUT";
+            req.headers['access-control-request-method'] = "PUT";
             req.method = "GET";
 
             assert.equal(cors.preflight(req), false);
@@ -27,7 +27,7 @@ describe('cors', function () {
         it('is not in effect if origin not set', function () {
             var req = {};
             req.headers = {};
-            req.headers['access-control-req-method'] = "PUT";
+            req.headers['access-control-request-method'] = "PUT";
             req.method = "OPTIONS";
 
             assert.equal(cors.preflight(req), false);
@@ -66,7 +66,7 @@ describe('cors', function () {
         });
 
         it('sets allowed headers if required', function () {
-            req.headers['access-control-req-headers'] = "abc";
+            req.headers['access-control-request-headers'] = "abc";
 
             cors.setCorsHeaders(req, res);
 
@@ -74,7 +74,7 @@ describe('cors', function () {
         });
 
         it('sets req method header if required', function () {
-            req.headers['access-control-req-method'] = "abc";
+            req.headers['access-control-request-method'] = "abc";
 
             cors.setCorsHeaders(req, res);
 
