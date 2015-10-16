@@ -18,6 +18,7 @@
         "client": "TPS_VALIDATOR",
         "secret": "I7PM4yBf"
       },
+      "redirect-protocol": "http:",
       "host": "https://test.amp.monsanto.com"
     }
   }

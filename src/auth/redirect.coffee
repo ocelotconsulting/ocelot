@@ -7,7 +7,8 @@ addQueryParam = (key, value) ->
 module.exports =
     # todo: remove references to ping, call auth backend
     startAuthCode: (req, res, route) ->
-        origUrl = 'http://' + req.headers.host + req.url
+        protocol = if config.has 'authentication.ping.redirect-protocol' then config.get 'authentication.ping.redirect-protocol' else 'http:'
+        origUrl = protocol + '//' + req.headers.host + req.url
         redirectUrl = origUrl + '/receive-auth-token'
         redirectUrl = redirectUrl.split('?')[0]
         state = new Buffer(origUrl).toString('base64')
