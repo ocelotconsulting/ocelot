@@ -1,9 +1,6 @@
 module.exports =
     preflight: (req) ->
-        if(req.headers.origin and req.headers['access-control-request-method'] and req.method == 'OPTIONS')
-            true
-        else
-            false
+        req.headers.origin and req.headers['access-control-request-method'] and req.method == 'OPTIONS'
     setCorsHeaders: (req, res) ->
         origin = req.headers.origin
         headers = req.headers['access-control-request-headers']
