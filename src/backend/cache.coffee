@@ -5,12 +5,8 @@ jwks = require './jwks'
 
 module.exports =
     initCache: ->
-        if config.has('backend.consul')
-            backend = consul
-        else
-            throw 'no backend found in configuration'
-        if !config.has('jwks.url')
-            throw 'no jwks url found in configuration'
+        if not config.has 'jwks.url' then throw 'no jwks url found in configuration'
+        backend = if config.has 'backend.consul' then consul else throw 'no backend found in configuration'
         jwks.initCache()
         backend.initCache()
     getRoutes: ->

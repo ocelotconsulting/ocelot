@@ -1,17 +1,9 @@
-Url = require 'url'
+url = require 'url'
 _ = require 'underscore'
 
 pickRandomEndpoint = (allEndpoints) ->
-    instanceUrlStr = allEndpoints[getRandomInt(0, allEndpoints.length - 1)].url
-    if instanceUrlStr.charAt(instanceUrlStr.length - 1) != '/'
-        instanceUrlStr + '/'
-    else instanceUrlStr
-
-getAllEndpoints = (route) ->
-    allInstances = []
-    allInstances = allInstances.concat(route.instances[route.services[i]]) for i in [0 .. route.services.length]
-    _.filter allInstances, (instance) ->
-        typeof instance != 'undefined'
+    instanceUrlStr = allEndpoints[getRandomInt 0, allEndpoints.length - 1].url
+    instanceUrlStr + (if instanceUrlStr.charAt(instanceUrlStr.length - 1) is '/' then '' else '/')
 
 rewriteUrl = (targetHost, incomingPath, route) ->
     capture = new RegExp(route['capture-pattern'])
@@ -25,22 +17,25 @@ rewriteUrl = (targetHost, incomingPath, route) ->
     while rewrittenPath.indexOf('/') == 0
         rewrittenPath = rewrittenPath.substring(1)
 
-    return targetHost + rewrittenPath
+    targetHost + rewrittenPath
+
+getAllEndpoints = (route) ->
+    _(route.services).chain().map((service) ->
+        route.instances[service]
+    ).flatten().compact().value()
 
 getRandomInt = (min, max) ->
     Math.floor(Math.random() * (max - min + 1)) + min
 
 module.exports =
     mapRoute: (incomingPath, route) ->
-        allEndpoints = getAllEndpoints(route)
-        if allEndpoints.length == 0
-            return null
+        allEndpoints = getAllEndpoints route
 
-        targetHost = pickRandomEndpoint(allEndpoints)
-        rewritten = rewriteUrl(targetHost, incomingPath, route)
+        if allEndpoints.length
+            targetHost = pickRandomEndpoint allEndpoints
+            rewritten = rewriteUrl targetHost, incomingPath, route
 
-        try
-            Url.parse(rewritten)
-        catch err
-            console.log 'could not parse url: ' + instanceUrlStr + rewritten
-            return null
+            try
+                url.parse rewritten
+            catch err
+                console.log "could not parse url: #{rewritten}"

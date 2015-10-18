@@ -1,0 +1,12 @@
+<!--suppress ALL -->
+<s:Envelope>
+    <s:Body>
+        <wst13:RequestSecurityTokenResponseCollection>
+            <wst13:RequestSecurityTokenResponse>
+                <wst13:RequestedSecurityToken>
+                    <wsse:BinarySecurityToken>foobar</wsse:BinarySecurityToken>
+                </wst13:RequestedSecurityToken>git
+            </wst13:RequestSecurityTokenResponse>
+        </wst13:RequestSecurityTokenResponseCollection>
+    </s:Body>
+</s:Envelope>

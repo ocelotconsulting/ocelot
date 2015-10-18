@@ -1,34 +1,38 @@
 {
   "name": "ocelot-proxy",
   "version": "1.0.2",
-  "description": "",
+  "description": "proxy for velocity.ag and other projects",
+  "private": true,
   "scripts": {
-    "start": "node src/bin/www",
-    "dev" : "gulp",
+    "start": "node bin/www",
+    "dev": "supervisor -w .,src -e coffee bin/www",
+    "test": "mocha --compilers coffee:coffee-script/register --recursive --colors --full-trace --reporter list test",
     "test:dev": "mocha --compilers coffee:coffee-script/register --recursive --colors --watch --reporter nyan test",
     "test:coverage": "istanbul cover _mocha -- -R spec"
   },
-  "author": "",
+  "author": "Chris Coffman",
   "publishConfig": {
     "registry": "http://dockers05.monsanto.com:40000/registry/_design/app/_rewrite"
   },
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^2.9.34",
     "coffee-script": "^1.9.3",
     "config": "^1.14.0",
-    "gulp": "^3.9.0",
-    "gulp-supervisor": "^0.1.2",
+    "cookie": "^0.2.2",
     "http-cors": "^1.0.1",
     "http-proxy": "^1.11.1",
     "httpplease": "^0.16.4",
     "httpplease-promises": "^0.3.0",
-    "mocha": "^2.2.5",
     "node-crontab": "0.0.8",
     "node-forge": "^0.6.34",
-    "promise": "^7.0.3",
-    "sinon": "^1.15.4",
     "underscore": "^1.8.3",
     "xml2js": "^0.4.9"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.1",
+    "sinon-as-promised": "^4.0.0",
+    "supervisor": "^0.9.1"
   }
 }

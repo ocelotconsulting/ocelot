@@ -1,11 +1,10 @@
 var assert = require("assert"),
     sinon = require("sinon"),
     headers = require("../src/auth/headers"),
-    config = require("config"),
     redirect = require("../src/auth/redirect"),
     response = require("../src/response");
 
-var responseMock, configMock;
+var responseMock;
 
 describe('redirect', function () {
     it('can redirect current page for refresh', function () {
@@ -38,13 +37,12 @@ describe('redirect', function () {
         responseMock = sinon.mock(response, 'send');
         responseMock.expects('send').withArgs(res, 307).once();
 
-        configMock = sinon.mock(config, 'get');
-        configMock.expects('get').withArgs('authentication.ping.host').once().returns('http://myauthhost');
-
         redirect.startAuthCode(req, res, route);
 
         var expectedUrl =
-            "http://myauthhost/as/authorization.oauth2?response_type=code&client_id=abc123&redirect_uri=http%3A%2F%2Fmyhost%2Fmy%2Furl%2Freceive-auth-token&state=aHR0cDovL215aG9zdC9teS91cmw%3D";
+            "https://test.amp.monsanto.com/as.authorization.oauth2?response_type=code&client_id=abc123&redirect_uri=http%3A%2F%2Fmyhost%2Fmy%2Furl%2Freceive-auth-token&state=aHR0cDovL215aG9zdC9teS91cmw%3D";
+
+        console.info(setHeader.lastCall.args);
 
         assert.equal(setHeader.withArgs('Location', expectedUrl).calledOnce, true);
             responseMock.verify();
@@ -52,7 +50,6 @@ describe('redirect', function () {
 
     afterEach(function () {
         restore(responseMock);
-        restore(configMock);
     });
 });
 

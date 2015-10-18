@@ -1,16 +1,20 @@
-assert = require('assert')
-sinon = require('sinon')
-headers = require('../src/auth/headers')
-postman = require('../src/auth/postman')
-exchange = require('../src/auth/exchange')
-validate = require('../src/auth/validate')
-postmanMock = undefined
-
-restore = (mockFunc) ->
-    if mockFunc and mockFunc.restore
-        mockFunc.restore()
+assert = require 'assert' 
+sinon = require 'sinon' 
+require 'sinon-as-promised'
+headers = require '../src/auth/headers'
+postman = require '../src/auth/postman' 
+exchange = require '../src/auth/exchange' 
+validate = require '../src/auth/validate' 
 
 describe 'validate', ->
+    {postmanMock} = {}
+
+    beforeEach ->
+        postmanMock = sinon.stub postman, 'postAs'
+
+    afterEach ->
+        postmanMock.restore()
+        
     it 'resolves if no required validation', (done) ->
         req = {}
         route = {}
@@ -20,6 +24,7 @@ describe 'validate', ->
         ), (auth) ->
             assert.fail 'auth failed!'
             done()
+
     it 'rejects if required validation but none sent', (done) ->
         req = headers: ''
         route = {}
@@ -28,16 +33,13 @@ describe 'validate', ->
             done()
         ), (auth) ->
             done()
+
     it 'resolves if bearer token found and valid', (done) ->
         req = headers: {}
         route = {}
         auth = id: 'myauth'
         req.headers.authorization = 'bearer abc'
-        postmanMock = sinon.stub(postman, 'postAs', (query, client, secret) ->
-            { then: (s, f) ->
-                s auth
-            }
-        )
+        postmanMock.resolves auth
         validate.authentication(req, route).then ((returnedAuth) ->
             assert.equal auth, returnedAuth
             done()
@@ -49,11 +51,7 @@ describe 'validate', ->
         route = {}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
-        postmanMock = sinon.stub(postman, 'postAs', (query, client, secret) ->
-            { then: (s, f) ->
-                s auth
-            }
-        )
+        postmanMock.resolves auth
         validate.authentication(req, route).then ((returnedAuth) ->
             assert.equal auth, returnedAuth
             done()
@@ -65,15 +63,9 @@ describe 'validate', ->
         route = {}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
-        postmanMock = sinon.stub(postman, 'postAs', (query, client, secret) ->
-            { then: (s, f) ->
-                Promise.reject 'you suck'
-            }
-        )
+        postmanMock.rejects 'you suck'
         validate.authentication(req, route).then ((returnedAuth) ->
             assert.fail 'should fail!'
             done()
         ), (auth) ->
             done()
-    afterEach ->
-        restore postmanMock

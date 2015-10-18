@@ -1,31 +1,54 @@
-_ = require 'underscore'
 config = require 'config'
 httpplease = require 'httpplease'
 promises = require 'httpplease-promises'
-Promise = require('bluebird')
 http = httpplease.use promises(Promise)
 xml2js = require 'xml2js'
 
-createSOAPReq = (token, url) ->
-    new Buffer(config.get('wam.converter-soap-req'), 'base64').toString('utf8').replace(/BASE64_ENCODED_OAUTH_TOKEN/, new Buffer(token, 'utf8').toString('base64')).replace(/WAM_CONVERTER_URL/, url)
+wamConverterUrl = config.get 'wam.converter-url'
 
-findWAMToken = (source) ->
-    source?["s:Envelope"]?["s:Body"]?[0]?["wst13:RequestSecurityTokenResponseCollection"]?[0]?["wst13:RequestSecurityTokenResponse"]?[0]?["wst13:RequestedSecurityToken"]?[0]?["wsse:BinarySecurityToken"]?[0]._
+soapRequestTemplate = do ->
+    rawTemplate = new Buffer(config.get('wam.converter-soap-req'), 'base64').toString 'utf8'
+    rawTemplate.replace /WAM_CONVERTER_URL/, wamConverterUrl
 
+createSOAPReq = (token) ->
+    base64Token = new Buffer(token, 'utf8').toString 'base64'
+    soapRequestTemplate.replace /BASE64_ENCODED_OAUTH_TOKEN/, base64Token
+
+wamTokenPath = [
+    's:Envelope'
+    's:Body'
+    0
+    'wst13:RequestSecurityTokenResponseCollection'
+    0
+    'wst13:RequestSecurityTokenResponse'
+    0
+    'wst13:RequestedSecurityToken'
+    0
+    'wsse:BinarySecurityToken'
+    0
+    #NOTE - original path ended in '_'.  looks like a mistake from what i can see
+]
+
+findWAMTokenInXML = (source) ->
+    find = (parent, index) ->
+        if not parent or index is wamTokenPath.length
+            parent
+        else
+            find parent[wamTokenPath[index]], index + 1
+
+    find source, 0
+
+# if an error occurs this will just resolve to undefined
 getWAMToken = (token) ->
     options =
         method: 'post'
-        url : config.get 'wam.converter-url'
-        body : createSOAPReq token, config.get 'wam.converter-url'
+        url : wamConverterUrl
+        body : createSOAPReq token
     http(options).then (resp) ->
-        if (resp.status == 200)
-            wamToken = ""
-            xml2js.parseString resp.body, (err, result) ->
-                wamToken = findWAMToken result
-            wamToken
-        else
-            undefined
-    .catch (err) ->
-        {name : err.name, message : err.message}
-module.exports =
-    getWAMToken: getWAMToken
+        if resp.status is 200
+            new Promise (resolve) ->
+                # according to xml2s docs you're not supposed to rely on sync execution
+                xml2js.parseString resp.body, (err, result) ->
+                    resolve findWAMTokenInXML(result)
+
+module.exports = {getWAMToken, findWAMTokenInXML}

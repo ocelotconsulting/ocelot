@@ -19,7 +19,7 @@ var px = {
 var corsHeadersMock, responseMock, preflightMock, resolverMock, exchangeMock, rewriteMock,
     validateMock, refreshMock, redirectMock, proxyMock, headersProxy;
 
-var req, res, handler = null;
+var req, res, handler;
 
 var presumeHost = function (req) {
     presumeHostReq = req;
