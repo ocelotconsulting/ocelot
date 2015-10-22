@@ -1,47 +1,43 @@
-Promise = require 'promise'
+_ = require 'underscore'
 postman = require './postman'
 config = require 'config'
-cookies = require '../cookies'
-client = config.get 'authentication.ping.validate.client'
-secret = config.get 'authentication.ping.validate.secret'
-_ = require 'underscore'
+parseCookies = require '../parseCookies'
 jwks = require '../backend/jwks'
 
+client = config.get 'authentication.ping.validate.client'
+secret = config.get 'authentication.ping.validate.secret'
+grantType = encodeURIComponent 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
+
 # todo: call backend for url composition
-getToken = (req, route) ->
-    returnVal = {}
-    if req.headers.authorization and req.headers.authorization.toLowerCase().indexOf('bearer') > -1
-        returnVal['OAuth'] = req.headers.authorization.split(' ')[1]
-    else if route['cookie-name']
-        returnVal['OAuth'] = cookies.parse(req)[route['cookie-name']]
-    else returnVal['OAuth'] = null
+exports.authentication = (req, route) ->
+    if route['require-auth'] is false
+        Promise.resolve {}
+    else
+        cookieName = route['cookie-name']
+        cookieAuthEnabled = cookieName?
+        cookies = cookieAuthEnabled and parseCookies req
+        refreshTokenPresent = cookieAuthEnabled and cookies["#{cookieName}_rt"]?
+        {authorization} = req.headers
 
-    if route['cookie-name']
-        returnVal['OIDC'] = cookies.parse(req)[route['cookie-name'] + '_oidc']
-    else returnVal['OIDC'] = null
-    returnVal
+        token = if authorization and authorization.slice(0, 7).toLowerCase() is 'bearer '
+            authorization.slice 7
+        else if cookieAuthEnabled
+            cookies[cookieName]
 
-module.exports =
-    authentication: (req, route) ->
-        if route['require-auth'] == false
-            Promise.resolve {}
+        if not token
+            Promise.reject {refreshTokenPresent, cookieAuthEnabled}
         else
-            token = getToken(req, route)
-            refreshTokenPresent = typeof cookies.parse(req)[route['cookie-name'] + '_rt'] != 'undefined'
-            cookieAuthEnabled = route['cookie-name'] and route['cookie-name'].length > 0
-            rejectData = {refresh: refreshTokenPresent, redirect: cookieAuthEnabled}
-            if !token['OAuth']
-                Promise.reject rejectData
-            else
-#                console.log "Checking #{token['OIDC']}"
-#                    oidcValidated = jwks.validateToken(token['OIDC'])
-                oidcValidated = false
-                validateQuery = 'grant_type=' + encodeURIComponent('urn:pingidentity.com:oauth2:grant_type:validate_bearer') + '&token=' + token['OAuth']
-                postman.postAs(validateQuery, client, secret)
-                .then((oAuthValidateResult) ->
-                    Promise.resolve(_.extend(oAuthValidateResult, {valid: true, oidcValid: oidcValidated}))
-                )
-                .catch((err) ->
-                  console.log "Had an error #{err}"
-                  Promise.reject _.extend(rejectData, {oidcValid: oidcValidated})
-                )
+    #    oidcValid = if cookieAuthEnabled
+    #        oidc = reqCookies["#{cookieName}_oidc"]
+    #        console.log "Checking #{oidc}"
+    #        jwks.validateToken oidc
+    #    else
+    #        false
+            oidcValid = false
+            postman.postAs("grant_type=#{grantType}&token=#{token}", client, secret)
+            .then((oAuthValidateResult) ->
+                _(oAuthValidateResult).extend {valid: true, oidcValid}
+            )
+            .catch (error) ->
+                console.log "Had an error #{error}"
+                Promise.reject {refreshTokenPresent, cookieAuthEnabled, oidcValid}

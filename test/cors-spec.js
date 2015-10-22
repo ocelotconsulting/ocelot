@@ -17,7 +17,7 @@ describe('cors', function () {
         it('is not in effect if not options method', function () {
             var req = {};
             req.headers = {};
-            req.headers.origin = "abc.monsanto.com";
+            req.headers.origin =  "abc.monsanto.com";
             req.headers['access-control-request-method'] = "PUT";
             req.method = "GET";
 
@@ -30,7 +30,7 @@ describe('cors', function () {
             req.headers['access-control-request-method'] = "PUT";
             req.method = "OPTIONS";
 
-            assert.equal(cors.preflight(req), false);
+            assert.equal(cors.preflight(req), undefined);
         });
 
         it('is not in effect if req method not set', function () {
@@ -39,7 +39,7 @@ describe('cors', function () {
             req.headers.origin = "abc.monsanto.com";
             req.method = "OPTIONS";
 
-            assert.equal(cors.preflight(req), false);
+            assert.equal(cors.preflight(req), undefined);
         });
     });
 

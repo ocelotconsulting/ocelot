@@ -1,24 +1,37 @@
 response = require '../response'
 config = require 'config'
 
-addQueryParam = (key, value) ->
-    if value then '&' + key + '=' + encodeURIComponent(value) else ''
+buildUrl = (base, params) ->
+    url = base
+    separator = '?'
+
+    addParam = (name, value) ->
+        if value
+            url += "#{separator}#{name}=#{encodeURIComponent value}"
+            separator = '&'
+
+    addParam name, value for name, value of params
+    url
+
+redirectProtocol = do ->
+    settingPath = 'authentication.ping.redirect-protocol'
+    if config.has settingPath then config.get settingPath else 'http:'
+
+authServer = config.get 'authentication.ping.host'
 
 module.exports =
     # todo: remove references to ping, call auth backend
     startAuthCode: (req, res, route) ->
-        protocol = if config.has 'authentication.ping.redirect-protocol' then config.get 'authentication.ping.redirect-protocol' else 'http:'
-        origUrl = protocol + '//' + req.headers.host + req.url
-        redirectUrl = origUrl + '/receive-auth-token'
-        redirectUrl = redirectUrl.split('?')[0]
-        state = new Buffer(origUrl).toString('base64')
-        client = route['client-id']
-        authServer = config.get('authentication.ping.host')
+        origUrl = "#{redirectProtocol}//#{req.headers.host}#{req.url}"
+        redirect_uri = "#{origUrl}/receive-auth-token"
+        redirect_uri = redirect_uri.split('?')[0]
+        state = new Buffer(origUrl).toString 'base64'
+        client_id = route['client-id']
         scope = route['oidc-scope']
-        location = authServer + '/as/authorization.oauth2?' + 'response_type=code' + addQueryParam('client_id', client) + addQueryParam('redirect_uri', redirectUrl) + addQueryParam('state', state) + addQueryParam('scope', scope)
+        location = buildUrl "#{authServer}/as.authorization.oauth2", {response_type: 'code', client_id, redirect_uri, state, scope}
         res.setHeader 'Location', location
         response.send res, 307
     refreshPage: (req, res) ->
-        origUrl = 'http://' + req.headers.host + req.url
+        origUrl = "http://#{req.headers.host}#{req.url}"
         res.setHeader 'Location', origUrl
         response.send res, 307

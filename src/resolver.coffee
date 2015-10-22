@@ -3,38 +3,30 @@ cache = require './backend/cache'
 uri = require 'url'
 _ = require 'underscore'
 
-findRouteByHost = (host) ->
-    if host.indexOf('.') > 0
-        route = findRoute(host.split('.')[0])
-        if typeof route != 'undefined'
-            return route
-    null
-
-findRouteByPath = (url) ->
-    pathDepth = 3
-    while pathDepth >= 0
-        routePath = if pathDepth == 0 then 'root' else getUrlStrStripLeadingSlash(url).split('/', pathDepth).join('/')
-        route = findRoute(routePath)
-        if typeof route != 'undefined'
-            return route
-        pathDepth--
-    null
-
-findRoute = (key) ->
-    _.find cache.getRoutes(), (route) ->
-        route.route == key
-
 getUrlStrStripLeadingSlash = (urlStr) ->
     path = uri.parse(urlStr).pathname
-    if path.indexOf('/') == 0 then path.substring(1) else path
+    if path.indexOf('/') is 0 then path.substring 1 else path
+
+findRouteByHost = (host) ->
+    if host.indexOf('.') > 0 then findRoute host.split('.')[0]
+
+findRoute = (key) ->
+    _(cache.getRoutes()).find (route) -> route.route is key
+
+findRouteByPath = (url, pathDepth = 3) ->
+    if pathDepth is 0
+        findRoute 'root'
+    else
+        routePath = getUrlStrStripLeadingSlash(url).split('/', pathDepth).join '/'
+        findRoute(routePath) or findRouteByPath(url, pathDepth - 1)
 
 cache.initCache()
 
 module.exports =
     resolveRoute: (url, host) ->
         closestRoute = findRouteByHost(host) or findRouteByPath(url)
-        if closestRoute != null
-            closestRoute.instances = {}
-            _.each closestRoute.services, (service) ->
-                closestRoute.instances[service] = cache.getServices()[service]
+        services = cache.getServices()
+        closestRoute?.instances = _(closestRoute.services).chain().map((service) ->
+            [service, services[service]]
+        ).object().value()
         closestRoute

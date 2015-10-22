@@ -2,9 +2,10 @@ cron = require 'node-crontab'
 jsonLoader = require './json'
 _ = require 'underscore'
 config = require 'config'
+forge = require 'node-forge'
+
 keys = undefined
 jwksUrl = undefined
-forge = require 'node-forge'
 
 reloadData = ->
     jsonLoader.get(jwksUrl).then ((data) ->
@@ -13,24 +14,18 @@ reloadData = ->
         console.log 'could not load JWKS keys: ' + error
 
 parseJson = (jwksJSON, keyRegex, mutate) ->
-    _.filter _.map(jwksJSON, (item) ->
+    _(jwksJSON).chain().map((item) ->
         try
             if keyRegex.test(item.Key)
                 decodedValue = JSON.parse(new Buffer(item.Value, 'base64').toString('utf8'))
                 match = keyRegex.exec(item.Key)
                 mutate(decodedValue, match)
-            else null
         catch e
             console.log 'error parsing: ' + item.Key
-            null
-    ), (obj) ->
-        obj != null
+    ).compact().value()
 
 parseJWKS = (jwksJSON) ->
-    newKeys = {}
-    _.each(jwksJSON.keys, (key) ->
-        newKeys[key.kid] = key)
-    newKeys
+    _(jwksJSON.keys).chain().map((key) -> [key.kid, key]).object().value()
 
 validateToken = (token) ->
     console.log "Starting oidc validation"
@@ -53,7 +48,7 @@ validateToken = (token) ->
 
 module.exports =
     initCache: ->
-        jwksUrl = config.get('jwks.url')
+        jwksUrl = config.get 'jwks.url'
         reloadData()
         cron.scheduleJob '*/20 * * * * *', reloadData
     getKeys: ->
