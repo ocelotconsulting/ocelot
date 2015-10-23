@@ -57,15 +57,8 @@ describe('cors', function () {
             assert.equal(res['Access-Control-Allow-Credentials'], "true");
         });
 
-        it('sets origin to * if empty', function () {
-            req.headers.origin = "";
-
-            cors.setCorsHeaders(req, res);
-
-            assert.equal(res['Access-Control-Allow-Origin'], "*");
-        });
-
         it('sets allowed headers if required', function () {
+            req.headers.origin = "abc.monsanto.com";
             req.headers['access-control-request-headers'] = "abc";
 
             cors.setCorsHeaders(req, res);
@@ -74,11 +67,20 @@ describe('cors', function () {
         });
 
         it('sets req method header if required', function () {
+            req.headers.origin = "abc.monsanto.com";
             req.headers['access-control-request-method'] = "abc";
 
             cors.setCorsHeaders(req, res);
 
             assert.equal(res['Access-Control-Allow-Methods'], "abc");
+        });
+
+        it('if the origin is not from an allowed domain, allow origin is not set', function () {
+            req.headers.origin = "abc.deere.com";
+
+            cors.setCorsHeaders(req, res);
+
+            assert.equal(typeof res['Access-Control-Allow-Origin'] == 'undefined', true);
         });
 
         beforeEach(function () {

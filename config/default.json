@@ -21,5 +21,6 @@
       "redirect-protocol": "http:",
       "host": "https://test.amp.monsanto.com"
     }
-  }
+  },
+  "cors-domains": ["velocity.ag", "monsanto.com", "threega.com", "localhost"]
 }
