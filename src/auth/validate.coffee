@@ -26,8 +26,11 @@ exports.authentication = (req, route) ->
         else if cookieAuthEnabled
             cookies[cookieName]
 
+        reject = (oidcValid = false) ->
+            Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled, oidcValid}
+
         if not token
-            Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled}
+            reject()
         else
     #    oidcValid = if cookieAuthEnabled
     #        oidc = reqCookies["#{cookieName}_oidc"]
@@ -42,4 +45,4 @@ exports.authentication = (req, route) ->
             )
             .catch (error) ->
                 console.log "Had an error #{error}"
-                Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled, oidcValid}
+                reject oidcValid
