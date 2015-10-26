@@ -32,6 +32,6 @@ module.exports =
         res.setHeader 'Location', location
         response.send res, 307
     refreshPage: (req, res) ->
-        origUrl = "http://#{req.headers.host}#{req.url}"
+        origUrl = "#{redirectProtocol}//#{req.headers.host}#{req.url}"
         res.setHeader 'Location', origUrl
         response.send res, 307
