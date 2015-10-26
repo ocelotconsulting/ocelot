@@ -19,8 +19,6 @@ exports.authentication = (req, route) ->
         refreshTokenPresent = cookieAuthEnabled and cookies["#{cookieName}_rt"]?
         {authorization} = req.headers
 
-        {refresh: refreshTokenPresent, redirect: cookieAuthEnabled}
-
         token = if authorization and authorization.slice(0, 7).toLowerCase() is 'bearer '
             authorization.slice 7
         else if cookieAuthEnabled
