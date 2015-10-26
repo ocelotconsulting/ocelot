@@ -18,9 +18,10 @@
         "client": "TPS_VALIDATOR",
         "secret": "I7PM4yBf"
       },
-      "redirect-protocol": "http:",
       "host": "https://test.amp.monsanto.com"
     }
   },
+  "default-protocol": "https",
+  "enforce-https": true,
   "cors-domains": ["velocity.ag", "monsanto.com", "threega.com", "localhost"]
 }

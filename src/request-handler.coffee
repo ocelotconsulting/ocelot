@@ -38,8 +38,12 @@ handleDefaultRequest = (px, req, res) ->
         else
             response.send res, 404, 'No active URL for route'
 
+upgradeConnection = (req) -> config.has('enforce-https') and config.get('enforce-https')  and not req.headers['x-forwarded-proto'] == 'https' and not req.connection.secure
+
 module.exports =
     create: (px) ->
         (req, res) ->
             cors.setCorsHeaders req, res
-            if cors.preflight req then response.send res, 204 else handleDefaultRequest px, req, res
+            if cors.preflight req then response.send res, 204
+            else if upgradeConnection req then redirect.upgrade req, res
+            else handleDefaultRequest px, req, res

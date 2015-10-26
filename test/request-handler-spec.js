@@ -26,12 +26,16 @@ var presumeHost = function (req) {
 };
 
 beforeEach(function () {
-    req, res = null;
+    req = {};
+    res = {};
+    req.headers = [];
+    req.origin = "abc.monsanto.com";
     handler = requestHandler.create(px, presumeHost);
 });
 
 describe('request handler', function () {
     it('delegates cors requests', function () {
+        req = {};
 
         preflightMock = sinon.stub(cors, "preflight");
         preflightMock.withArgs(req).returns(true);
