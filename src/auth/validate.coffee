@@ -19,13 +19,15 @@ exports.authentication = (req, route) ->
         refreshTokenPresent = cookieAuthEnabled and cookies["#{cookieName}_rt"]?
         {authorization} = req.headers
 
+        {refresh: refreshTokenPresent, redirect: cookieAuthEnabled}
+
         token = if authorization and authorization.slice(0, 7).toLowerCase() is 'bearer '
             authorization.slice 7
         else if cookieAuthEnabled
             cookies[cookieName]
 
         if not token
-            Promise.reject {refreshTokenPresent, cookieAuthEnabled}
+            Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled}
         else
     #    oidcValid = if cookieAuthEnabled
     #        oidc = reqCookies["#{cookieName}_oidc"]
@@ -40,4 +42,4 @@ exports.authentication = (req, route) ->
             )
             .catch (error) ->
                 console.log "Had an error #{error}"
-                Promise.reject {refreshTokenPresent, cookieAuthEnabled, oidcValid}
+                Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled, oidcValid}
