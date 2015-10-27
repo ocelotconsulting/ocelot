@@ -38,14 +38,7 @@ handleDefaultRequest = (px, req, res) ->
         else
             response.send res, 404, 'No active URL for route'
 
-upgradeConnection = (req) ->
-    console.log("enforce https: #{config.get('enforce-https')}")
-    console.log("x-forwarded-proto: #{req.headers['x-forwarded-proto']}")
-    console.log("secure connection: #{req.connection.secure}")
-    upgrade = config.get('enforce-https') and req.headers['x-forwarded-proto'] != 'https' and not req.connection.secure?
-    console.log("upgrade connection: #{upgrade}")
-    upgrade
-
+upgradeConnection = (req) -> config.get('enforce-https') and req.headers['x-forwarded-proto'] != 'https' and not req.connection.secure?
 
 module.exports =
     create: (px) ->
