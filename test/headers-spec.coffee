@@ -17,7 +17,6 @@ describe 'headers', ->
         res.setHeader = (name, value) ->
             @[name] = value
 
-
         route['cookie-name'] = 'mycookie'
         route['route'] = 'abc'
         route['client-secret'] = 'secret'
@@ -25,12 +24,10 @@ describe 'headers', ->
         authentication['access_token'] = 'def123'
         authentication['id_token'] = 'ghi123'
         headers.setAuthCookies res, route, authentication
-        .then((reslt) ->
-            assert.equal reslt['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
-            assert.equal reslt['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/abc") > -1, true
-            assert.equal reslt['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, true
-        )
-
+        .then ->
+            assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
+            assert.equal res['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/abc") > -1, true
+            assert.equal res['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, true
 
     it 'omit refresh or oidc token when not present', ->
 
@@ -41,11 +38,10 @@ describe 'headers', ->
         route.route = 'abc'
         authentication['access_token'] = 'def123'
         headers.setAuthCookies res, route, authentication
-        .then((reslt) ->
-            assert.equal reslt['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
-            assert.equal reslt['Set-Cookie'].indexOf('mycookie_rt=abc123; path=/abc') > -1, false
-            assert.equal reslt['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, false
-        )
+        .then ->
+            assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
+            assert.equal res['Set-Cookie'].indexOf('mycookie_rt=abc123; path=/abc') > -1, false
+            assert.equal res['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, false
 
     it 'overrides the route key if you have a cookie path on your route', ->
 
@@ -59,10 +55,10 @@ describe 'headers', ->
         authentication['refresh_token'] = 'abc123'
         authentication['access_token'] = 'def123'
         headers.setAuthCookies res, route, authentication
-        .then((reslt) ->
-            assert.equal reslt['Set-Cookie'].indexOf('mycookie=def123; path=/zzz') > -1, true
-            assert.equal reslt['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/zzz") > -1, true
-        )
+        .then ->
+            assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/zzz') > -1, true
+            assert.equal res['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/zzz") > -1, true
+
 
 describe 'auth headers', ->
     it 'adds user header if oidc token exists and encodes a subject', ->
