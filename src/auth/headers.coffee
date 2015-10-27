@@ -12,15 +12,19 @@ module.exports =
             refreshTokenCookie = ->
                 "#{cookieName}_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly"
             cookiePath = route['cookie-path'] or "/#{route.route}"
-            res.setHeader 'Set-Cookie', _([
-                "#{cookieName}=#{authentication.access_token}"
-                if wamResult then "AXMSESSION=#{wamResult}"
-                if authentication.refresh_token then refreshTokenCookie()
-                if authentication.id_token then "#{cookieName}_oidc=#{authentication.id_token}"
-            ]).chain().compact().map((item) ->
-                "#{item}; path=#{cookiePath}"
-            ).value()
-            res
+            cookieChain = _([
+                      "#{cookieName}=#{authentication.access_token}"
+                      if wamResult then "AXMSESSION=#{wamResult}"
+                      if authentication.refresh_token then refreshTokenCookie()
+                      if authentication.id_token then "#{cookieName}_oidc=#{authentication.id_token}"
+                  ]).chain().compact().map((item) ->
+                      "#{item}; path=#{cookiePath}"
+                  )
+
+            if route['cookie-domain']
+                cookieChain = cookieChain.map((item) -> "#{item}; domain=#{route['cookie-domain']}")
+
+            res.setHeader 'Set-Cookie', cookieChain.value()
     addAuth: (req, route, authentication) ->
         try
             userHeader = route['user-header']

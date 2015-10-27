@@ -46,7 +46,7 @@ module.exports =
         routeUrl = config.get 'backend.consul.routes'
         serviceUrl = config.get 'backend.consul.services'
         reloadData()
-        cron.scheduleJob '*/20 * * * * *', reloadData
+        cron.scheduleJob '*/30 * * * * *', reloadData
     getRoutes: ->
         routes
     getServices: ->
