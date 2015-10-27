@@ -15,12 +15,13 @@ module.exports =
             postman.post "grant_type=refresh_token&refresh_token=#{refreshToken}", route
 
         doRefresh = (result) ->
+            console.log "refresh was a success!"
             headers.setAuthCookies res, route, result
-            .then (result) ->
-                redirect.refreshPage req, result
+            .then () ->
+                redirect.refreshPage req, res
 
         refreshError = (error) ->
-            console.log error
+            console.log "refresh error: #{error}"
             redirect.startAuthCode req, res, route
 
         tryRefresh().then doRefresh, refreshError
