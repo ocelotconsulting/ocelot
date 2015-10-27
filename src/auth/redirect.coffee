@@ -30,7 +30,7 @@ module.exports =
         state = new Buffer(origUrl).toString 'base64'
         client_id = route['client-id']
         scope = route['oidc-scope']
-        location = buildUrl "#{authServer}/as.authorization.oauth2", {response_type: 'code', client_id, redirect_uri, state, scope}
+        location = buildUrl "#{authServer}/as/authorization.oauth2", {response_type: 'code', client_id, redirect_uri, state, scope}
         res.setHeader 'Location', location
         response.send res, 307
     refreshPage: (req, res) ->
@@ -38,6 +38,6 @@ module.exports =
         res.setHeader 'Location', origUrl
         response.send res, 307
     upgrade: (req, res) ->
-        origUrl = "https://#{req.headers.host}#{req.url}"
-        res.setHeader 'Location', origUrl
+        url = "https://#{req.headers.host}#{req.url}"
+        res.setHeader 'Location', url
         response.send res, 307

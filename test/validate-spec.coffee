@@ -1,10 +1,10 @@
-assert = require 'assert' 
-sinon = require 'sinon' 
+assert = require 'assert'
+sinon = require 'sinon'
 require 'sinon-as-promised'
 headers = require '../src/auth/headers'
-postman = require '../src/auth/postman' 
-exchange = require '../src/auth/exchange' 
-validate = require '../src/auth/validate' 
+postman = require '../src/auth/postman'
+exchange = require '../src/auth/exchange'
+validate = require '../src/auth/validate'
 
 describe 'validate', ->
     {postmanMock} = {}
@@ -14,7 +14,7 @@ describe 'validate', ->
 
     afterEach ->
         postmanMock.restore()
-        
+
     it 'resolves if no required validation', (done) ->
         req = {}
         route = {}
@@ -47,7 +47,7 @@ describe 'validate', ->
             assert.fail 'failed!'
             done()
     it 'resolves if auth token found and valid', (done) ->
-        req = headers: cookie: 'mycookie=abc'
+        req = headers: cookie: 'mycookie=abcd'
         route = {}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
@@ -59,13 +59,29 @@ describe 'validate', ->
             assert.fail 'failed!'
             done()
     it 'rejects if auth token found but invalid', (done) ->
-        req = headers: cookie: 'mycookie=abc'
+        req = headers: cookie: 'mycookie=abcde'
         route = {}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
         postmanMock.rejects 'you suck'
-        validate.authentication(req, route).then ((returnedAuth) ->
+        validate.authentication(req, route).then ((auth) ->
             assert.fail 'should fail!'
             done()
         ), (auth) ->
             done()
+    it 'caches validations', (done) ->
+        req = headers: cookie: 'mycookie=abcdef'
+        route = {}
+        auth = id: 'myauth'
+        route['cookie-name'] = 'mycookie'
+        postmanMock.resolves auth
+        validate.authentication(req, route)
+        .then (auth) -> validate.authentication(req, route)
+        .then (auth) ->
+          assert.equal postmanMock.calledOnce, true
+          done()
+        .catch  ->
+          assert.fail 'failed!'
+          done()
+
+

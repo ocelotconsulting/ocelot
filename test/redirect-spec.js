@@ -40,7 +40,7 @@ describe('redirect', function () {
         redirect.startAuthCode(req, res, route);
 
         var expectedUrl =
-            "https://test.amp.monsanto.com/as.authorization.oauth2?response_type=code&client_id=abc123&redirect_uri=https%3A%2F%2Fmyhost%2Fmy%2Furl%2Freceive-auth-token&state=aHR0cHM6Ly9teWhvc3QvbXkvdXJs"
+            "https://test.amp.monsanto.com/as/authorization.oauth2?response_type=code&client_id=abc123&redirect_uri=https%3A%2F%2Fmyhost%2Fmy%2Furl%2Freceive-auth-token&state=aHR0cHM6Ly9teWhvc3QvbXkvdXJs"
         console.info(setHeader.lastCall.args);
 
         assert.equal(setHeader.withArgs('Location', expectedUrl).calledOnce, true);

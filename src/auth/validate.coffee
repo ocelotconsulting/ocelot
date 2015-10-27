@@ -3,6 +3,7 @@ postman = require './postman'
 config = require 'config'
 parseCookies = require '../parseCookies'
 jwks = require '../backend/jwks'
+cache = require 'memory-cache'
 
 client = config.get 'authentication.ping.validate.client'
 secret = config.get 'authentication.ping.validate.secret'
@@ -37,10 +38,17 @@ exports.authentication = (req, route) ->
     #    else
     #        false
             oidcValid = false
-            postman.postAs("grant_type=#{grantType}&token=#{token}", client, secret)
-            .then((oAuthValidateResult) ->
-                _(oAuthValidateResult).extend {valid: true, oidcValid}
-            )
-            .catch (error) ->
-                console.log "Had an error #{error}"
-                reject oidcValid
+
+            cachedValidation = cache.get token
+            if cachedValidation
+                Promise.accept cachedValidation
+            else
+                postman.postAs("grant_type=#{grantType}&token=#{token}", client, secret)
+                .then((oAuthValidateResult) ->
+                    authentication = _(oAuthValidateResult).extend {valid: true, oidcValid}
+                    cache.put token, authentication, 60000
+                    authentication
+                )
+                .catch (error) ->
+                    console.log "Had an error #{error}"
+                    reject oidcValid
