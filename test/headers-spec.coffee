@@ -60,6 +60,22 @@ describe 'headers', ->
             assert.equal res['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/zzz") > -1, true
 
 
+    it 'allows you to set a cookie domain on your route', ->
+
+      res.setHeader = (name, value) ->
+          @[name] = value
+
+      route['cookie-name'] = 'mycookie'
+      route['cookie-path'] = '/zzz'
+      route['cookie-domain'] = 'xyz'
+      route['route'] = 'abc'
+      route['client-secret'] = 'secret'
+      authentication['refresh_token'] = 'abc123'
+      authentication['access_token'] = 'def123'
+      headers.setAuthCookies res, route, authentication
+      .then ->
+          assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/zzz; domain=xyz') > -1, true
+
 describe 'auth headers', ->
     it 'adds user header if oidc token exists and encodes a subject', ->
         req = headers: {}
