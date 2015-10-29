@@ -1,8 +1,8 @@
 {
   "backend": {
-    "consul": {
-      "routes": "http://stludockersbx01.monsanto.com:8500/v1/kv/routes-np/?recurse",
-      "services": "http://stludockersbx01.monsanto.com:8500/v1/kv/services-np/?recurse"
+    "redis": {
+      "host": "192.168.99.100",
+      "port": 32768
     }
   },
   "jwks": {

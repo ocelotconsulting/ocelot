@@ -9,10 +9,12 @@ servicesRegex = /[^/]+[/](.+)\/(.+)/
 reloadData = ->
     jsonLoader.get(routeUrl).then ((data) ->
         routes = parseRoutes(data)
+        console.log JSON.stringify(routes)
     ), (error) ->
         console.log 'could not load routes: ' + error
     jsonLoader.get(serviceUrl).then ((data) ->
         services = parseServices(data)
+        console.log JSON.stringify(services)
     ), (error) ->
         console.log 'could not load services: ' + error
 
@@ -26,6 +28,7 @@ parseConsul = (consulJson, keyRegex, mutate) ->
         catch e
             console.log 'error parsing: ' + item.Key
     ).compact().value()
+
 
 parseRoutes = (consulJson) ->
     parseConsul consulJson, routeRegex, (value, match) ->

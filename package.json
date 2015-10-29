@@ -26,6 +26,7 @@
     "memory-cache": "^0.1.4",
     "node-crontab": "0.0.8",
     "node-forge": "^0.6.34",
+    "redis": "^2.2.5",
     "underscore": "^1.8.3",
     "xml2js": "^0.4.9"
   },
