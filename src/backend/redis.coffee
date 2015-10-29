@@ -3,7 +3,6 @@ config = require 'config'
 cron = require 'node-crontab'
 {client, routes, hosts} = {}
 
-
 reloadData = ->
   client.hgetall "routes", (err, obj) ->
 
@@ -45,7 +44,6 @@ module.exports =
   initCache: ->
     if not config.has('backend.redis.host') or not config.has('backend.redis.port')
       throw 'redis backend mis-configured'
-
 
     client = redis.createClient
       host: config.get 'backend.redis.host'
