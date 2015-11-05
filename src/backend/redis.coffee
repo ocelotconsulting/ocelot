@@ -36,10 +36,10 @@ reloadData = ->
       hosts = res
 
 module.exports =
-  init: ->
-    if not config.has('backend.redis.host') or not config.has('backend.redis.port')
-      throw 'redis backend mis-configured'
+  detect: ->
+    config.has('backend.redis.host') and config.has('backend.redis.port')
 
+  init: ->
     client = redis.createClient
       host: config.get 'backend.redis.host'
       port: config.get 'backend.redis.port'

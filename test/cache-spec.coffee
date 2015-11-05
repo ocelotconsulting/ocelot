@@ -2,55 +2,56 @@ assert = require 'assert'
 config = require 'config'
 sinon = require 'sinon'
 consul = require '../src/backend/consul.coffee'
+redis = require '../src/backend/redis.coffee'
 facade = require '../src/backend/facade.coffee'
 describe 'facade', ->
+  restore = (mockFunc) ->
+    if mockFunc.restore
+      mockFunc.restore()
 
-    restore = (mockFunc) ->
-        if mockFunc.restore
-            mockFunc.restore()
+  it 'initializes consul backend when configured', ->
+    detectStub = sinon.stub(consul, 'detect')
+    initStub = sinon.stub(consul, 'init')
 
-    it 'initializes consul backend when configured', ->
-        sinon.stub(config, 'has', (arg) ->
-            arg == 'backend.consul' or arg == 'jwks.url'
-        )
-        stub = sinon.stub(consul, 'init')
-        facade.init()
-        assert.equal stub.calledOnce, true
+    detectStub.returns(true)
+    facade.init()
+    assert.equal initStub.calledOnce, true
 
-    it 'loads routes from consul backend', ->
-        sinon.stub(config, 'has', (arg) ->
-            arg == 'backend.consul' or arg == 'jwks.url'
-        )
-        sinon.stub consul, 'init'
-        sinon.stub(consul, 'getRoutes').returns 'result': 'success'
-        facade.init()
-        routes = facade.getRoutes()
-        assert.equal routes.result, 'success'
+  it 'loads routes from consul backend', ->
+    detectStub = sinon.stub(consul, 'detect')
+    detectStub.returns(true)
 
-    it 'loads services from consul backend', ->
-        sinon.stub(config, 'has', (arg) ->
-            arg == 'backend.consul' or arg == 'jwks.url'
-        )
-        sinon.stub consul, 'init'
-        sinon.stub(consul, 'getServices').returns 'result': 'success'
-        facade.init()
-        services = facade.getServices()
-        assert.equal services.result, 'success'
+    sinon.stub consul, 'init'
+    sinon.stub(consul, 'getRoutes').returns 'result': 'success'
+    facade.init()
+    routes = facade.getRoutes()
+    assert.equal routes.result, 'success'
 
-    it 'throws exception if there is no backend defined', ->
-        backendStub = sinon.stub(config, 'has', (arg) ->
-            arg == 'backend.consul' or arg == 'jwks.url'
-        )
-        initCacheStub = sinon.stub(consul, 'init')
-        try
-            facade.init()
-            assert.fail 'should have thrown an error'
-        catch error
-            assert backendStub.calledTwice == true
-            assert initCacheStub.calledOnce == true
+  it 'loads services from consul backend', ->
+    detectStub = sinon.stub(consul, 'detect')
+    detectStub.returns(true)
+    sinon.stub consul, 'init'
 
-    afterEach ->
-        restore config.has
-        restore consul.init
-        restore consul.getRoutes
-        restore consul.getServices
+    sinon.stub(consul, 'getServices').returns 'result': 'success'
+
+    facade.init()
+    services = facade.getServices()
+    assert.equal services.result, 'success'
+
+  it 'throws exception if there is no backend defined', ->
+    sinon.stub(consul, 'detect').returns(false);
+    sinon.stub(redis, 'detect').returns(false);
+
+    try
+      facade.init()
+      assert.fail 'should have thrown an error'
+    catch error
+
+
+  afterEach ->
+    restore config.has
+    restore consul.init
+    restore consul.detect
+    restore redis.detect
+    restore consul.getRoutes
+    restore consul.getServices

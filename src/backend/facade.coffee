@@ -6,11 +6,16 @@ jwks = require './jwks'
 
 module.exports =
     init: ->
+        if consul.detect()
+            datastore = consul
+        else if redis.detect()
+            datastore = redis
+        else
+            throw 'no datastore backend found in configuration'
+
         if not config.has 'jwks.url' then throw 'no jwks url found in configuration'
-        datastore = if config.has 'backend.consul' then consul
-        else if config.has 'backend.redis' then redis
-        else throw 'no backend found in configuration'
         jwks.init()
+
         datastore.init()
     getRoutes: ->
         datastore.getRoutes()
