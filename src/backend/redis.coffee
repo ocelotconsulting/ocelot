@@ -41,7 +41,7 @@ reloadData = ->
       hosts = res
 
 module.exports =
-  initCache: ->
+  init: ->
     if not config.has('backend.redis.host') or not config.has('backend.redis.port')
       throw 'redis backend mis-configured'
 

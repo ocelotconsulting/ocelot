@@ -1,5 +1,5 @@
 http = require 'http'
-cache = require './backend/cache'
+facade = require './backend/facade.coffee'
 uri = require 'url'
 _ = require 'underscore'
 
@@ -11,7 +11,7 @@ findRouteByHost = (host) ->
     if host.indexOf('.') > 0 then findRoute host.split('.')[0]
 
 findRoute = (key) ->
-    _(cache.getRoutes()).find (route) -> route.route is key
+    _(facade.getRoutes()).find (route) -> route.route is key
 
 findRouteByPath = (url, pathDepth = 3) ->
     if pathDepth is 0
@@ -20,12 +20,12 @@ findRouteByPath = (url, pathDepth = 3) ->
         routePath = getUrlStrStripLeadingSlash(url).split('/', pathDepth).join '/'
         findRoute(routePath) or findRouteByPath(url, pathDepth - 1)
 
-cache.initCache()
+facade.init()
 
 module.exports =
     resolveRoute: (url, host) ->
         closestRoute = findRouteByHost(host) or findRouteByPath(url)
-        services = cache.getServices()
+        services = facade.getServices()
         closestRoute?.instances = _(closestRoute.services).chain().map((service) ->
             [service, services[service]]
         ).object().value()

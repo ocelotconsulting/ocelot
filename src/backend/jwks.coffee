@@ -47,7 +47,7 @@ validateToken = (token) ->
         false
 
 module.exports =
-    initCache: ->
+    init: ->
         jwksUrl = config.get 'jwks.url'
         reloadData()
         cron.scheduleJob '*/20 * * * * *', reloadData

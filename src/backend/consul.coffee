@@ -43,7 +43,7 @@ parseServices = (consulJson) ->
     ).groupBy 'name'
 
 module.exports =
-    initCache: ->
+    init: ->
         if not config.has('backend.consul.routes') or not config.has('backend.consul.services')
             throw 'consul backend mis-configured'
         routeUrl = config.get 'backend.consul.routes'
