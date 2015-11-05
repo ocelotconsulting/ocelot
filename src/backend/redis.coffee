@@ -28,9 +28,9 @@ reloadData = ->
         try
           json = JSON.parse(v)
           json.id = k
-          if not res[json.name]?
-            res[json.name] = []
-          res[json.name].push json
+          if not res[json.id]?
+            res[json.id] = []
+          res[json.id].push json
         catch e
           console.log 'error parsing: ' + k
       hosts = res
@@ -54,35 +54,40 @@ module.exports =
     Promise.resolve(routes)
 
   putRoute: (id, route) ->
-    new Promise ->
+    new Promise (resolve, reject) ->
       client.hset "routes", id, route, (err, res) ->
         if(err?)
-          Promise.reject new Error("could not put route #{id}: #{err}")
+          reject "could not put route #{id}: #{err}"
         else
-          Promise.resolve
+          resolve "ok"
 
   deleteRoute: (id) ->
-    client.hdel "routes", id, (err, res) ->
-      if(err?)
-        Promise.reject new Error("could not delete route #{id}: #{err}")
-      else
-        Promise.resolve
+    new Promise (resolve, reject) ->
+      client.hdel "routes", id, (err, res) ->
+        if(err?)
+          reject "could not delete route #{id}: #{err}"
+        else
+          resolve "ok"
 
   getServices: ->
+    console.log hosts
+
     Promise.resolve(hosts)
 
   putHost: (id, host) ->
-    client.hset "hosts", id, host, (err, res) ->
-      if(err?)
-        Promise.reject new Error("could not put host #{id}: #{err}")
-      else
-        Promise.resolve
+    new Promise (resolve, reject) ->
+      client.hset "hosts", id, host, (err, res) ->
+        if(err?)
+          reject "could not put host #{id}: #{err}"
+        else
+          resolve "ok"
 
   deleteHost: (id) ->
-    client.hdel "hosts", id, (err, res) ->
-      if(err?)
-        Promise.reject new Error("could not delete host #{id}: #{err}")
-      else
-        Promise.resolve
+    new Promise (resolve, reject) ->
+      client.hdel "hosts", id, (err, res) ->
+        if(err?)
+          reject "could not delete host #{id}: #{err}"
+        else
+          resolve "ok"
 
   reloadData: reloadData

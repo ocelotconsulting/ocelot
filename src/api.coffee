@@ -31,7 +31,7 @@ router.get '/routes/:id', (req, res)->
 
 router.put '/routes/:id', (req, res) ->
   id = req.params.id
-  facade.putRoute(id, req.body)
+  facade.putRoute(id, JSON.stringify(req.body))
   .then ->
     response.send res, 200, 'ok'
   .catch (err) ->
@@ -71,7 +71,7 @@ router.get '/hosts/:id', (req, res)->
 router.put '/hosts/:id', (req, res) ->
   id = req.params.id
 
-  facade.putHost(id, req.body)
+  facade.putHost(id, JSON.stringify(req.body))
   .then ->
     response.send res, 200, 'ok'
   .catch (err) ->
