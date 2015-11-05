@@ -44,6 +44,6 @@ module.exports =
     create: (px) ->
         (req, res) ->
             cors.setCorsHeaders req, res
-            if cors.preflight req then response.send res, 204
+            if cors.shortCircuit req then response.send res, 204
             else if upgradeConnection req then redirect.upgrade req, res
             else handleDefaultRequest px, req, res

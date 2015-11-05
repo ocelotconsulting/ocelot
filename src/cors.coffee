@@ -9,8 +9,11 @@ whitelistedDomain = (origin) ->
     domains? and origin? and domains.filter((domain) -> endsWith(origin, ".#{domain}")).length > 0 or domains.indexOf(origin) > -1
 
 module.exports =
-    preflight: (req) ->
-        req.headers.origin and req.headers['access-control-request-method'] and req.method is 'OPTIONS'
+    shortCircuit: (req) ->
+        preflight = -> req.headers.origin and req.headers['access-control-request-method'] and req.method is 'OPTIONS'
+        untrustredDomain = -> origin? and not whitelistedDomain req.headers.origin
+        preflight() or untrustredDomain()
+
     setCorsHeaders: (req, res) ->
         {origin} = req.headers
         headers = req.headers['access-control-request-headers']

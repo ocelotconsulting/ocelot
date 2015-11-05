@@ -2,7 +2,7 @@ var assert = require("assert"),
     cors = require('../src/cors');
 
 describe('cors', function () {
-    describe('preflight', function () {
+    describe('shortCircuit', function () {
         it('is in effect when origin header present, req method present,  and is options request', function () {
             var req = {};
             req.headers = {};
@@ -10,7 +10,7 @@ describe('cors', function () {
             req.headers['access-control-request-method'] = "PUT";
             req.method = "OPTIONS";
 
-            assert.equal(cors.preflight(req), true);
+            assert.equal(cors.shortCircuit(req), true);
         });
 
         it('is not in effect if not options method', function () {
@@ -20,7 +20,7 @@ describe('cors', function () {
             req.headers['access-control-request-method'] = "PUT";
             req.method = "GET";
 
-            assert.equal(cors.preflight(req), false);
+            assert.equal(cors.shortCircuit(req), false);
         });
 
         it('is not in effect if origin not set', function () {
@@ -29,7 +29,7 @@ describe('cors', function () {
             req.headers['access-control-request-method'] = "PUT";
             req.method = "OPTIONS";
 
-            assert.equal(cors.preflight(req), undefined);
+            assert.equal(cors.shortCircuit(req), false);
         });
 
         it('is not in effect if req method not set', function () {
@@ -38,7 +38,16 @@ describe('cors', function () {
             req.headers.origin = "abc.monsanto.com";
             req.method = "OPTIONS";
 
-            assert.equal(cors.preflight(req), undefined);
+            assert.equal(cors.shortCircuit(req), false);
+        });
+
+        it('is in effect for untrusted domains', function () {
+            var req = {};
+            req.headers = {};
+            req.headers.origin = "abc.monsanto.com";
+            req.method = "OPTIONS";
+
+            assert.equal(cors.shortCircuit(req), false);
         });
     });
 

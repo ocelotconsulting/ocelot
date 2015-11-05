@@ -37,7 +37,7 @@ describe('request handler', function () {
     it('delegates cors requests', function () {
         req = {};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(true);
 
         corsHeadersMock = sinon.mock(cors);
@@ -55,7 +55,7 @@ describe('request handler', function () {
     it('returns 404 on missing route', function () {
         req = {url: "http://someurl", headers: {host: ""}};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
 
         corsHeadersMock = sinon.stub(cors, "setCorsHeaders");
@@ -76,7 +76,7 @@ describe('request handler', function () {
         req = {url: "http://someurl/receive-auth-token", headers: {host: ""}};
         var route = {id: "my route"};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
         corsHeadersMock = sinon.stub(cors, "setCorsHeaders");
         corsHeadersMock.withArgs(req, res);
@@ -96,7 +96,7 @@ describe('request handler', function () {
         req = {url: "http://someurl", headers: {host: ""}};
         var route = {id: "my route"};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
         corsHeadersMock = sinon.stub(cors, "setCorsHeaders");
         corsHeadersMock.withArgs(req, res);
@@ -120,7 +120,7 @@ describe('request handler', function () {
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: true};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
         corsHeadersMock = sinon.stub(cors, "setCorsHeaders");
         corsHeadersMock.withArgs(req, res);
@@ -150,7 +150,7 @@ describe('request handler', function () {
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: false, redirect: true};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
         corsHeadersMock = sinon.stub(cors, "setCorsHeaders");
         corsHeadersMock.withArgs(req, res);
@@ -180,7 +180,7 @@ describe('request handler', function () {
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: false, redirect: false};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
         corsHeadersMock = sinon.stub(cors, "setCorsHeaders");
         corsHeadersMock.withArgs(req, res);
@@ -210,7 +210,7 @@ describe('request handler', function () {
         var rewrittenUrl = "http://someotherurl";
         var auth = {refresh: false, redirect: false};
 
-        preflightMock = sinon.stub(cors, "preflight");
+        preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
         corsHeadersMock = sinon.stub(cors, "setCorsHeaders");
         corsHeadersMock.withArgs(req, res);
