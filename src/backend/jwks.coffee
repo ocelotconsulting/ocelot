@@ -1,5 +1,6 @@
 cron = require 'node-crontab'
-jsonLoader = require './json'
+Promise = this.Promise || require('promise');
+agent = require('superagent-promise')(require('superagent'), Promise)
 _ = require 'underscore'
 config = require 'config'
 forge = require 'node-forge'
@@ -8,8 +9,8 @@ keys = undefined
 jwksUrl = undefined
 
 reloadData = ->
-    jsonLoader.get(jwksUrl).then ((data) ->
-        keys = parseJWKS(data)
+    agent.get(jwksUrl).then ((data) ->
+        keys = parseJWKS(data.text)
     ), (error) ->
         console.log 'could not load JWKS keys: ' + error
 

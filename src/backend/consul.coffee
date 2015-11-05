@@ -4,8 +4,8 @@ config = require 'config'
 {routes, services, routeUrl, serviceUrl} = {}
 routeRegex = /[^/]+[/](.+)/
 servicesRegex = /[^/]+[/](.+)\/(.+)/
-Promise = this.Promise || require('promise');
-agent = require('superagent-promise')(require('superagent'), Promise);
+Promise = this.Promise || require 'promise'
+agent = require('superagent-promise')(require('superagent'), Promise)
 
 reload = ->
     agent.get(routeUrl + '/?recurse')

@@ -24,9 +24,9 @@
   "default-protocol": "https",
   "enforce-https": true,
   "cors-domains": [
-    ".velocity.ag",
-    ".monsanto.com",
-    ".threega.com",
+    "velocity.ag",
+    "monsanto.com",
+    "threega.com",
     "localhost"
   ]
 }
