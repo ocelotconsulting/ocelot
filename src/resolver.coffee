@@ -20,8 +20,6 @@ findRouteByPath = (url, pathDepth = 3) ->
         routePath = getUrlStrStripLeadingSlash(url).split('/', pathDepth).join '/'
         findRoute(routePath) or findRouteByPath(url, pathDepth - 1)
 
-facade.init()
-
 module.exports =
     resolveRoute: (url, host) ->
         closestRoute = findRouteByHost(host) or findRouteByPath(url)

@@ -1,22 +1,28 @@
 cron = require 'node-crontab'
-jsonLoader = require './json'
 _ = require 'underscore'
 config = require 'config'
 {routes, services, routeUrl, serviceUrl} = {}
 routeRegex = /[^/]+[/](.+)/
 servicesRegex = /[^/]+[/](.+)\/(.+)/
+Promise = this.Promise || require('promise');
+agent = require('superagent-promise')(require('superagent'), Promise);
 
-reloadData = ->
-    jsonLoader.get(routeUrl).then ((data) ->
-        routes = parseRoutes(data)
-        console.log JSON.stringify(routes)
-    ), (error) ->
-        console.log 'could not load routes: ' + error
-    jsonLoader.get(serviceUrl).then ((data) ->
-        services = parseServices(data)
-        console.log JSON.stringify(services)
-    ), (error) ->
-        console.log 'could not load services: ' + error
+reload = ->
+    agent.get(routeUrl + '/?recurse')
+    .then (data) ->
+        JSON.parse(data.text)
+    .then (json)->
+        routes = parseRoutes(json)
+    .catch (err) ->
+        console.log 'could not load routes: ' + err
+
+    agent.get(serviceUrl + '/?recurse')
+    .then (data) ->
+        JSON.parse(data.text)
+    .then (json)->
+        services = parseServices(json)
+    .catch (err) ->
+        console.log 'could not load services: ' + err
 
 parseConsul = (consulJson, keyRegex, mutate) ->
     _(consulJson).chain().map((item) ->
@@ -48,10 +54,27 @@ module.exports =
             throw 'consul backend mis-configured'
         routeUrl = config.get 'backend.consul.routes'
         serviceUrl = config.get 'backend.consul.services'
-        reloadData()
-        cron.scheduleJob '*/30 * * * * *', reloadData
+        reload()
+        cron.scheduleJob '*/30 * * * * *', reload
+
+    reloadData: reload
+
     getRoutes: ->
-        routes
+        Promise.resolve routes
+    getRoute: (id) ->
+        returns = routes.filter (el) ->
+            el.route == id
+        Promise.resolve returns
+    putRoute: (id, route) ->
+        agent.put("#{routeUrl}/#{id}", route)
+    deleteRoute: (id) ->
+        agent.delete("#{routeUrl}/#{id}")
+
     getServices: ->
-        services
-    reloadData: reloadData
+        Promise.resolve services
+    getHost: (id) ->
+        Promise.resolve services[id]
+    putHost: (id, host) ->
+        agent.put("#{serviceUrl}/#{id}", host)
+    deleteHost: (id) ->
+        agent.delete("#{serviceUrl}/#{id}")
