@@ -5,12 +5,10 @@ cron = require 'node-crontab'
 
 reloadData = ->
   client.hgetall "routes", (err, obj) ->
-
     if err or not obj
       console.log "error loading data from redis: error: #{err}, obj: #{JSON.stringify(obj)} "
     else
       res = []
-
       for k,v of obj
         try
           json = JSON.parse(v)
@@ -18,7 +16,6 @@ reloadData = ->
           res.push json
         catch e
           console.log 'error parsing: ' + k
-
       routes = res
 
 
@@ -27,7 +24,6 @@ reloadData = ->
       console.log "error loading data from redis: error: #{err}, obj: #{JSON.stringify(obj)} "
     else
       res = {}
-
       for k,v of obj
         try
           json = JSON.parse(v)
@@ -37,7 +33,6 @@ reloadData = ->
           res[json.name].push json
         catch e
           console.log 'error parsing: ' + k
-
       hosts = res
 
 module.exports =
@@ -54,8 +49,40 @@ module.exports =
 
     reloadData()
     cron.scheduleJob '*/30 * * * * *', reloadData
+
   getRoutes: ->
-    routes
+    Promise.resolve(routes)
+
+  putRoute: (id, route) ->
+    new Promise ->
+      client.hset "routes", id, route, (err, res) ->
+        if(err?)
+          Promise.reject new Error("could not put route #{id}: #{err}")
+        else
+          Promise.resolve
+
+  deleteRoute: (id) ->
+    client.hdel "routes", id, (err, res) ->
+      if(err?)
+        Promise.reject new Error("could not delete route #{id}: #{err}")
+      else
+        Promise.resolve
+
   getServices: ->
-    hosts
+    Promise.resolve(hosts)
+
+  putHost: (id, host) ->
+    client.hset "hosts", id, host, (err, res) ->
+      if(err?)
+        Promise.reject new Error("could not put host #{id}: #{err}")
+      else
+        Promise.resolve
+
+  deleteHost: (id) ->
+    client.hdel "hosts", id, (err, res) ->
+      if(err?)
+        Promise.reject new Error("could not delete host #{id}: #{err}")
+      else
+        Promise.resolve
+
   reloadData: reloadData

@@ -4,6 +4,7 @@ response = require './response'
 requestHandler = require './request-handler'
 express = require 'express'
 facade = require './backend/facade'
+bodyparser = require 'body-parser'
 
 px = httpProxy.createProxyServer {changeOrigin: true, autoRewrite: true}
 
@@ -18,8 +19,8 @@ console.log 'proxy listening on port ' + port
 server.listen port
 
 app = express()
+app.use bodyparser.json()
 apiPort =(process.env.PORT + 1) or 8081
-
-app.use('/api/v1/', require('./api'));
+app.use('/api/v1', require('./api'));
 console.log 'api listening on port ' + apiPort
 app.listen(apiPort);

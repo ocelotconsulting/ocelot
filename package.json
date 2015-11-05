@@ -16,6 +16,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.14.1",
     "coffee-script": "^1.9.3",
     "config": "^1.14.0",
     "cookie": "^0.2.2",

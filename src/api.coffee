@@ -2,12 +2,11 @@ express = require 'express'
 facade = require './backend/facade'
 response = require './response'
 Promise = require 'promise'
+util = require 'util'
 
-app = express()
+router = express.Router()
 
-app.get '/routes', (req, res) ->
-  console.log 'getting routes'
-
+router.get '/routes', (req, res) ->
   facade.getRoutes()
   .then (routes) ->
     res.json routes
@@ -15,29 +14,31 @@ app.get '/routes', (req, res) ->
     console.log err
     response.send res, 500, 'unable to load routes'
 
-app.get '/routes/:id', (req, res)->
+router.get '/routes/:id', (req, res)->
   id = req.params.id
 
-  facade.getRoute(id)
+  facade.getRoutes()
   .then (data) ->
-    res.json data
+    returns = data.filter (el) ->
+      el.route == id
+    if returns.length == 1
+      res.json returns[0]
+    else
+      response.send res, 404
   .catch (err) ->
     console.log "unable to get route #{id}, #{err}"
     response.send res, 500, 'unable to get route, check the log'
 
-app.put '/routes/:id', (req, res) ->
+router.put '/routes/:id', (req, res) ->
   id = req.params.id
-  new Promise ->
-    JSON.parse(req.body)
-  .then (route) ->
-    facade.putRoute(id, route)
+  facade.putRoute(id, req.body)
   .then ->
     response.send res, 200, 'ok'
   .catch (err) ->
     console.log "unable to save route #{id}, #{err}"
     response.send res, 500, 'unable to save route, check the log'
 
-app.delete '/routes/:id', (req, res) ->
+router.delete '/routes/:id', (req, res) ->
   id = req.params.id
 
   facade.deleteRoute(id)
@@ -47,36 +48,37 @@ app.delete '/routes/:id', (req, res) ->
     console.log "unable to delete route #{id}, #{err}"
     response.send res, 500, 'unable to delete route, check the log'
 
-app.get '/hosts/', (req, res) ->
+router.get '/hosts/', (req, res) ->
   facade.getServices()
   .then (hosts) ->
     res.json hosts
   .catch (err) ->
     response.send res, 500, 'unable to load hosts'
 
-app.get '/hosts/:id', (req, res)->
+router.get '/hosts/:id', (req, res)->
   id = req.params.id
 
-  facade.getHost(id)
+  facade.getServices()
   .then (data) ->
-    res.json data
+    if data[id]
+      res.json data[id]
+    else
+      response.send res, 404
   .catch (err) ->
     console.log "unable to get host #{id}, #{err}"
     response.send res, 500, 'unable to get host, check the log'
 
-app.put '/hosts/:id', (req, res) ->
+router.put '/hosts/:id', (req, res) ->
   id = req.params.id
-  new Promise ->
-    JSON.parse(req.body)
-  .then (route) ->
-    facade.putHost(id, route)
+
+  facade.putHost(id, req.body)
   .then ->
     response.send res, 200, 'ok'
   .catch (err) ->
     console.log "unable to save host #{id}, #{err}"
     response.send res, 500, 'unable to save host, check the log'
 
-app.delete '/hosts/:id', (req, res) ->
+router.delete '/hosts/:id', (req, res) ->
   id = req.params.id
 
   facade.deleteHost(id)
@@ -86,4 +88,4 @@ app.delete '/hosts/:id', (req, res) ->
     console.log "unable to delete host #{id}, #{err}"
     response.send res, 500, 'unable to delete host, check the log'
 
-module.exports = app
+module.exports = router

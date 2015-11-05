@@ -61,14 +61,10 @@ module.exports =
 
     getRoutes: ->
         Promise.resolve routes
-    getRoute: (id) ->
-        returns = routes.filter (el) ->
-            el.route == id
-        Promise.resolve returns
     putRoute: (id, route) ->
         agent.put("#{routeUrl}/#{id}", route)
     deleteRoute: (id) ->
-        agent.delete("#{routeUrl}/#{id}")
+        agent.del("#{routeUrl}/#{id}")
 
     getServices: ->
         Promise.resolve services
@@ -77,4 +73,4 @@ module.exports =
     putHost: (id, host) ->
         agent.put("#{serviceUrl}/#{id}", host)
     deleteHost: (id) ->
-        agent.delete("#{serviceUrl}/#{id}")
+        agent.del("#{serviceUrl}/#{id}")
