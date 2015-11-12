@@ -23,7 +23,7 @@ findRouteByPath = (url, pathDepth = 3) ->
 module.exports =
     resolveRoute: (url, host) ->
         closestRoute = findRouteByHost(host) or findRouteByPath(url)
-        services = facade.getServices()
+        services = facade.getHosts()
         closestRoute?.instances = _(closestRoute.services).chain().map((service) ->
             [service, services[service]]
         ).object().value()

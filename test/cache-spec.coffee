@@ -32,10 +32,10 @@ describe 'facade', ->
     detectStub.returns(true)
     sinon.stub consul, 'init'
 
-    sinon.stub(consul, 'getServices').returns 'result': 'success'
+    sinon.stub(consul, 'getHosts').returns 'result': 'success'
 
     facade.init()
-    services = facade.getServices()
+    services = facade.getHosts()
     assert.equal services.result, 'success'
 
   it 'throws exception if there is no backend defined', ->
@@ -54,4 +54,4 @@ describe 'facade', ->
     restore consul.detect
     restore redis.detect
     restore consul.getRoutes
-    restore consul.getServices
+    restore consul.getHosts

@@ -11,12 +11,11 @@ router.get '/routes', (req, res) ->
   .then (routes) ->
     res.json routes
   .catch (err) ->
-    console.log err
+    console.log "unable to load routes: #{err}"
     response.send res, 500, 'unable to load routes'
 
 router.get '/routes/:id', (req, res)->
   id = req.params.id
-
   facade.getRoutes()
   .then (data) ->
     returns = data.filter (el) ->
@@ -40,7 +39,6 @@ router.put '/routes/:id', (req, res) ->
 
 router.delete '/routes/:id', (req, res) ->
   id = req.params.id
-
   facade.deleteRoute(id)
   .then ->
     response.send res, 200, 'ok'
@@ -49,7 +47,7 @@ router.delete '/routes/:id', (req, res) ->
     response.send res, 500, 'unable to delete route, check the log'
 
 router.get '/hosts/', (req, res) ->
-  facade.getServices()
+  facade.getHosts()
   .then (hosts) ->
     res.json hosts
   .catch (err) ->

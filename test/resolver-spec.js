@@ -56,14 +56,14 @@ describe('resolver', function () {
     it('adds service urls', function () {
         sinon.stub(facade, "getRoutes").returns([{route: 'abc/def', services: ['service1']}]);
 
-        sinon.stub(facade, "getServices").returns({service1: [{url: "www.monsanto.com"}]});
+        sinon.stub(facade, "getHosts").returns({service1: [{url: "www.monsanto.com"}]});
 
         assert.equal(resolver.resolveRoute("http://monsanto.com/abc/def/ghi", "").instances.service1[0].url, 'www.monsanto.com');
     });
 
     afterEach(function () {
         restore(facade.getRoutes);
-        restore(facade.getServices);
+        restore(facade.getHosts);
     });
 
     function restore(mockFunc) {

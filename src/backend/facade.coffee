@@ -19,8 +19,8 @@ module.exports =
         datastore.init()
     getRoutes: ->
         datastore.getRoutes()
-    getServices: ->
-        datastore.getServices()
+    getHosts: ->
+        datastore.getHosts()
     putRoute: (id, route) ->
         datastore.putRoute(id, route)
     deleteRoute: (id) ->

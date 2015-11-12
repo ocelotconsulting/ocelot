@@ -54,7 +54,7 @@ module.exports =
 
     init: ->
         routeUrl = config.get 'backend.consul.routes'
-        serviceUrl = config.get 'backend.consul.services'
+        hostUrl = config.get 'backend.consul.hosts'
         reload()
         cron.scheduleJob '*/30 * * * * *', reload
 
@@ -67,7 +67,7 @@ module.exports =
     deleteRoute: (id) ->
         agent.del("#{routeUrl}/#{id}")
 
-    getServices: ->
+    getHosts: ->
         Promise.resolve services
     getHost: (id) ->
         Promise.resolve services[id]

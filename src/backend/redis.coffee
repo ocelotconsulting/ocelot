@@ -69,9 +69,7 @@ module.exports =
         else
           resolve "ok"
 
-  getServices: ->
-    console.log hosts
-
+  getHosts: ->
     Promise.resolve(hosts)
 
   putHost: (id, host) ->
