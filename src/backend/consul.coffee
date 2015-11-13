@@ -1,7 +1,7 @@
 cron = require 'node-crontab'
 _ = require 'underscore'
 config = require 'config'
-{routes, services, routeUrl, serviceUrl} = {}
+{routes, hosts, routeUrl, hostUrl} = {}
 routeRegex = /[^/]+[/](.+)/
 servicesRegex = /[^/]+[/](.+)\/(.+)/
 Promise = this.Promise || require 'promise'
@@ -16,11 +16,11 @@ reload = ->
     .catch (err) ->
         console.log 'could not load routes: ' + err
 
-    agent.get(serviceUrl + '/?recurse')
+    agent.get(hostUrl + '/?recurse')
     .then (data) ->
         JSON.parse(data.text)
     .then (json)->
-        services = parseServices(json)
+        hosts = parseHosts(json)
     .catch (err) ->
         console.log 'could not load services: ' + err
 
@@ -41,7 +41,7 @@ parseRoutes = (consulJson) ->
         value.route = match[1]
         value
 
-parseServices = (consulJson) ->
+parseHosts = (consulJson) ->
     _(parseConsul consulJson, servicesRegex, (value, match) ->
         value.name = match[1]
         value.id = match[2]
@@ -50,7 +50,7 @@ parseServices = (consulJson) ->
 
 module.exports =
     detect: ->
-        config.has('backend.consul.routes') and config.has('backend.consul.services')
+        config.has('backend.consul.routes') and config.has('backend.consul.hosts')
 
     init: ->
         routeUrl = config.get 'backend.consul.routes'
@@ -61,17 +61,15 @@ module.exports =
     reloadData: reload
 
     getRoutes: ->
-        Promise.resolve routes
-    putRoute: (id, route) ->
-        agent.put("#{routeUrl}/#{id}", route)
-    deleteRoute: (id) ->
-        agent.del("#{routeUrl}/#{id}")
+        routes
+    putRoute: (key, route) ->
+        agent.put("#{routeUrl}/#{key}", route)
+    deleteRoute: (key) ->
+        agent.del("#{routeUrl}/#{key}")
 
     getHosts: ->
-        Promise.resolve services
-    getHost: (id) ->
-        Promise.resolve services[id]
-    putHost: (id, host) ->
-        agent.put("#{serviceUrl}/#{id}", host)
-    deleteHost: (id) ->
-        agent.del("#{serviceUrl}/#{id}")
+        hosts
+    putHost: (key, host) ->
+        agent.put("#{hostUrl}/#{key}", host)
+    deleteHost: (key) ->
+        agent.del("#{hostUrl}/#{key}")

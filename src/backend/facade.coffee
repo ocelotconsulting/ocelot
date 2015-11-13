@@ -4,6 +4,7 @@ config = require 'config'
 datastore = undefined
 jwks = require './jwks'
 
+# todo: get rid of this module
 module.exports =
     init: ->
         if consul.detect()
@@ -12,7 +13,6 @@ module.exports =
             datastore = redis
         else
             throw 'no datastore backend found in configuration'
-
         if not config.has 'jwks.url' then throw 'no jwks url found in configuration'
         jwks.init()
 
@@ -21,14 +21,14 @@ module.exports =
         datastore.getRoutes()
     getHosts: ->
         datastore.getHosts()
-    putRoute: (id, route) ->
-        datastore.putRoute(id, route)
-    deleteRoute: (id) ->
-        datastore.deleteRoute(id)
-    putHost: (id, route) ->
-        datastore.putHost(id, route)
-    deleteHost: (id) ->
-        datastore.deleteHost(id)
+    putRoute: (key, route) ->
+        datastore.putRoute(key, route)
+    deleteRoute: (key) ->
+        datastore.deleteRoute(key)
+    putHost: (key, host) ->
+        datastore.putHost(key, host)
+    deleteHost: (key) ->
+        datastore.deleteHost(key)
     getJWKS: ->
         jwks.getKeys
     reloadData: ->

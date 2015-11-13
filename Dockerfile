@@ -1,4 +1,4 @@
-# latest: dockerc01.monsanto.com:5000/ocelot:1.12
+# latest: dockerc01.monsanto.com:5000/ocelot:1.13
 
 FROM alpine
 

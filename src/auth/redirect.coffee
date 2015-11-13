@@ -21,11 +21,14 @@ redirectProtocol = (req) ->
 
 authServer = config.get 'authentication.ping.host'
 
+endsWith = (str, suffix) ->
+    str.indexOf(suffix, str.length - suffix.length) != -1
+
 module.exports =
     # todo: remove references to ping, call auth backend
     startAuthCode: (req, res, route) ->
         origUrl = "#{redirectProtocol(req)}://#{req.headers.host}#{req.url}"
-        redirect_uri = "#{origUrl}/receive-auth-token"
+        redirect_uri = if endsWith origUrl, '/' then "#{origUrl}receive-auth-token" else "#{origUrl}/receive-auth-token"
         redirect_uri = redirect_uri.split('?')[0]
         state = new Buffer(origUrl).toString 'base64'
         client_id = route['client-id']

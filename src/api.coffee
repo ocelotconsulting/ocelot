@@ -7,7 +7,7 @@ util = require 'util'
 router = express.Router()
 
 router.get '/routes', (req, res) ->
-  facade.getRoutes()
+  Promise.resolve facade.getRoutes()
   .then (routes) ->
     res.json routes
   .catch (err) ->
@@ -16,7 +16,7 @@ router.get '/routes', (req, res) ->
 
 router.get '/routes/:id', (req, res)->
   id = req.params.id
-  facade.getRoutes()
+  Promise.resolve facade.getRoutes()
   .then (data) ->
     returns = data.filter (el) ->
       el.route == id
@@ -26,64 +26,71 @@ router.get '/routes/:id', (req, res)->
       response.send res, 404
   .catch (err) ->
     console.log "unable to get route #{id}, #{err}"
-    response.send res, 500, 'unable to get route, check the log'
+    response.send res, 500, 'unable to get route'
 
-router.put '/routes/:id', (req, res) ->
+router.put '/routes/:id/', (req, res) ->
   id = req.params.id
+  console.log "> #{JSON.stringify(req.body)}"
+
   facade.putRoute(id, JSON.stringify(req.body))
   .then ->
-    response.send res, 200, 'ok'
+    response.send res, 200
   .catch (err) ->
     console.log "unable to save route #{id}, #{err}"
-    response.send res, 500, 'unable to save route, check the log'
+    response.send res, 500, 'unable to save route'
 
 router.delete '/routes/:id', (req, res) ->
   id = req.params.id
   facade.deleteRoute(id)
   .then ->
-    response.send res, 200, 'ok'
+    response.send res, 200
   .catch (err) ->
     console.log "unable to delete route #{id}, #{err}"
-    response.send res, 500, 'unable to delete route, check the log'
+    response.send res, 500, 'unable to delete route'
 
 router.get '/hosts/', (req, res) ->
-  facade.getHosts()
+  Promise.resolve facade.getHosts()
   .then (hosts) ->
     res.json hosts
   .catch (err) ->
+    console.log "unable to get hosts #{err}"
     response.send res, 500, 'unable to load hosts'
 
-router.get '/hosts/:id', (req, res)->
-  id = req.params.id
-
-  facade.getServices()
+router.get '/hosts/:group', (req, res)->
+  group = req.params.group
+  Promise.resolve facade.getHosts()
   .then (data) ->
-    if data[id]
-      res.json data[id]
+    if data[group]
+      res.json data[group]
     else
       response.send res, 404
   .catch (err) ->
-    console.log "unable to get host #{id}, #{err}"
-    response.send res, 500, 'unable to get host, check the log'
+    console.log "unable to get host #{group}, #{err}"
+    response.send res, 500, 'unable to get host'
 
-router.put '/hosts/:id', (req, res) ->
+router.put '/hosts/:group/:id', (req, res) ->
   id = req.params.id
+  group = req.params.group
+#  todo: validate
+  req.body.id = id
+  req.body.name = group
 
-  facade.putHost(id, JSON.stringify(req.body))
+  facade.putHost("#{group}/#{id}", JSON.stringify(req.body))
   .then ->
-    response.send res, 200, 'ok'
+    response.send res, 200
   .catch (err) ->
     console.log "unable to save host #{id}, #{err}"
-    response.send res, 500, 'unable to save host, check the log'
+    response.send res, 500, 'unable to save host'
 
-router.delete '/hosts/:id', (req, res) ->
+router.delete '/hosts/:group/:id', (req, res) ->
   id = req.params.id
+  group = req.params.group
 
-  facade.deleteHost(id)
+  facade.deleteHost("#{group}/#{id}")
   .then ->
-    response.send res, 200, 'ok'
+    response.send res, 200
   .catch (err) ->
     console.log "unable to delete host #{id}, #{err}"
-    response.send res, 500, 'unable to delete host, check the log'
+    response.send res, 500, 'unable to delete host'
 
 module.exports = router
