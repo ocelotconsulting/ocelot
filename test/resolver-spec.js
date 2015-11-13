@@ -11,46 +11,46 @@ describe('resolver', function () {
         assert.equal(resolver.resolveRoute("http://monsanto.com/abc", ""), null);
     });
 
-    it('returns route if found by subdomain', function () {
-        sinon.stub(facade, "getRoutes").returns([{route: 'abc'}]);
+    it('returns route if found by host', function () {
+        sinon.stub(facade, "getRoutes").returns([{route: 'abc.monsanto.com'}]);
 
-        assert.equal(resolver.resolveRoute("/xyz", "abc.monsanto.com").route, 'abc');
+        assert.equal(resolver.resolveRoute("/xyz", "abc.monsanto.com").route, 'abc.monsanto.com');
     });
 
     it('returns route if found, level 1', function () {
-        sinon.stub(facade, "getRoutes").returns([{route: 'abc'}]);
+        sinon.stub(facade, "getRoutes").returns([{route: 'abc.monsanto.com'}]);
 
-        assert.equal(resolver.resolveRoute("/abc", "").route, 'abc');
+        assert.equal(resolver.resolveRoute("/abc", "abc.monsanto.com").route, 'abc.monsanto.com');
     });
 
     it('returns route if found, level 2', function () {
-        sinon.stub(facade, "getRoutes").returns([{route: 'abc/def'}]);
+        sinon.stub(facade, "getRoutes").returns([{route: 'abc.monsanto.com/def'}]);
 
-        assert.equal(resolver.resolveRoute("http://monsanto.com/abc/def", "").route, 'abc/def');
+        assert.equal(resolver.resolveRoute("/def", "abc.monsanto.com").route, 'abc.monsanto.com/def');
     });
 
     it('returns route if found, level 3', function () {
-        sinon.stub(facade, "getRoutes").returns([{route: 'abc/def/ghi'}]);
+        sinon.stub(facade, "getRoutes").returns([{route: 'abc.monsanto.com/def/ghi'}]);
 
-        assert.equal(resolver.resolveRoute("http://monsanto.com/abc/def/ghi", "").route, 'abc/def/ghi');
+        assert.equal(resolver.resolveRoute("/def/ghi", "abc.monsanto.com").route, 'abc.monsanto.com/def/ghi');
     });
 
-    it('does not go to level 4', function () {
-        sinon.stub(facade, "getRoutes").returns([{route: 'abc/def/ghi/jkl'}]);
+    it('does not go to level 5', function () {
+        sinon.stub(facade, "getRoutes").returns([{route: 'abc/def/ghi/jkl/mno'}]);
 
-        assert.equal(resolver.resolveRoute("http://monsanto.com/abc/def/ghi/jkl", ""), null);
+        assert.equal(resolver.resolveRoute("/def/ghi/jkl/mno", "abc"), null);
     });
 
     it('uses closest path', function () {
         sinon.stub(facade, "getRoutes").returns([{route: 'abc/def'}]);
 
-        assert.equal(resolver.resolveRoute("http://monsanto.com/abc/def/ghi", "").route, 'abc/def');
+        assert.equal(resolver.resolveRoute("/def/ghi", "abc").route, 'abc/def');
     });
 
     it('returns whole cache object', function () {
         sinon.stub(facade, "getRoutes").returns([{route: 'abc/def', fruit: "banana"}]);
 
-        assert.equal(resolver.resolveRoute("http://monsanto.com/abc/def/ghi", "").fruit, 'banana');
+        assert.equal(resolver.resolveRoute("/def/ghi", "abc").fruit, 'banana');
     });
 
     it('adds service urls', function () {
@@ -58,7 +58,7 @@ describe('resolver', function () {
 
         sinon.stub(facade, "getHosts").returns({service1: [{url: "www.monsanto.com"}]});
 
-        assert.equal(resolver.resolveRoute("http://monsanto.com/abc/def/ghi", "").instances.service1[0].url, 'www.monsanto.com');
+        assert.equal(resolver.resolveRoute("/def/ghi", "abc").instances.service1[0].url, 'www.monsanto.com');
     });
 
     afterEach(function () {

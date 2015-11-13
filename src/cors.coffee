@@ -5,6 +5,7 @@ domains = config.get('cors-domains')
 endsWith = (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1
 
+#    domains have to be whitelisted exactly, or be a subdomain which is why we do endsWith .<domain>
 whitelistedDomain = (origin) ->
     domains? and origin? and domains.filter((domain) -> endsWith(origin, ".#{domain}")).length > 0 or domains.indexOf(origin) > -1
 
