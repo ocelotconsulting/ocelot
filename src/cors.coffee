@@ -1,5 +1,5 @@
 config = require 'config'
-originPortRegex = /(.*):\d+/
+originPortRegex = /(.*):\d+$/
 
 domains = config.get('cors-domains')
 
@@ -15,8 +15,10 @@ whitelistedDomain = (origin) ->
 
 module.exports =
     shortCircuit: (req) ->
-        preflight = -> req.headers.origin and req.headers['access-control-request-method'] and req.method is 'OPTIONS'
+        origin = req.headers.origin
+        preflight = -> origin? and req.headers['access-control-request-method'] and req.method is 'OPTIONS'
         untrustredDomain = -> origin? and not whitelistedDomain req.headers.origin
+
         preflight() or untrustredDomain()
 
     setCorsHeaders: (req, res) ->

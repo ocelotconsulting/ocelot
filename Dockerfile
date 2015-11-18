@@ -1,4 +1,4 @@
-# latest: dockerc01.monsanto.com:5000/ocelot:1.13
+# latest: docker-registry.threega.com/ocelot:1.17
 
 FROM alpine
 

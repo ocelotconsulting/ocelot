@@ -101,6 +101,14 @@ describe('cors', function () {
             assert.equal(typeof res['Access-Control-Allow-Origin'] == 'undefined', true);
         });
 
+        it('not set without subdomain or exact match', function () {
+            req.headers.origin = "http://monsanto.com";
+
+            cors.setCorsHeaders(req, res);
+
+            assert.equal(typeof res['Access-Control-Allow-Origin'] == 'undefined', true);
+        });
+
         beforeEach(function () {
             req = {};
             req.headers = {};
