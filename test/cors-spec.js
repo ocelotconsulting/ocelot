@@ -65,6 +65,16 @@ describe('cors', function () {
             assert.equal(res['Access-Control-Allow-Credentials'], "true");
         });
 
+        it('cors is enabled even for unspecified ports', function () {
+            req.headers.origin = "http://abc.monsanto.com:8080";
+
+            cors.setCorsHeaders(req, res);
+
+            assert.equal(res['Access-Control-Allow-Origin'], "http://abc.monsanto.com:8080");
+            assert.equal(res['Access-Control-Max-Age'], "1728000");
+            assert.equal(res['Access-Control-Allow-Credentials'], "true");
+        });
+
         it('sets allowed headers if required', function () {
             req.headers.origin = "abc.monsanto.com";
             req.headers['access-control-request-headers'] = "abc";

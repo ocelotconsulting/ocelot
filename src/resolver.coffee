@@ -4,7 +4,7 @@ uri = require 'url'
 _ = require 'underscore'
 
 findRoute = (key) ->
-    _(facade.getRoutes()).find (route) -> route.route is key
+    _(facade.getCachedRoutes()).find (route) -> route.route is key
 
 findRouteByPath = (url, pathDepth = 4) ->
     if pathDepth == 0
@@ -16,7 +16,7 @@ findRouteByPath = (url, pathDepth = 4) ->
 module.exports =
     resolveRoute: (url, host) ->
         closestRoute = findRouteByPath("#{host}#{url}")
-        services = facade.getHosts()
+        services = facade.getCachedHosts()
         closestRoute?.instances = _(closestRoute.services).chain().map((service) ->
             [service, services[service]]
         ).object().value()

@@ -1,8 +1,8 @@
 {
   "backend": {
-    "redis": {
-      "host": "192.168.99.100",
-      "port": 32768
+    "consul": {
+      "routes": "http://192.168.99.104:8500/v1/kv/routes",
+      "hosts": "http://192.168.99.104:8500/v1/kv/services"
     }
   },
   "jwks": {

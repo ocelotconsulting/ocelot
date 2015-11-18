@@ -4,8 +4,9 @@ wam = require '../backend/wam'
 parseCookies = require '../parseCookies'
 
 module.exports =
+
+    #todo: wam sucks
     setAuthCookies: (res, route, authentication) ->
-        #todo: maybe hash incoming ip address along with cookie to prevent cross site scripting
         wamPromise = if route['wam-legacy'] then wam.getWAMToken authentication.access_token else Promise.resolve()
         wamPromise.then (wamResult) ->
             cookieName = route['cookie-name']

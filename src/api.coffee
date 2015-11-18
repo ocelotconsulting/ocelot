@@ -7,49 +7,48 @@ util = require 'util'
 router = express.Router()
 
 router.get '/routes', (req, res) ->
-  Promise.resolve facade.getRoutes()
+  facade.getRoutes()
   .then (routes) ->
     res.json routes
   .catch (err) ->
     console.log "unable to load routes: #{err}"
     response.send res, 500, 'unable to load routes'
 
-router.get '/routes/:id', (req, res)->
-  id = req.params.id
-  Promise.resolve facade.getRoutes()
+router.get /\/routes\/(.*)/, (req, res)->
+  route = req.params[0]
+  facade.getRoutes()
   .then (data) ->
     returns = data.filter (el) ->
-      el.route == id
+      el.route == route
     if returns.length == 1
       res.json returns[0]
     else
       response.send res, 404
   .catch (err) ->
-    console.log "unable to get route #{id}, #{err}"
+    console.log "unable to get route #{route}, #{err}"
     response.send res, 500, 'unable to get route'
 
-router.put '/routes/:id/', (req, res) ->
-  id = req.params.id
-  console.log "> #{JSON.stringify(req.body)}"
-
-  facade.putRoute(id, JSON.stringify(req.body))
+router.put /\/routes\/(.*)/, (req, res) ->
+  route = req.params[0]
+#  todo: validate
+  facade.putRoute(route, JSON.stringify(req.body))
   .then ->
     response.send res, 200
   .catch (err) ->
-    console.log "unable to save route #{id}, #{err}"
+    console.log "unable to save route #{route}, #{err}"
     response.send res, 500, 'unable to save route'
 
-router.delete '/routes/:id', (req, res) ->
-  id = req.params.id
-  facade.deleteRoute(id)
+router.delete /\/routes\/(.*)/, (req, res) ->
+  route = req.params[0]
+  facade.deleteRoute(route)
   .then ->
     response.send res, 200
   .catch (err) ->
-    console.log "unable to delete route #{id}, #{err}"
+    console.log "unable to delete route #{route}, #{err}"
     response.send res, 500, 'unable to delete route'
 
 router.get '/hosts/', (req, res) ->
-  Promise.resolve facade.getHosts()
+  facade.getHosts()
   .then (hosts) ->
     res.json hosts
   .catch (err) ->
@@ -58,7 +57,7 @@ router.get '/hosts/', (req, res) ->
 
 router.get '/hosts/:group', (req, res)->
   group = req.params.group
-  Promise.resolve facade.getHosts()
+  facade.getHosts()
   .then (data) ->
     if data[group]
       res.json data[group]
@@ -72,10 +71,8 @@ router.put '/hosts/:group/:id', (req, res) ->
   id = req.params.id
   group = req.params.group
 #  todo: validate
-  req.body.id = id
-  req.body.name = group
 
-  facade.putHost("#{group}/#{id}", JSON.stringify(req.body))
+  facade.putHost(group, id, JSON.stringify(req.body))
   .then ->
     response.send res, 200
   .catch (err) ->
@@ -86,7 +83,7 @@ router.delete '/hosts/:group/:id', (req, res) ->
   id = req.params.id
   group = req.params.group
 
-  facade.deleteHost("#{group}/#{id}")
+  facade.deleteHost(group, id)
   .then ->
     response.send res, 200
   .catch (err) ->

@@ -1,8 +1,8 @@
 {
-  "name": "ocelot-proxy",
-  "version": "1.0.2",
+  "name": "@monsantoco/ocelot-proxy",
+  "version": "1.0.3",
   "description": "proxy for velocity.ag and other projects",
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "node bin/www",
     "dev": "supervisor -w .,src -e coffee bin/www",
@@ -11,9 +11,6 @@
     "test:coverage": "istanbul cover _mocha -- -R spec"
   },
   "author": "Chris Coffman",
-  "publishConfig": {
-    "registry": "http://dockers05.monsanto.com:40000/registry/_design/app/_rewrite"
-  },
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.14.1",

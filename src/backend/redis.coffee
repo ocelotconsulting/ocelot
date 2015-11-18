@@ -50,8 +50,8 @@ module.exports =
     reloadData()
     cron.scheduleJob '*/30 * * * * *', reloadData
 
-  getRoutes: ->
-    Promise.resolve(routes)
+  getCachedRoutes: ->
+    routes
 
   putRoute: (id, route) ->
     new Promise (resolve, reject) ->
@@ -59,7 +59,7 @@ module.exports =
         if(err?)
           reject "could not put route #{id}: #{err}"
         else
-          resolve "ok"
+          resolve
 
   deleteRoute: (id) ->
     new Promise (resolve, reject) ->
@@ -67,10 +67,10 @@ module.exports =
         if(err?)
           reject "could not delete route #{id}: #{err}"
         else
-          resolve "ok"
+          resolve
 
-  getHosts: ->
-    Promise.resolve(hosts)
+  getCachedHosts: ->
+    hosts
 
   putHost: (id, host) ->
     new Promise (resolve, reject) ->
@@ -78,7 +78,7 @@ module.exports =
         if(err?)
           reject "could not put host #{id}: #{err}"
         else
-          resolve "ok"
+          resolve
 
   deleteHost: (id) ->
     new Promise (resolve, reject) ->
@@ -86,6 +86,6 @@ module.exports =
         if(err?)
           reject "could not delete host #{id}: #{err}"
         else
-          resolve "ok"
+          resolve
 
   reloadData: reloadData
