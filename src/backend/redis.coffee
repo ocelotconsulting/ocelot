@@ -32,11 +32,11 @@ getHosts = () ->
             json = JSON.parse(v)
             if hostRegex.test k
               match = hostRegex.exec k
-              json.name = match[1]
+              name = match[1]
               json.id = match[2]
-              if not res[json.name]?
-                res[json.name] = []
-                res[json.name].push json
+              if not res[name]?
+                res[name] = []
+                res[name].push json
           catch e
             console.log "error parsing #{e}"
 

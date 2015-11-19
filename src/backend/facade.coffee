@@ -19,26 +19,17 @@ module.exports =
         if not config.has 'jwks.url' then throw 'no jwks url found in configuration'
         jwks.init()
 
-    getCachedRoutes: ->
-        datastore.getCachedRoutes()
-    getRoutes: ->
-        datastore.getRoutes()
-    putRoute: (key, route) ->
-        datastore.putRoute(key, route)
-    deleteRoute: (key) ->
-        datastore.deleteRoute(key)
+    getCachedRoutes: -> datastore.getCachedRoutes()
+    getRoutes: -> datastore.getRoutes()
+    putRoute: (key, route) -> datastore.putRoute(key, route)
+    deleteRoute: (key) -> datastore.deleteRoute(key)
 
-    getCachedHosts: ->
-        datastore.getCachedHosts()
-    getHosts: ->
-        datastore.getHosts()
-    putHost: (group, id, host) ->
-        datastore.putHost(group, id, host)
-    deleteHost: (group, id) ->
-        datastore.deleteHost(group, id)
+    getCachedHosts: -> datastore.getCachedHosts()
+    getHosts: -> datastore.getHosts()
+    putHost: (group, id, host) -> datastore.putHost(group, id, host)
+    deleteHost: (group, id) -> datastore.deleteHost(group, id)
 
-    getJWKS: ->
-        jwks.getKeys
+    getJWKS: -> jwks.getKeys
 
     reloadData: ->
         datastore.reloadData()
