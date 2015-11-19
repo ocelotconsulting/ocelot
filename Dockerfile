@@ -9,3 +9,4 @@ ADD ./ ./
 CMD npm start
 
 EXPOSE 8080
+EXPOSE 8081
