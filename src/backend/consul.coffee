@@ -74,20 +74,12 @@ module.exports =
 
     reloadData: reload
 
-    getCachedRoutes: ->
-        routes
-    getRoutes: ->
-        getRoutes()
-    putRoute: (key, route) ->
-        agent.put("#{routeUrl}/#{key}", route)
-    deleteRoute: (key) ->
-        agent.del("#{routeUrl}/#{key}")
+    getCachedRoutes: -> routes
+    getRoutes: -> getRoutes()
+    putRoute: (key, route) -> agent.put("#{routeUrl}/#{key}", route)
+    deleteRoute: (key) -> agent.del("#{routeUrl}/#{key}")
 
-    getCachedHosts: ->
-        hosts
-    getHosts: ->
-        getHosts()
-    putHost: (group, id, host) ->
-        agent.put("#{hostUrl}/#{group}/#{id}", host)
-    deleteHost: (group, id) ->
-        agent.del("#{hostUrl}/#{group}/#{id}")
+    getCachedHosts: -> hosts
+    getHosts: -> getHosts()
+    putHost: (group, id, host) -> agent.put("#{hostUrl}/#{group}/#{id}", host)
+    deleteHost: (group, id) -> agent.del("#{hostUrl}/#{group}/#{id}")

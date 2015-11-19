@@ -15,9 +15,9 @@ whitelistedDomain = (origin) ->
 
 module.exports =
     shortCircuit: (req) ->
-        origin = req.headers.origin
+        {origin} = req.headers
         preflight = -> origin? and req.headers['access-control-request-method'] and req.method is 'OPTIONS'
-        untrustredDomain = -> origin? and not whitelistedDomain req.headers.origin
+        untrustredDomain = -> origin? and not whitelistedDomain origin
 
         preflight() or untrustredDomain()
 

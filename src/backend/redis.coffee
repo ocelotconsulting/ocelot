@@ -2,38 +2,58 @@ redis = require 'redis'
 config = require 'config'
 cron = require 'node-crontab'
 {client, routes, hosts} = {}
+hostRegex = /(.+)\/(.+)/
+
+getRoutes = () ->
+  new Promise (accept, reject) ->
+    client.hgetall "routes", (err, obj) ->
+      if err
+        reject(err)
+      else
+        res = []
+        for own k,v of obj
+          try
+            json = JSON.parse(v)
+            json.route = k
+            res.push json
+          catch e
+            console.log "error parsing #{e}"
+        accept res
+
+getHosts = () ->
+  new Promise (accept, reject) ->
+    client.hgetall "hosts", (err, obj) ->
+      if err
+        reject(err)
+      else
+        res = {}
+        for own k,v of obj
+          try
+            json = JSON.parse(v)
+            if hostRegex.test k
+              match = hostRegex.exec k
+              json.name = match[1]
+              json.id = match[2]
+              if not res[json.name]?
+                res[json.name] = []
+                res[json.name].push json
+          catch e
+            console.log "error parsing #{e}"
+
+        accept res
 
 reloadData = ->
-  client.hgetall "routes", (err, obj) ->
-    if err or not obj
-      console.log "error loading data from redis: error: #{err}, obj: #{JSON.stringify(obj)} "
-    else
-      res = []
-      for k,v of obj
-        try
-          json = JSON.parse(v)
-          json.route = k
-          res.push json
-        catch e
-          console.log 'error parsing: ' + k
-      routes = res
+  getRoutes()
+  .then (res) ->
+    routes = res
+  .catch (err) ->
+    console.log(err)
 
-
-  client.hgetall "hosts", (err, obj) ->
-    if err or not obj
-      console.log "error loading data from redis: error: #{err}, obj: #{JSON.stringify(obj)} "
-    else
-      res = {}
-      for k,v of obj
-        try
-          json = JSON.parse(v)
-          json.id = k
-          if not res[json.id]?
-            res[json.id] = []
-          res[json.id].push json
-        catch e
-          console.log 'error parsing: ' + k
-      hosts = res
+  getHosts()
+  .then (res) ->
+    hosts = res
+  .catch (err) ->
+    console.log(err)
 
 module.exports =
   detect: ->
@@ -50,42 +70,42 @@ module.exports =
     reloadData()
     cron.scheduleJob '*/30 * * * * *', reloadData
 
-  getCachedRoutes: ->
-    routes
+  getCachedRoutes: -> routes
+  getRoutes: -> getRoutes()
 
   putRoute: (id, route) ->
     new Promise (resolve, reject) ->
-      client.hset "routes", id, route, (err, res) ->
+      client.hset "routes", id, route, (err) ->
         if(err?)
           reject "could not put route #{id}: #{err}"
         else
-          resolve
+          resolve()
 
   deleteRoute: (id) ->
     new Promise (resolve, reject) ->
-      client.hdel "routes", id, (err, res) ->
+      client.hdel "routes", id, (err) ->
         if(err?)
           reject "could not delete route #{id}: #{err}"
         else
-          resolve
+          resolve()
 
-  getCachedHosts: ->
-    hosts
+  getCachedHosts: -> hosts
+  getHosts: -> getHosts()
 
-  putHost: (id, host) ->
+  putHost: (group, id, host) ->
     new Promise (resolve, reject) ->
-      client.hset "hosts", id, host, (err, res) ->
+      client.hset "hosts", "#{group}/#{id}", host, (err) ->
         if(err?)
           reject "could not put host #{id}: #{err}"
         else
-          resolve
+          resolve()
 
-  deleteHost: (id) ->
+  deleteHost: (group, id) ->
     new Promise (resolve, reject) ->
-      client.hdel "hosts", id, (err, res) ->
+      client.hdel "hosts", "#{group}/#{id}", (err) ->
         if(err?)
           reject "could not delete host #{id}: #{err}"
         else
-          resolve
+          resolve()
 
   reloadData: reloadData
