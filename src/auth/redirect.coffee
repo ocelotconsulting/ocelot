@@ -28,9 +28,9 @@ module.exports =
     # todo: remove references to ping, call auth backend
     startAuthCode: (req, res, route) ->
         origUrl = "#{redirectProtocol(req)}://#{req.headers.host}#{req.url}"
-        redirect_uri = if endsWith origUrl, '/' then "#{origUrl}receive-auth-token" else "#{origUrl}/receive-auth-token"
-        redirect_uri = redirect_uri.split('?')[0]
         state = new Buffer(origUrl).toString 'base64'
+        redirect_uri = origUrl.split('?')[0]
+        redirect_uri = if endsWith redirect_uri, '/' then "#{redirect_uri}receive-auth-token" else "#{redirect_uri}/receive-auth-token"
         client_id = route['client-id']
         scope = route['oidc-scope']
         location = buildUrl "#{authServer}/as/authorization.oauth2", {response_type: 'code', client_id, redirect_uri, state, scope}
