@@ -8,6 +8,7 @@ getRoutes = () ->
   new Promise (accept, reject) ->
     client.hgetall "routes", (err, obj) ->
       if err
+        console.log "error in hgetall routes", err.stacktrace
         reject(err)
       else
         res = []
@@ -17,7 +18,7 @@ getRoutes = () ->
             json.route = k
             res.push json
           catch e
-            console.log "error parsing #{e}"
+            console.log "*warning* issue found parsing routes entry as json '#{k}'='#{v}' #{e}"
         accept res
 
 getHosts = () ->
@@ -38,7 +39,7 @@ getHosts = () ->
                 res[name] = []
                 res[name].push json
           catch e
-            console.log "error parsing #{e}"
+            console.log "*warning* issue found parsing host entry as json '#{k}'='#{v}' #{e}"
 
         accept res
 
@@ -60,9 +61,12 @@ module.exports =
     config.has('backend.redis.host') and config.has('backend.redis.port')
 
   init: ->
+    host = config.get 'backend.redis.host'
+    port = config.get 'backend.redis.port'
     client = redis.createClient
-      host: config.get 'backend.redis.host'
-      port: config.get 'backend.redis.port'
+      host: host
+      port: port
+    console.log "connecting to redis at #{host}:#{port}"
 
     client.on "error", (err) ->
       console.log "Redis client error: #{err}"

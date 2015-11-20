@@ -17,7 +17,8 @@ module.exports =
         datastore.init()
 
         if not config.has 'jwks.url' then throw 'no jwks url found in configuration'
-        jwks.init()
+        # jwks.init is periodically throwing Error: getaddrinfo EAI_AGAIN errors causing all of ocelot to die, jwks isn't even being used in the code base.
+        # jwks.init()
 
     getCachedRoutes: -> datastore.getCachedRoutes()
     getRoutes: -> datastore.getRoutes()
