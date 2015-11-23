@@ -22,6 +22,7 @@
     "http-proxy": "^1.11.1",
     "httpplease": "^0.16.4",
     "httpplease-promises": "^0.3.0",
+    "log": "^1.4.0",
     "memory-cache": "^0.1.4",
     "node-crontab": "0.0.8",
     "node-forge": "^0.6.34",

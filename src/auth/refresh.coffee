@@ -4,6 +4,8 @@ parseCookies = require '../parseCookies'
 headers = require './headers'
 crypt = require './crypt'
 _ = require 'underscore'
+Log = require 'log'
+log = new Log
 
 grantType = "refresh_token"
 
@@ -24,7 +26,7 @@ module.exports =
                 redirect.refreshPage req, res
 
         refreshError = (err) ->
-            console.log "Refresh error for route #{route.route}: #{err}; for query #{query}"
+            log.debug "Refresh error for route #{route.route} when using cookie #{cookieName}: #{err}; for query #{query}"
             redirect.startAuthCode req, res, route
 
         tryRefresh().then doRefresh, refreshError

@@ -1,5 +1,7 @@
 response = require '../response'
 config = require 'config'
+Log = require 'log'
+log = new Log
 
 buildUrl = (base, params) ->
     url = base
@@ -35,10 +37,12 @@ module.exports =
         scope = route['oidc-scope']
         location = buildUrl "#{authServer}/as/authorization.oauth2", {response_type: 'code', client_id, redirect_uri, state, scope}
         res.setHeader 'Location', location
+        log.debug "Redirecting request #{origUrl} to #{location}"
         response.send res, 307
     refreshPage: (req, res) ->
         origUrl = "#{redirectProtocol(req)}://#{req.headers.host}#{req.url}"
         res.setHeader 'Location', origUrl
+        log.debug "Refreshing current page #{origUrl}"
         response.send res, 307
     upgrade: (req, res) ->
         url = "https://#{req.headers.host}#{req.url}"

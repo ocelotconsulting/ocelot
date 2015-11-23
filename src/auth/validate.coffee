@@ -4,6 +4,8 @@ config = require 'config'
 parseCookies = require '../parseCookies'
 jwks = require '../backend/jwks'
 cache = require 'memory-cache'
+Log = require 'log'
+log = new Log
 
 client = config.get 'authentication.ping.validate.client'
 secret = config.get 'authentication.ping.validate.secret'
@@ -53,5 +55,5 @@ exports.authentication = (req, route) ->
                     cache.put token, authentication, 60000
                     authentication
                 .catch (err) ->
-                    console.log "Validate error for route #{route.route}: #{err}; for query #{query}"
+                    log.debug "Validate error for route #{route.route}: #{err}; for query #{query}"
                     reject oidcValid

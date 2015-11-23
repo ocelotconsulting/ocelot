@@ -2,6 +2,8 @@ url = require 'url'
 postman = require './postman'
 headers = require './headers'
 response = require '../response'
+Log = require 'log'
+log = new Log
 
 grantType = "authorization_code"
 
@@ -21,12 +23,15 @@ module.exports =
         exchangeQuery = "grant_type=#{grantType}&code=#{code}&redirect_uri=#{redirectUrl}"
 
         redirectToOriginalUri = (result) ->
+            log.debug "Exchanged code for token for route #{route.route}; server response #{JSON.stringify result}"
             res.setHeader 'Location', new Buffer(query.state, 'base64').toString('utf8')
             headers.setAuthCookies(res, route, result).then ->
+                log.debug "Completing the exchange for route #{route.route} with headers #{JSON.stringify res.headers}"
                 response.send res, 307
 
         authCodeExchangeError = (err) ->
-            console.log "Auth code exchange error for route #{route.route}: #{err}; for query #{exchangeQuery}"
+            log.debug "Auth code exchange error for route #{route.route}: #{err}; for query #{exchangeQuery}"
             response.send res, 500, err
 
+        log.debug "Attempting auth code exchange for route #{route.route} query #{exchangeQuery}"
         postman.post(exchangeQuery, route).then redirectToOriginalUri, authCodeExchangeError

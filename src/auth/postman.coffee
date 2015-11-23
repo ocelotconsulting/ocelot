@@ -16,7 +16,12 @@ postAs = (query, client, secret) ->
                     JSON.parse data
                 catch e
                     error: "could not parse JSON response: #{data}"
-                if result.error then reject result.error else resolve result
+                if result.error
+                    if result['error_description']
+                        reject "#{result.error} #{result['error_description']}"
+                    else
+                        reject "#{result.error}"
+                else resolve result
 
         options =
             host: pingHost
