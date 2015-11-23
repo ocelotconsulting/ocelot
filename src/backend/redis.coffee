@@ -1,14 +1,13 @@
 redis = require 'redis'
 config = require 'config'
 cron = require 'node-crontab'
-{client, routes, hosts} = {}
+{routes, hosts} = {}
 hostRegex = /(.+)\/(.+)/
 
 getRoutes = () ->
   new Promise (accept, reject) ->
     client.hgetall "routes", (err, obj) ->
       if err
-        console.log "error in hgetall routes", err.stacktrace
         reject(err)
       else
         res = []
@@ -25,7 +24,7 @@ getHosts = () ->
   new Promise (accept, reject) ->
     client.hgetall "hosts", (err, obj) ->
       if err
-        reject(err)
+        reject err
       else
         res = {}
         for own k,v of obj
@@ -40,7 +39,6 @@ getHosts = () ->
                 res[name].push json
           catch e
             console.log "*warning* issue found parsing host entry as json '#{k}'='#{v}' #{e}"
-
         accept res
 
 reloadData = ->
@@ -48,13 +46,13 @@ reloadData = ->
   .then (res) ->
     routes = res
   .catch (err) ->
-    console.log(err)
+    console.log("error loading routes: #{err}")
 
   getHosts()
   .then (res) ->
     hosts = res
   .catch (err) ->
-    console.log(err)
+    console.log("error loading hosts #{hosts}")
 
 module.exports =
   detect: ->
@@ -66,7 +64,6 @@ module.exports =
     client = redis.createClient
       host: host
       port: port
-    console.log "connecting to redis at #{host}:#{port}"
 
     client.on "error", (err) ->
       console.log "Redis client error: #{err}"

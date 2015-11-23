@@ -5,21 +5,26 @@ headers = require './headers'
 crypt = require './crypt'
 _ = require 'underscore'
 
+grantType = "refresh_token"
+
 #todo: call backend for url composition
 module.exports =
     token: (req, res, route) ->
+        cookies = parseCookies req
+        cookieName = "#{route['cookie-name']}_rt"
+        refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']
+        query = "grant_type=#{grantType}&refresh_token=#{refreshToken}"
+
         tryRefresh = ->
-            cookies = parseCookies req
-            cookieName = "#{route['cookie-name']}_rt"
-            refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']
-            postman.post "grant_type=refresh_token&refresh_token=#{refreshToken}", route
+            postman.post query, route
 
         doRefresh = (result) ->
             headers.setAuthCookies res, route, result
             .then () ->
                 redirect.refreshPage req, res
 
-        refreshError = (error) ->
+        refreshError = (err) ->
+            console.log "Refresh error for route #{route.route}: #{err}; for query #{query}"
             redirect.startAuthCode req, res, route
 
         tryRefresh().then doRefresh, refreshError

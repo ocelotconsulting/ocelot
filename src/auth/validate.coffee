@@ -20,10 +20,13 @@ exports.authentication = (req, route) ->
         refreshTokenPresent = cookieAuthEnabled and cookies["#{cookieName}_rt"]?
         {authorization} = req.headers
 
-        token = if authorization and authorization.slice(0, 7).toLowerCase() is 'bearer '
+        token = (if authorization and authorization.slice(0, 7).toLowerCase() is 'bearer '
             authorization.slice 7
         else if cookieAuthEnabled
-            cookies[cookieName]
+            cookies[cookieName])
+        if token
+            encodeURIComponent token
+
 
         reject = (oidcValid = false) ->
             Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled, oidcValid}
@@ -43,12 +46,12 @@ exports.authentication = (req, route) ->
             if cachedValidation
                 Promise.accept cachedValidation
             else
-                postman.postAs("grant_type=#{grantType}&token=#{token}", client, secret)
-                .then((oAuthValidateResult) ->
+                query = "grant_type=#{grantType}&token=#{token}"
+                postman.postAs(query, client, secret)
+                .then (oAuthValidateResult) ->
                     authentication = _(oAuthValidateResult).extend {valid: true, oidcValid}
                     cache.put token, authentication, 60000
                     authentication
-                )
-                .catch (error) ->
-                    console.log "Had an error #{error}"
+                .catch (err) ->
+                    console.log "Validate error for route #{route.route}: #{err}; for query #{query}"
                     reject oidcValid

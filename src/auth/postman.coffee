@@ -3,11 +3,8 @@ url = require 'url'
 config = require 'config'
 _ = require 'underscore'
 
-processResult = (postres) ->
-
 pingHost = url.parse(config.get 'authentication.ping.host').host
 
-#todo: delegate to auth backend for url composition
 postAs = (query, client, secret) ->
     new Promise (resolve, reject) ->
         processResult = (postResult) ->
