@@ -18,16 +18,12 @@
         "client": "TPS_VALIDATOR",
         "secret": "I7PM4yBf"
       },
-      "host": "https://test.amp.monsanto.com"
+      "token-endpoint": "https://test.amp.monsanto.com/as/token.oauth2",
+      "auth-endpoint": "https://test.amp.monsanto.com/as/authorization.oauth2"
     }
   },
   "default-protocol": "https",
   "enforce-https": true,
-  "cors-domains": [
-    "velocity.ag",
-    "monsanto.com",
-    "threega.com",
-    "localhost"
-  ],
+  "cors-domains": ["velocity.ag", "monsanto.com", "threega.com", "localhost"],
   "log-level": "debug"
 }

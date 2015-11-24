@@ -3,7 +3,9 @@ url = require 'url'
 config = require 'config'
 _ = require 'underscore'
 
-pingHost = url.parse(config.get 'authentication.ping.host').host
+parsedUrl = url.parse(config.get 'authentication.ping.token-endpoint')
+authHost = parsedUrl.host
+authPathname = parsedUrl.pathname
 
 postAs = (query, client, secret) ->
     new Promise (resolve, reject) ->
@@ -24,8 +26,8 @@ postAs = (query, client, secret) ->
                 else resolve result
 
         options =
-            host: pingHost
-            path: "/as/token.oauth2?#{query}"
+            host: authHost
+            path: "#{authPathname}?#{query}"
             method: 'POST'
             headers:
                 Authorization: "basic #{new Buffer(client + ':' + secret, 'utf8').toString 'base64'}"

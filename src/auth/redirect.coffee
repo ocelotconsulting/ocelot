@@ -21,7 +21,7 @@ redirectProtocol = (req) ->
     else if config.has settingPath then config.get settingPath
     else 'http'
 
-authServer = config.get 'authentication.ping.host'
+authUrl = config.get 'authentication.ping.auth-endpoint'
 
 endsWith = (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1
@@ -35,7 +35,7 @@ module.exports =
         redirect_uri = if endsWith redirect_uri, '/' then "#{redirect_uri}receive-auth-token" else "#{redirect_uri}/receive-auth-token"
         client_id = route['client-id']
         scope = route['oidc-scope']
-        location = buildUrl "#{authServer}/as/authorization.oauth2", {response_type: 'code', client_id, redirect_uri, state, scope}
+        location = buildUrl authUrl, {response_type: 'code', client_id, redirect_uri, state, scope}
         res.setHeader 'Location', location
         log.debug "Redirecting request #{origUrl} to #{location}"
         response.send res, 307

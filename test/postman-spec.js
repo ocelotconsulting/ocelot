@@ -9,14 +9,14 @@ var assert = require("assert"),
 var postmanMock, headerMock, configMock, httpsMock;
 
 describe('postman', function () {
-    var pingUrl = "http://someurl";
+    var pingUrl = "http://someurl/like/this";
     var someQuery = "this=that";
     var myclient = "myclient";
     var mysecret = "mysecret";
 
     it('post happy path', function (done) {
         configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.ping.host').returns(pingUrl);
+        configMock.withArgs('authentication.ping.token-endpoint').returns(pingUrl);
 
         httpsMock = createHttpsStub('{"some": "data"}');
 
@@ -26,11 +26,16 @@ describe('postman', function () {
             assert.fail('post failed!');
             done();
         });
+
+        httpsArgs = httpsMock.args[0][0];
+        assert.equal(httpsArgs.host, "test.amp.monsanto.com");
+        assert.equal(httpsArgs.path, "/as/token.oauth2?this=that");
+        assert.equal(httpsArgs.method, "POST");
     });
 
     it('returns error from json response', function (done) {
         configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.ping.host').returns(pingUrl);
+        configMock.withArgs('authentication.ping.token-endpoint').returns(pingUrl);
 
         httpsMock = createHttpsStub('{"error": "you suck"}');
 
@@ -45,7 +50,7 @@ describe('postman', function () {
 
     it('returns error if not json response', function (done) {
         configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.ping.host').returns(pingUrl);
+        configMock.withArgs('authentication.ping.token-endpoint').returns(pingUrl);
 
         httpsMock = createHttpsStub('tartar sauce');
 
