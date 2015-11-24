@@ -1,7 +1,7 @@
 response = require '../response'
 config = require 'config'
-Log = require 'log'
-log = new Log
+config = require 'config'
+log = require '../log'
 
 buildUrl = (base, params) ->
     url = base

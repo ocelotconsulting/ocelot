@@ -4,8 +4,7 @@ config = require 'config'
 parseCookies = require '../parseCookies'
 jwks = require '../backend/jwks'
 cache = require 'memory-cache'
-Log = require 'log'
-log = new Log
+log = require '../log'
 
 client = config.get 'authentication.ping.validate.client'
 secret = config.get 'authentication.ping.validate.secret'
@@ -27,8 +26,7 @@ exports.authentication = (req, route) ->
         else if cookieAuthEnabled
             cookies[cookieName])
         if token
-            encodeURIComponent token
-
+            token = encodeURIComponent token
 
         reject = (oidcValid = false) ->
             Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled, oidcValid}
@@ -55,5 +53,5 @@ exports.authentication = (req, route) ->
                     cache.put token, authentication, 60000
                     authentication
                 .catch (err) ->
-                    log.debug "Validate error for route #{route.route}: #{err}; for query #{query}"
+                    log.error "Validate error for route #{route.route}: #{err}; for query #{query}"
                     reject oidcValid

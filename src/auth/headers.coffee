@@ -2,6 +2,7 @@ _ = require 'underscore'
 crypt = require './crypt'
 wam = require '../backend/wam'
 parseCookies = require '../parseCookies'
+log = require '../log'
 
 module.exports =
 
@@ -38,4 +39,4 @@ module.exports =
             if authentication.valid and clientHeader and authentication.client_id
                 req.headers[clientHeader] = authentication.client_id
         catch ex
-            console.log 'error adding user/client header: ' + ex + '; ' + ex.stack
+            log.error 'error adding user/client header: ' + ex + '; ' + ex.stack

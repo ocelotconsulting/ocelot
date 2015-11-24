@@ -2,8 +2,7 @@ url = require 'url'
 postman = require './postman'
 headers = require './headers'
 response = require '../response'
-Log = require 'log'
-log = new Log
+log = require '../log'
 
 grantType = "authorization_code"
 

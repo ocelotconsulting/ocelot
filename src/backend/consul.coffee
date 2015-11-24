@@ -6,6 +6,7 @@ routeRegex = /[^/]+[/](.+)/
 servicesRegex = /[^/]+[/](.+)\/(.+)/
 Promise = this.Promise || require 'promise'
 agent = require('superagent-promise')(require('superagent'), Promise)
+log = require '../log'
 
 getRoutes = ->
     agent.get(routeUrl + '/?recurse')
@@ -26,13 +27,13 @@ reload = ->
     .then (stuff) ->
         routes = stuff
     .catch (err) ->
-        console.log "unable to load routes: #{err}"
+        log.error "unable to load routes: #{err}"
 
     getHosts()
     .then (stuff) ->
         hosts = stuff
     .catch (err) ->
-        console.log "unable to load hosts: #{err}"
+        log.error "unable to load hosts: #{err}"
 
 parseConsul = (consulJson, keyRegex, mutate) ->
     _(consulJson).chain().map((item) ->
@@ -42,7 +43,7 @@ parseConsul = (consulJson, keyRegex, mutate) ->
                 match = keyRegex.exec item.Key
                 mutate decodedValue, match
         catch e
-            console.log 'error parsing: ' + item.Key
+            log.error 'error parsing: ' + item.Key
     ).compact().value()
 
 

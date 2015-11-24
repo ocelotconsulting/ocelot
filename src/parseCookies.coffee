@@ -1,6 +1,5 @@
 cookie = require 'cookie'
-Log = require 'log'
-log = new Log
+log = require './log'
 
 module.exports = (req) ->
     rawCookie = req.headers.cookie
@@ -10,7 +9,7 @@ module.exports = (req) ->
             if kv.indexOf '=' > 0
                 name = kv.split('=')[0].trim()
                 if names.indexOf(name) > -1
-                    log.debug "Duplicate cookies exist in request #{name}: #{rawCookie}"
+                    log.warning "Duplicate cookies exist in request #{name}: #{rawCookie}"
                 else
                     names.push name
 

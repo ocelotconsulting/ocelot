@@ -3,6 +3,7 @@ config = require 'config'
 cron = require 'node-crontab'
 {routes, hosts} = {}
 hostRegex = /(.+)\/(.+)/
+log = require '../log'
 
 getRoutes = () ->
   new Promise (accept, reject) ->
@@ -17,7 +18,7 @@ getRoutes = () ->
             json.route = k
             res.push json
           catch e
-            console.log "*warning* issue found parsing routes entry as json '#{k}'='#{v}' #{e}"
+            log.warning "issue found parsing routes entry as json '#{k}'='#{v}' #{e}"
         accept res
 
 getHosts = () ->
@@ -38,7 +39,7 @@ getHosts = () ->
                 res[name] = []
                 res[name].push json
           catch e
-            console.log "*warning* issue found parsing host entry as json '#{k}'='#{v}' #{e}"
+            log.warning "issue found parsing host entry as json '#{k}'='#{v}' #{e}"
         accept res
 
 reloadData = ->
@@ -46,13 +47,13 @@ reloadData = ->
   .then (res) ->
     routes = res
   .catch (err) ->
-    console.log("error loading routes: #{err}")
+    log.error("error loading routes: #{err}")
 
   getHosts()
   .then (res) ->
     hosts = res
   .catch (err) ->
-    console.log("error loading hosts #{hosts}")
+    log.error("error loading hosts #{hosts}")
 
 module.exports =
   detect: ->
@@ -66,7 +67,7 @@ module.exports =
       port: port
 
     client.on "error", (err) ->
-      console.log "Redis client error: #{err}"
+      log.error "Redis client error: #{err}"
 
     reloadData()
     cron.scheduleJob '*/30 * * * * *', reloadData

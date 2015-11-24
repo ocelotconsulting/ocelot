@@ -1,8 +1,8 @@
 {
   "backend": {
-    "redis": {
-      "host": "192.168.99.104",
-      "port": 32768
+    "consul": {
+      "routes": "http://stludockersbx01.monsanto.com:8500/v1/kv/routes-np",
+      "hosts": "http://stludockersbx01.monsanto.com:8500/v1/kv/services-np"
     }
   },
   "jwks": {
@@ -28,5 +28,6 @@
     "monsanto.com",
     "threega.com",
     "localhost"
-  ]
+  ],
+  "log-level": "debug"
 }

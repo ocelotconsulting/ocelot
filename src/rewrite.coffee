@@ -1,5 +1,6 @@
 url = require 'url'
 _ = require 'underscore'
+log = require './log'
 
 pickRandomEndpoint = (allEndpoints) ->
     instanceUrlStr = allEndpoints[getRandomInt 0, allEndpoints.length - 1].url
@@ -38,4 +39,4 @@ module.exports =
             try
                 url.parse rewritten
             catch err
-                console.log "could not parse url: #{rewritten}"
+                log.error "could not parse url: #{rewritten}"

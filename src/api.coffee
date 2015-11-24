@@ -3,6 +3,7 @@ facade = require './backend/facade'
 response = require './response'
 Promise = require 'promise'
 util = require 'util'
+log = require './log'
 
 router = express.Router()
 
@@ -11,7 +12,7 @@ router.get '/routes', (req, res) ->
   .then (routes) ->
     res.json routes
   .catch (err) ->
-    console.log "unable to load routes: #{err}"
+    log.error "unable to load routes: #{err}"
     response.send res, 500, 'unable to load routes'
 
 router.get /\/routes\/(.*)/, (req, res)->
@@ -25,7 +26,7 @@ router.get /\/routes\/(.*)/, (req, res)->
     else
       response.send res, 404
   .catch (err) ->
-    console.log "unable to get route #{route}, #{err}"
+    log.error "unable to get route #{route}, #{err}"
     response.send res, 500, 'unable to get route'
 
 router.put /\/routes\/(.*)/, (req, res) ->
@@ -35,7 +36,7 @@ router.put /\/routes\/(.*)/, (req, res) ->
   .then ->
     response.send res, 200
   .catch (err) ->
-    console.log "unable to save route #{route}, #{err}"
+    log.error "unable to save route #{route}, #{err}"
     response.send res, 500, 'unable to save route'
 
 router.delete /\/routes\/(.*)/, (req, res) ->
@@ -44,7 +45,7 @@ router.delete /\/routes\/(.*)/, (req, res) ->
   .then ->
     response.send res, 200
   .catch (err) ->
-    console.log "unable to delete route #{route}, #{err}"
+    log.error "unable to delete route #{route}, #{err}"
     response.send res, 500, 'unable to delete route'
 
 router.get '/hosts/', (req, res) ->
@@ -52,7 +53,7 @@ router.get '/hosts/', (req, res) ->
   .then (hosts) ->
     res.json hosts
   .catch (err) ->
-    console.log "unable to get hosts #{err}"
+    log.error "unable to get hosts #{err}"
     response.send res, 500, 'unable to load hosts'
 
 router.get '/hosts/:group', (req, res)->
@@ -64,7 +65,7 @@ router.get '/hosts/:group', (req, res)->
     else
       response.send res, 404
   .catch (err) ->
-    console.log "unable to get host #{group}, #{err}"
+    log.error "unable to get host #{group}, #{err}"
     response.send res, 500, 'unable to get host'
 
 router.put '/hosts/:group/:id', (req, res) ->
@@ -76,7 +77,7 @@ router.put '/hosts/:group/:id', (req, res) ->
   .then ->
     response.send res, 200
   .catch (err) ->
-    console.log "unable to save host #{id}, #{err}"
+    log.error "unable to save host #{id}, #{err}"
     response.send res, 500, 'unable to save host'
 
 router.delete '/hosts/:group/:id', (req, res) ->
@@ -87,7 +88,7 @@ router.delete '/hosts/:group/:id', (req, res) ->
   .then ->
     response.send res, 200
   .catch (err) ->
-    console.log "unable to delete host #{id}, #{err}"
+    log.error "unable to delete host #{id}, #{err}"
     response.send res, 500, 'unable to delete host'
 
 module.exports = router
