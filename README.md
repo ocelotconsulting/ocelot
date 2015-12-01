@@ -30,3 +30,32 @@ Ocelot is currently deployed to stludockerprd01 - 03.  The first node is mapped 
 Ocelot takes the host header and finds a key in the route endpoint that matches the subdomain.  If none exists,
 it tries to find a route that best matches the path.  The key that best matches
 contains config information, including which backend endpoints to load balance the request over.
+
+## How to run in Docker
+
+This is an example configuration, using Consul as a backend
+
+
+sudo docker run -d --restart always -p 80:8080 -p 81:8081 -e NODE_CONFIG='{
+  "backend": {
+    "consul": {
+      "routes": "http://consulhost/v1/kv/routes",
+      "hosts": "http://consulhost/v1/kv/services"
+}
+  },
+  "jwks": {
+    "url": "https://test.amp.monsanto.com/pf/JWKS"
+  },
+  "authentication": {
+    "ping": {
+      "validate": {
+        "client": "pingclientid",
+        "secret": "pingsecret"
+      },
+      "host": "https://test.amp.monsanto.com"
+    }
+  },
+"default-protocol": "https",
+"enforce-https": true,
+"cors-domains": ["velocity.ag", "https://velocity.ag", "monsanto.com", "threega.com", "localhost", "velocity-np.ag", "https://velocity-np.ag"]
+}' --name ocelot docker-registry.threega.com/ocelot:1.19
