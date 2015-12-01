@@ -35,7 +35,7 @@ contains config information, including which backend endpoints to load balance t
 
 This is an example configuration, using Consul as a backend
 
-
+```
 sudo docker run -d --restart always -p 80:8080 -p 81:8081 -e NODE_CONFIG='{
   "backend": {
     "consul": {
@@ -59,3 +59,4 @@ sudo docker run -d --restart always -p 80:8080 -p 81:8081 -e NODE_CONFIG='{
 "enforce-https": true,
 "cors-domains": ["velocity.ag", "https://velocity.ag", "monsanto.com", "threega.com", "localhost", "velocity-np.ag", "https://velocity-np.ag"]
 }' --name ocelot docker-registry.threega.com/ocelot:1.19
+```
