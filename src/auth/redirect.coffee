@@ -27,7 +27,6 @@ endsWith = (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1
 
 module.exports =
-    # todo: remove references to ping, call auth backend
     startAuthCode: (req, res, route) ->
         origUrl = "#{redirectProtocol(req)}://#{req.headers.host}#{req.url}"
         state = new Buffer(origUrl).toString 'base64'

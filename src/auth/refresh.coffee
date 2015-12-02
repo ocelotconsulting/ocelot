@@ -7,7 +7,6 @@ _ = require 'underscore'
 log = require '../log'
 grantType = "refresh_token"
 
-#todo: call backend for url composition
 module.exports =
     token: (req, res, route) ->
         cookies = parseCookies req

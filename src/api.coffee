@@ -11,6 +11,13 @@ router = express.Router()
 
 validationEnabled = config.has('api-clients')
 
+# route fields
+routeFields = ['capture-pattern', 'rewrite-pattern', 'services', 'require-auth']
+cookieFields = ['cookie-name', 'client-id', 'client-secret', 'user-header', 'client-header', 'scope', 'cookie-path', 'cookie-domain']
+
+# host fields
+hostFields = ['url']
+
 validateApiUser = (req, res) ->
   if not validationEnabled
     Response.resolve()
@@ -48,9 +55,16 @@ router.get /\/routes\/(.*)/, (req, res)->
 
 router.put /\/routes\/(.*)/, (req, res) ->
   route = req.params[0]
-#  todo: validate
+
+  newObj = {}
+  for own k,v of req.body
+    if routeFields.indexOf(k) != -1 then newObj[k] = v
+  if req.body[cookieFields[0]]
+    for own k,v of req.body
+      if cookieFields.indexOf(k) != -1 then newObj[k] = v
+
   validateApiUser(req, res)
-  .then -> facade.putRoute(route, JSON.stringify(req.body))
+  .then -> facade.putRoute(route, JSON.stringify(newObj))
   .then ->
     response.send res, 200
   .catch (err) ->
@@ -92,10 +106,13 @@ router.get '/hosts/:group', (req, res)->
 router.put '/hosts/:group/:id', (req, res) ->
   id = req.params.id
   group = req.params.group
-#  todo: validate
+
+  newObj = {}
+  for own k,v of req.body
+    if hostFields.indexOf(k) != -1 then newObj[k] = v
 
   validateApiUser(req, res)
-  .then -> facade.putHost(group, id, JSON.stringify(req.body))
+  .then -> facade.putHost(group, id, JSON.stringify(newObj))
   .then ->
     response.send res, 200
   .catch (err) ->
