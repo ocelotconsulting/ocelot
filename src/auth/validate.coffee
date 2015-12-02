@@ -10,48 +10,50 @@ client = config.get 'authentication.ping.validate.client'
 secret = config.get 'authentication.ping.validate.secret'
 grantType = encodeURIComponent 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
 
-# todo: call backend for url composition
-exports.authentication = (req, route) ->
-    if route['require-auth'] is false
-        Promise.resolve {}
+validateToken = (token) ->
+    cachedValidation = cache.get token
+    if cachedValidation
+        Promise.accept cachedValidation
+    query = "grant_type=#{grantType}&token=#{token}"
+    postman.postAs(query, client, secret)
+
+getCookieToken = (route) ->
+    cookieName = route['cookie-name']
+    token = cookieName? and parseCookies(req)[cookieName]
+    if not token?
+        Promise.reject()
     else
-        cookieName = route['cookie-name']
-        cookieAuthEnabled = cookieName?
-        cookies = cookieAuthEnabled and parseCookies req
-        refreshTokenPresent = cookieAuthEnabled and cookies["#{cookieName}_rt"]?
-        {authorization} = req.headers
+        Promise.accept(token)
 
-        token = (if authorization and authorization.slice(0, 7).toLowerCase() is 'bearer '
-            authorization.slice 7
-        else if cookieAuthEnabled
-            cookies[cookieName])
-        if token
-            token = encodeURIComponent token
+getBearerToken = (req) ->
+    {authorization} = req.headers
+    token = if authorization? and authorization.slice(0, 7).toLowerCase() is 'bearer ' then authorization.slice 7
+    if not token?
+        Promise.reject()
+    else
+        Promise.accept(token)
 
-        reject = (oidcValid = false) ->
-            Promise.reject {refresh: refreshTokenPresent, redirect: cookieAuthEnabled, oidcValid}
-
-        if not token
-            reject()
-        else
-    #    oidcValid = if cookieAuthEnabled
-    #        oidc = reqCookies["#{cookieName}_oidc"]
-    #        console.log "Checking #{oidc}"
-    #        jwks.validateToken oidc
-    #    else
-    #        false
-            oidcValid = false
-
-            cachedValidation = cache.get token
-            if cachedValidation
-                Promise.accept cachedValidation
-            else
-                query = "grant_type=#{grantType}&token=#{token}"
-                postman.postAs(query, client, secret)
-                .then (oAuthValidateResult) ->
-                    authentication = _(oAuthValidateResult).extend {valid: true, oidcValid}
-                    cache.put token, authentication, 60000
-                    authentication
-                .catch (err) ->
-                    log.error "Validate error for route #{route.route}: #{err}; for query #{query}"
-                    reject oidcValid
+exports.authentication = (req, route) ->
+    if route? and not route?['require-auth']
+        Promise.resolve()
+    else
+        authCodeFlowEnabled = false
+        refreshTokenFound = false
+        getBearerToken(req)
+        .catch () ->
+            getCookieToken(route)
+            .then (token) ->
+                authCodeFlowEnabled = true
+                refreshTokenFound = parseCookies(req)["#{route['cookie-name']}_rt"]?
+                token
+        .then (token) ->
+            validateToken(token)
+            .then (validateResult) ->
+                authentication = _(validateResult).extend {valid: true}
+                cache.put token, authentication, 60000
+                authentication
+            .catch (err) ->
+                log.error "Validate error for route #{route.route}: #{err}; for query #{query}"
+                Promise.reject {refresh: refreshTokenFound, redirect: authCodeFlowEnabled}
+        .catch () ->
+            Promise.reject {refresh: refreshTokenFound, redirect: authCodeFlowEnabled}

@@ -22,9 +22,7 @@
       "auth-endpoint": "https://test.amp.monsanto.com/as/authorization.oauth2"
     }
   },
-  "api": {
-    "user": "api-user", "password": "api-password"
-  },
+  "api-clients": ["OCELOT-UI"],
   "default-protocol": "https",
   "enforce-https": true,
   "cors-domains": ["velocity.ag", "monsanto.com", "threega.com", "localhost"],

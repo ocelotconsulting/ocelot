@@ -5,25 +5,25 @@ Promise = require 'promise'
 util = require 'util'
 log = require './log'
 config = require 'config'
+validate = require './auth/validate'
 
 router = express.Router()
 
-apiUserPass = "#{config.get('api.user')}:#{config.get('api.password')}"
-validationEnabled = config.has('api.user')
+validationEnabled = config.has('api-clients')
 
-validateApiUser ->
-  passAuth ->
-    authHeader = req.headers.authorization
-    authHeader?.slice(0, 6).toLowerCase() == "basic " and
-      new Buffer(authHeader.slice 6, 'base64').toString('utf8') == apiUserPass
-
-  if not validationEnabled or passAuth
-    Promise.resolve()
+validateApiUser = (req, res) ->
+  if not validationEnabled
+    Response.resolve()
   else
-    Promise.reject()
+    validate.authentication(req)
+    .then (validation) ->
+      if config.get('api-clients').indexOf(validation['client_id']) == -1
+        throw "invalid client id"
+    .catch () ->
+      response.send res, 401, 'Unauthorized'
 
 router.get '/routes', (req, res) ->
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.getRoutes()
   .then (routes) -> res.json routes
   .catch (err) ->
@@ -33,7 +33,7 @@ router.get '/routes', (req, res) ->
 router.get /\/routes\/(.*)/, (req, res)->
   route = req.params[0]
 
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.getRoutes()
   .then (data) ->
     returns = data.filter (el) ->
@@ -49,7 +49,7 @@ router.get /\/routes\/(.*)/, (req, res)->
 router.put /\/routes\/(.*)/, (req, res) ->
   route = req.params[0]
 #  todo: validate
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.putRoute(route, JSON.stringify(req.body))
   .then ->
     response.send res, 200
@@ -59,7 +59,7 @@ router.put /\/routes\/(.*)/, (req, res) ->
 
 router.delete /\/routes\/(.*)/, (req, res) ->
   route = req.params[0]
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.deleteRoute(route)
   .then ->
     response.send res, 200
@@ -68,7 +68,7 @@ router.delete /\/routes\/(.*)/, (req, res) ->
     response.send res, 500, 'unable to delete route'
 
 router.get '/hosts/', (req, res) ->
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.getHosts()
   .then (hosts) ->
     res.json hosts
@@ -78,7 +78,7 @@ router.get '/hosts/', (req, res) ->
 
 router.get '/hosts/:group', (req, res)->
   group = req.params.group
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.getHosts()
   .then (data) ->
     if data[group]
@@ -94,7 +94,7 @@ router.put '/hosts/:group/:id', (req, res) ->
   group = req.params.group
 #  todo: validate
 
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.putHost(group, id, JSON.stringify(req.body))
   .then ->
     response.send res, 200
@@ -106,7 +106,7 @@ router.delete '/hosts/:group/:id', (req, res) ->
   id = req.params.id
   group = req.params.group
 
-  validateApiUser()
+  validateApiUser(req, res)
   .then -> facade.deleteHost(group, id)
   .then -> response.send res, 200
   .catch (err) ->
