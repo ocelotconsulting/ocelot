@@ -13,7 +13,15 @@ module.exports =
             cookieName = route['cookie-name']
             refreshTokenCookie = ->
                 "#{cookieName}_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly"
-            cookiePath = route['cookie-path'] or "/#{route.route}"
+
+            cookiePath =
+                if route['cookie-path']
+                    route['cookie-path']
+                else if route.route.indexOf("/") != -1
+                    route.route.substring(route.route.indexOf("/"))
+                else
+                    "/"
+
             cookieChain = _([
                       "#{cookieName}=#{authentication.access_token}"
                       if wamResult then "AXMSESSION=#{wamResult}"

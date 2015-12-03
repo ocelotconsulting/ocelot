@@ -12,18 +12,20 @@ module.exports =
         cookies = parseCookies req
         cookieName = "#{route['cookie-name']}_rt"
         refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']
-        query = "grant_type=#{grantType}&refresh_token=#{refreshToken}"
+        formData =
+            grant_type: grantType
+            refresh_token: refreshToken
 
-        tryRefresh = ->
-            postman.post query, route
+        tryRefreshToken = ->
+            postman.post formData, route
 
-        doRefresh = (result) ->
+        browserRefresh = (result) ->
             headers.setAuthCookies res, route, result
             .then () ->
                 redirect.refreshPage req, res
 
-        refreshError = (err) ->
-            log.error "Refresh error for route #{route.route} when using cookie #{cookieName}: #{err}; for query #{query}"
+        beginAuthCodeFlow = (err) ->
+            log.error "Refresh error for route #{route.route} when using cookie #{cookieName}: #{err}; for query #{formData}"
             redirect.startAuthCode req, res, route
 
-        tryRefresh().then doRefresh, refreshError
+        tryRefreshToken().then browserRefresh, beginAuthCodeFlow

@@ -8,18 +8,22 @@ log = require '../log'
 
 client = config.get 'authentication.ping.validate.client'
 secret = config.get 'authentication.ping.validate.secret'
-grantType = encodeURIComponent 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
+grantType = 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
 
 validateToken = (token) ->
     cachedValidation = cache.get token
     if cachedValidation
         Promise.accept cachedValidation
-    query = "grant_type=#{grantType}&token=#{token}"
-    postman.postAs(query, client, secret)
+    else
+        formData =
+            grant_type: grantType
+            token: token
+        postman.postAs(formData, client, secret)
 
-getCookieToken = (route) ->
+getCookieToken = (req, route) ->
     cookieName = route['cookie-name']
     token = cookieName? and parseCookies(req)[cookieName]
+
     if not token?
         Promise.reject()
     else
@@ -41,10 +45,10 @@ exports.authentication = (req, route) ->
         refreshTokenFound = false
         getBearerToken(req)
         .catch () ->
-            getCookieToken(route)
+            authCodeFlowEnabled = route['cookie-name']?
+            refreshTokenFound = parseCookies(req)["#{route['cookie-name']}_rt"]?
+            getCookieToken(req, route)
             .then (token) ->
-                authCodeFlowEnabled = true
-                refreshTokenFound = parseCookies(req)["#{route['cookie-name']}_rt"]?
                 token
         .then (token) ->
             validateToken(token)
@@ -54,6 +58,6 @@ exports.authentication = (req, route) ->
                 authentication
             .catch (err) ->
                 log.error "Validate error for route #{route.route}: #{err}; for query #{query}"
-                Promise.reject {refresh: refreshTokenFound, redirect: authCodeFlowEnabled}
+                Promise.reject()
         .catch () ->
             Promise.reject {refresh: refreshTokenFound, redirect: authCodeFlowEnabled}

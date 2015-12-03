@@ -18,7 +18,8 @@ cookieFields = ['cookie-name', 'client-id', 'client-secret', 'user-header', 'cli
 # host fields
 hostFields = ['url']
 
-validateApiUser = (req, res) ->
+validateApiUser = (req) ->
+  #  todo: give back 401
   if not validationEnabled
     Response.resolve()
   else
@@ -26,8 +27,6 @@ validateApiUser = (req, res) ->
     .then (validation) ->
       if config.get('api-clients').indexOf(validation['client_id']) == -1
         throw "invalid client id"
-    .catch () ->
-      response.send res, 401, 'Unauthorized'
 
 router.get '/routes', (req, res) ->
   validateApiUser(req, res)
@@ -59,7 +58,7 @@ router.put /\/routes\/(.*)/, (req, res) ->
   newObj = {}
   for own k,v of req.body
     if routeFields.indexOf(k) != -1 then newObj[k] = v
-  if req.body[cookieFields[0]]
+  if newObj[cookieFields[0]]
     for own k,v of req.body
       if cookieFields.indexOf(k) != -1 then newObj[k] = v
 
