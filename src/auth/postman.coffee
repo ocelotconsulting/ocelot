@@ -2,6 +2,7 @@ https = require 'https'
 url = require 'url'
 config = require 'config'
 _ = require 'underscore'
+Promise = require 'promise'
 agent = require('superagent-promise')(require('superagent'), Promise)
 
 url = config.get 'authentication.ping.token-endpoint'

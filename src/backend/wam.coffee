@@ -1,6 +1,7 @@
 config = require 'config'
 httpplease = require 'httpplease'
 promises = require 'httpplease-promises'
+Promise = require 'promise'
 http = httpplease.use promises(Promise)
 xml2js = require 'xml2js'
 

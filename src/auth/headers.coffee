@@ -3,6 +3,7 @@ crypt = require './crypt'
 wam = require '../backend/wam'
 parseCookies = require '../parseCookies'
 log = require '../log'
+Promise = require 'promise'
 
 module.exports =
 
@@ -40,11 +41,11 @@ module.exports =
             userHeader = route['user-header']
             clientHeader = route['client-header']
             oidc = parseCookies(req)[route['cookie-name'] + '_oidc']
-            if authentication.valid and userHeader and oidc
+            if authentication?.valid and userHeader and oidc
                 stringToParse = new Buffer(oidc.split('.')[1], 'base64').toString('utf8')
                 oidcDecoded = JSON.parse(stringToParse)
                 req.headers[userHeader] = oidcDecoded.sub
-            if authentication.valid and clientHeader and authentication.client_id
+            if authentication?.valid and clientHeader and authentication.client_id
                 req.headers[clientHeader] = authentication.client_id
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack

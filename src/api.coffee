@@ -58,7 +58,7 @@ router.put /\/routes\/(.*)/, (req, res) ->
   newObj = {}
   for own k,v of req.body
     if routeFields.indexOf(k) != -1 then newObj[k] = v
-  if newObj[cookieFields[0]]
+  if req.body[cookieFields[0]]
     for own k,v of req.body
       if cookieFields.indexOf(k) != -1 then newObj[k] = v
 

@@ -5,6 +5,7 @@ parseCookies = require '../parseCookies'
 jwks = require '../backend/jwks'
 cache = require 'memory-cache'
 log = require '../log'
+Promise = require 'promise'
 
 client = config.get 'authentication.ping.validate.client'
 secret = config.get 'authentication.ping.validate.secret'
@@ -13,7 +14,7 @@ grantType = 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
 validateToken = (token) ->
     cachedValidation = cache.get token
     if cachedValidation
-        Promise.accept cachedValidation
+        Promise.resolve cachedValidation
     else
         formData =
             grant_type: grantType
@@ -27,7 +28,7 @@ getCookieToken = (req, route) ->
     if not token?
         Promise.reject()
     else
-        Promise.accept(token)
+        Promise.resolve(token)
 
 getBearerToken = (req) ->
     {authorization} = req.headers
@@ -35,7 +36,7 @@ getBearerToken = (req) ->
     if not token?
         Promise.reject()
     else
-        Promise.accept(token)
+        Promise.resolve(token)
 
 exports.authentication = (req, route) ->
     if route? and not route?['require-auth']
@@ -48,8 +49,6 @@ exports.authentication = (req, route) ->
             authCodeFlowEnabled = route['cookie-name']?
             refreshTokenFound = parseCookies(req)["#{route['cookie-name']}_rt"]?
             getCookieToken(req, route)
-            .then (token) ->
-                token
         .then (token) ->
             validateToken(token)
             .then (validateResult) ->

@@ -1,9 +1,10 @@
 redis = require 'redis'
 config = require 'config'
 cron = require 'node-crontab'
-{routes, hosts} = {}
+{client, routes, hosts} = {}
 hostRegex = /(.+)\/(.+)/
 log = require '../log'
+Promise = require 'promise'
 
 getRoutes = () ->
   new Promise (accept, reject) ->

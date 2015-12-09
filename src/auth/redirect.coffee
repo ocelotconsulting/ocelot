@@ -16,10 +16,7 @@ buildUrl = (base, params) ->
     url
 
 redirectProtocol = (req) ->
-    settingPath = 'default-protocol'
-    if req.headers['x-forwarded-proto']? then req.headers['x-forwarded-proto']
-    else if config.has settingPath then config.get settingPath
-    else 'http'
+    req.headers['x-forwarded-proto'] or config.get 'default-protocol' or 'http'
 
 authUrl = config.get 'authentication.ping.auth-endpoint'
 
@@ -28,7 +25,7 @@ endsWith = (str, suffix) ->
 
 module.exports =
     startAuthCode: (req, res, route) ->
-        origUrl = "#{redirectProtocol(req)}://#{req.headers.host}#{req.url}"
+        origUrl = "#{redirectProtocol(req, route)}://#{req.headers.host}#{req.url}"
         state = new Buffer(origUrl).toString 'base64'
         redirect_uri = origUrl.split('?')[0]
         redirect_uri = if endsWith redirect_uri, '/' then "#{redirect_uri}receive-auth-token" else "#{redirect_uri}/receive-auth-token"

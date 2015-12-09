@@ -1,6 +1,6 @@
-# latest: docker-registry.threega.com/ocelot:1.20
+# latest: docker-registry.threega.com/ocelot:1.21
 
-FROM alpine
+FROM alpine:3.1
 
 RUN apk add --update nodejs
 
