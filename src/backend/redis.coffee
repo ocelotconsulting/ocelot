@@ -58,11 +58,11 @@ reloadData = ->
 
 module.exports =
   detect: ->
-    config.has('backend.redis.host') and config.has('backend.redis.port')
+    config.get('backend.provider') == "redis"
 
   init: ->
-    host = config.get 'backend.redis.host'
-    port = config.get 'backend.redis.port'
+    host = config.get 'backend.host'
+    port = config.get 'backend.port'
     client = redis.createClient
       host: host
       port: port

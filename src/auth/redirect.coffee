@@ -18,7 +18,7 @@ buildUrl = (base, params) ->
 redirectProtocol = (req) ->
     req.headers['x-forwarded-proto'] or config.get 'default-protocol' or 'http'
 
-authUrl = config.get 'authentication.ping.auth-endpoint'
+authUrl = config.get 'authentication.auth-endpoint'
 
 endsWith = (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1

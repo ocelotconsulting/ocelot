@@ -7,8 +7,8 @@ cache = require 'memory-cache'
 log = require '../log'
 Promise = require 'promise'
 
-client = config.get 'authentication.ping.validate.client'
-secret = config.get 'authentication.ping.validate.secret'
+client = config.get 'authentication.validation-client'
+secret = config.get 'authentication.validation-secret'
 grantType = 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
 
 validateToken = (token) ->

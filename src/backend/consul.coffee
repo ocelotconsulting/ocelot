@@ -65,11 +65,11 @@ parseHosts = (consulJson) ->
 
 module.exports =
     detect: ->
-        config.has('backend.consul.routes') and config.has('backend.consul.hosts')
+        config.get('backend.provider') == "consul"
 
     init: ->
-        routeUrl = config.get 'backend.consul.routes'
-        hostUrl = config.get 'backend.consul.hosts'
+        routeUrl = config.get 'backend.routes'
+        hostUrl = config.get 'backend.hosts'
         reload()
         cron.scheduleJob '*/30 * * * * *', reload
 

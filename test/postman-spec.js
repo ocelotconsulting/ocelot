@@ -16,7 +16,7 @@ describe('postman', function () {
 
     it('post happy path', function (done) {
         configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.ping.token-endpoint').returns(pingUrl);
+        configMock.withArgs('authentication.token-endpoint').returns(pingUrl);
 
         httpsMock = createHttpsStub('{"some": "data"}');
 
@@ -35,7 +35,7 @@ describe('postman', function () {
 
     it('returns error from json response', function (done) {
         configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.ping.token-endpoint').returns(pingUrl);
+        configMock.withArgs('authentication.token-endpoint').returns(pingUrl);
 
         httpsMock = createHttpsStub('{"error": "you suck"}');
 
@@ -50,7 +50,7 @@ describe('postman', function () {
 
     it('returns error if not json response', function (done) {
         configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.ping.token-endpoint').returns(pingUrl);
+        configMock.withArgs('authentication.token-endpoint').returns(pingUrl);
 
         httpsMock = createHttpsStub('tartar sauce');
 

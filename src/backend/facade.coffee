@@ -3,13 +3,16 @@ redis = require './redis'
 config = require 'config'
 datastore = undefined
 jwks = require './jwks'
+log = require '../log'
 
 # todo: get rid of this module?
 module.exports =
     init: ->
         if consul.detect()
+            log.debug 'Consul backend detected'
             datastore = consul
         else if redis.detect()
+            log.debug 'Redis backend detected'
             datastore = redis
         else
             throw 'no datastore backend found in configuration'

@@ -5,10 +5,10 @@
   "private": false,
   "scripts": {
     "start": "node bin/www",
-    "dev": "supervisor -w .,src -e coffee bin/www",
-    "test": "mocha --compilers coffee:coffee-script/register --recursive --colors --full-trace --reporter list test",
-    "test:dev": "mocha --compilers coffee:coffee-script/register --recursive --colors --watch --reporter nyan test",
-    "test:coverage": "istanbul cover _mocha -- -R spec"
+    "dev": "NODE_ENV=localhost supervisor -w .,src -e coffee bin/www",
+    "test": "NODE_ENV=localhost mocha --compilers coffee:coffee-script/register --recursive --colors --full-trace --reporter list test",
+    "test:dev": "NODE_ENV=localhost mocha --compilers coffee:coffee-script/register --recursive --colors --watch --reporter nyan test",
+    "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- -R spec"
   },
   "author": "Chris Coffman",
   "license": "ISC",

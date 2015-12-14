@@ -5,7 +5,7 @@ _ = require 'underscore'
 Promise = require 'promise'
 agent = require('superagent-promise')(require('superagent'), Promise)
 
-url = config.get 'authentication.ping.token-endpoint'
+url = config.get 'authentication.token-endpoint'
 
 postAs = (formData, client, secret) ->
     agent
@@ -18,7 +18,6 @@ postAs = (formData, client, secret) ->
         client_secret: secret
     .then (res) ->
         result = try
-            console.log res.text
             JSON.parse res.text
         catch e
             throw "could not parse JSON response: #{data}"
