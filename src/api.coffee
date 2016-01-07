@@ -21,7 +21,7 @@ hostFields = ['url']
 validateApiUser = (req) ->
   #  todo: give back 401
   if not validationEnabled
-    Response.resolve()
+    Promise.resolve()
   else
     validate.authentication(req)
     .then (validation) ->
