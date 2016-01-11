@@ -31,8 +31,9 @@ module.exports =
                 response.send res, 307
 
         authCodeExchangeError = (err) ->
-            log.debug "Auth code exchange error for route #{route.route}: #{err}; for query #{formData}"
+            log.debug "Auth code exchange error for route #{route.route}: #{err}; for query #{JSON.stringify(formData)}"
             response.send res, 500, err
 
-        log.debug "Attempting auth code exchange for route #{route.route} query #{formData}"
-        postman.post(formData, route).then redirectToOriginalUri, authCodeExchangeError
+        log.debug "Attempting auth code exchange for route #{route.route} query #{JSON.stringify(formData)}"
+        postman.post(formData, route)
+            .then redirectToOriginalUri, authCodeExchangeError

@@ -7,6 +7,21 @@ agent = require('superagent-promise')(require('superagent'), Promise)
 
 url = config.get 'authentication.token-endpoint'
 
+throwBadHttpResponse = (res) ->
+    throw "HTTP #{res.statusCode}: #{res.text}"
+
+handleSuccessResult = (res) ->
+    result = try
+        JSON.parse res.text
+    catch e
+        throwBadHttpResponse res
+    if result.error
+        throwBadHttpResponse res
+    else result
+
+handleErrorResult = (err) ->
+    throwBadHttpResponse err.response
+
 postAs = (formData, client, secret) ->
     agent
     .post url
@@ -16,15 +31,7 @@ postAs = (formData, client, secret) ->
         client_id: client
     .send
         client_secret: secret
-    .then (res) ->
-        result = try
-            JSON.parse res.text
-        catch e
-            throw "could not parse JSON response: #{data}"
-
-        if result.error
-            throw "#{result.error} #{result['error_description']}"
-        else result
+    .then handleSuccessResult, handleErrorResult
 
 post = (formData, route) ->
     postAs formData, route['client-id'], route['client-secret']
