@@ -9,11 +9,17 @@ config = require 'config'
 redirect = require './auth/redirect'
 cors = require './cors'
 headers = require './auth/headers'
+tokenInfo = require './auth/token-info'
+upgrade = require './upgrade'
+URL = require 'url'
 
 authenticateAndProxy = (px, req, res, route, url) ->
     authFulfilled = (authentication) ->
-        headers.addAuth req, route, authentication
-        proxy.request px, req, res, url
+        if tokenInfo.accept req
+            tokenInfo.complete route, res
+        else
+            headers.addAuth req, route, authentication
+            proxy.request px, req, res, url
 
     authRejected = (authentication) ->
         if authentication.refresh
@@ -28,8 +34,12 @@ authenticateAndProxy = (px, req, res, route, url) ->
 handleDefaultRequest = (px, req, res) ->
     route = resolver.resolveRoute req.url, req.headers.host
     if not route?
+#        if config.has 'route-not-found-url'
+#            url = URL.parse config.get('route-not-found-url')
+#            proxy.request px, req, res, url
+#        else
         response.send res, 404, 'Route not found'
-    else if req.url.indexOf('receive-auth-token') > -1
+    else if exchange.accept req
         exchange.authCodeFlow req, res, route
     else
         url = rewrite.mapRoute req.url, route
@@ -38,12 +48,10 @@ handleDefaultRequest = (px, req, res) ->
         else
             response.send res, 404, 'No active URL for route'
 
-upgradeConnection = (req) -> config.get('enforce-https') and req.headers['x-forwarded-proto'] != 'https' and req.connection and not req.connection.secure
-
 module.exports =
     create: (px) ->
         (req, res) ->
             cors.setCorsHeaders req, res
             if cors.shortCircuit req then response.send res, 204
-            else if upgradeConnection req then redirect.upgrade req, res
+            else if upgrade.accept req then upgrade.complete req, res
             else handleDefaultRequest px, req, res

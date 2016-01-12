@@ -6,8 +6,6 @@ domains = config.get('cors-domains')
 endsWith = (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1
 
-#   domains have to be whitelisted exactly, or be a subdomain which is why we do endsWith .<domain>
-#   we do forgive port mismatch on purpose
 whitelistedDomain = (origin, url) ->
     if originPortRegex.test origin
         origin = originPortRegex.exec(origin)[1]

@@ -31,11 +31,9 @@ getRandomInt = (min, max) ->
 module.exports =
     mapRoute: (incomingPath, route) ->
         allEndpoints = getAllEndpoints route
-
         if allEndpoints.length > 0
             targetHost = pickRandomEndpoint allEndpoints
             rewritten = rewriteUrl targetHost, incomingPath, route
-
         try
             url.parse rewritten
         catch err

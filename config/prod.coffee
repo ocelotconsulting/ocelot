@@ -16,5 +16,5 @@ module.exports =
   'api-clients': ["OCELOT-UI"]
   'default-protocol': "https"
   'enforce-https': true
-  'cors-domains': ["velocity.ag", "https://velocity.ag", "monsanto.com", "threega.com", "localhost", "velocity-np.ag", "https://velocity-np.ag", "http://localhost"]
+  'cors-domains': ["velocity.ag", "https://velocity.ag", "monsanto.com", "threega.com"]
   'log-level': "debug"

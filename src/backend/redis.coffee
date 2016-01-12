@@ -54,24 +54,27 @@ reloadData = ->
   .then (res) ->
     hosts = res
   .catch (err) ->
-    log.error("error loading hosts #{hosts}")
+    log.error("error loading hosts #{err}")
+
+init = =>
+  host = config.get 'backend.host'
+  port = config.get 'backend.port'
+  client = redis.createClient
+    host: host
+    port: port
+
+  client.on "error", (err) ->
+    log.error "Redis client error: #{err}"
+    init()
+
+  reloadData()
+  cron.scheduleJob '*/30 * * * * *', reloadData
 
 module.exports =
   detect: ->
     config.get('backend.provider') == "redis"
 
-  init: ->
-    host = config.get 'backend.host'
-    port = config.get 'backend.port'
-    client = redis.createClient
-      host: host
-      port: port
-
-    client.on "error", (err) ->
-      log.error "Redis client error: #{err}"
-
-    reloadData()
-    cron.scheduleJob '*/30 * * * * *', reloadData
+  init: -> init()
 
   getCachedRoutes: -> routes
   getRoutes: -> getRoutes()

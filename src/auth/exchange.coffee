@@ -14,6 +14,7 @@ getRedirectUrl = (query) ->
     if endsWith redirectUrl, '/' then "#{redirectUrl}receive-auth-token" else "#{redirectUrl}/receive-auth-token"
 
 module.exports =
+    accept: (req) -> req.url.indexOf('receive-auth-token') > -1
     authCodeFlow: (req, res, route) ->
         {query} = url.parse req.url, true
         redirectUrl = getRedirectUrl query

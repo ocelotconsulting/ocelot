@@ -1,6 +1,5 @@
 response = require '../response'
 config = require 'config'
-config = require 'config'
 log = require '../log'
 
 buildUrl = (base, params) ->
@@ -39,8 +38,4 @@ module.exports =
         origUrl = "#{redirectProtocol(req)}://#{req.headers.host}#{req.url}"
         res.setHeader 'Location', origUrl
         log.debug "Refreshing current page #{origUrl}"
-        response.send res, 307
-    upgrade: (req, res) ->
-        url = "https://#{req.headers.host}#{req.url}"
-        res.setHeader 'Location', url
         response.send res, 307
