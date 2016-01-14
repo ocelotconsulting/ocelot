@@ -35,9 +35,9 @@ describe('cors', function () {
             it('origin is null string and referrer is trusted', function () {
                 var req = {};
                 req.headers = {};
-                req.headers.origin = 'null';
+                req.headers.origin = "null";
                 req.method = "GET";
-                req.headers.referer = "abc.monsanto.com";
+                req.headers.referer = "http://abc.monsanto.com/blah";
 
                 assert.equal(cors.shortCircuit(req), false);
             });
@@ -68,7 +68,7 @@ describe('cors', function () {
                 req.headers = {};
                 req.headers.origin = 'null';
                 req.method = "GET";
-                req.headers.referer = "abc.untrusted.com";
+                req.headers.referer = "http://abc.untrusted.com/blah";
 
                 assert.equal(cors.shortCircuit(req), true);
             });

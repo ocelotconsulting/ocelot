@@ -5,7 +5,7 @@ originPortRegex = /(.*):\d+$/
 domains = config.get('cors-domains')
 
 endsWith = (str, suffix) ->
-    str? and str.indexOf(suffix, str.length - suffix.length) != -1
+    str.indexOf(suffix, str.length - suffix.length) != -1
 
 isTrustedOrigin = (origin, referer) ->
     isWhitelisted = (origin) ->
@@ -14,12 +14,20 @@ isTrustedOrigin = (origin, referer) ->
         domains.filter((domain) -> endsWith(origin, ".#{domain}")).length > 0 or
           domains.indexOf(origin) > -1
 
-    isWhitelisted(origin) or origin == 'null' and referer? and isWhitelisted(URL.parse(referer).host)
+    isRefererWhitelisted = () ->
+        if referer?
+            url = URL.parse(referer).host
+            url and isWhitelisted(URL.parse(referer).host)
+        else
+            false
+
+    isWhitelisted(origin) or origin == 'null' and isRefererWhitelisted()
 
 
 module.exports =
     shortCircuit: (req) ->
         {origin, referer} = req.headers
+
         isCorsRequest = -> origin?
         isPreflightRequest = -> req.headers['access-control-request-method'] and req.method is 'OPTIONS'
 
