@@ -15,28 +15,26 @@ describe 'validate', ->
     afterEach ->
         postmanMock.restore()
 
-    it 'resolves if no required validation', (done) ->
+    it 'resolves if no required auth', (done) ->
         req = {}
         route = {}
         route['require-auth'] = false
         validate.authentication(req, route).then ((auth) ->
             done()
         ), (auth) ->
-            assert.fail 'auth failed!'
-            done()
+            done('auth failed!')
 
-    it 'rejects if required validation but none sent', (done) ->
+    it 'rejects if required auth but none sent', (done) ->
         req = headers: ''
-        route = {}
+        route = {"require-auth": true}
         validate.authentication(req, route).then ((auth) ->
-            assert.fail 'should have failed!'
-            done()
+            done('should have failed!')
         ), (auth) ->
             done()
 
     it 'resolves if bearer token found and valid', (done) ->
         req = headers: {}
-        route = {}
+        route = {"require-auth": true}
         auth = id: 'myauth'
         req.headers.authorization = 'bearer abc'
         postmanMock.resolves auth
@@ -48,7 +46,7 @@ describe 'validate', ->
             done()
     it 'resolves if auth token found and valid', (done) ->
         req = headers: cookie: 'mycookie=abcd'
-        route = {}
+        route = {"require-auth": true}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
         postmanMock.resolves auth
@@ -60,7 +58,7 @@ describe 'validate', ->
             done()
     it 'rejects if auth token found but invalid', (done) ->
         req = headers: cookie: 'mycookie=abcde'
-        route = {}
+        route = {"require-auth": true}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
         postmanMock.rejects 'you suck'
@@ -71,7 +69,7 @@ describe 'validate', ->
             done()
     it 'caches validations', (done) ->
         req = headers: cookie: 'mycookie=abcdef'
-        route = {}
+        route = {"require-auth": true}
         auth = id: 'myauth'
         route['cookie-name'] = 'mycookie'
         postmanMock.resolves auth
