@@ -18,13 +18,14 @@ describe 'headers', ->
             @[name] = value
 
         route['cookie-name'] = 'mycookie'
-        route['route'] = 'abc'
+        route['route'] = 'domain/abc'
         route['client-secret'] = 'secret'
         authentication['refresh_token'] = 'abc123'
         authentication['access_token'] = 'def123'
         authentication['id_token'] = 'ghi123'
         headers.setAuthCookies res, route, authentication
         .then ->
+            console.log res['Set-Cookie']
             assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
             assert.equal res['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/abc") > -1, true
             assert.equal res['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, true
@@ -35,7 +36,7 @@ describe 'headers', ->
             @[name] = value
 
         route['cookie-name'] = 'mycookie'
-        route.route = 'abc'
+        route.route = 'domain/abc'
         authentication['access_token'] = 'def123'
         headers.setAuthCookies res, route, authentication
         .then ->
