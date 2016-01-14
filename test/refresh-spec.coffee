@@ -24,7 +24,12 @@ describe 'refresh', ->
         route['cookie-name'] = 'something'
         route['client-secret'] = secret
         postmanMock = sinon.stub(postman, 'post')
-        postmanMock.withArgs('grant_type=refresh_token&refresh_token=' + unencrypted_refresh, route).returns then: (s, f) ->
+
+        postData =
+            grant_type: 'refresh_token'
+            refresh_token: unencrypted_refresh
+
+        postmanMock.withArgs(postData, route).returns then: (s, f) ->
             s auth
 
         headerMock = sinon.stub(headers, 'setAuthCookies')
@@ -47,7 +52,12 @@ describe 'refresh', ->
         route['cookie-name'] = 'something'
         route['client-secret'] = secret
         postmanMock = sinon.stub(postman, 'post')
-        postmanMock.withArgs('grant_type=refresh_token&refresh_token=' + unencrypted_refresh, route).returns then: (s, f) ->
+
+        postData =
+            grant_type: 'refresh_token'
+            refresh_token: unencrypted_refresh
+
+        postmanMock.withArgs(postData, route).returns then: (s, f) ->
             f auth
 
         redirectMock = sinon.stub(redirect, 'startAuthCode')
