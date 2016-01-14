@@ -3,52 +3,77 @@ var assert = require("assert"),
 
 describe('cors', function () {
     describe('shortCircuit', function () {
-        it('is in effect when origin header present, req method present,  and is options request', function () {
-            var req = {};
-            req.headers = {};
-            req.headers.origin = "abc.monsanto.com";
-            req.headers['access-control-request-method'] = "PUT";
-            req.method = "OPTIONS";
+        describe('is not in effect when', function(){
+            it('request method is not options', function () {
+                var req = {};
+                req.headers = {};
+                req.headers.origin =  "abc.monsanto.com";
+                req.headers['access-control-request-method'] = "PUT";
+                req.method = "GET";
 
-            assert.equal(cors.shortCircuit(req), true);
+                assert.equal(cors.shortCircuit(req), false);
+            });
+
+            it('origin is not set', function () {
+                var req = {};
+                req.headers = {};
+                req.headers['access-control-request-method'] = "PUT";
+                req.method = "OPTIONS";
+
+                assert.equal(cors.shortCircuit(req), false);
+            });
+
+            it('request method is not set', function () {
+                var req = {};
+                req.headers = {};
+                req.headers.origin = "abc.monsanto.com";
+                req.method = "OPTIONS";
+
+                assert.equal(cors.shortCircuit(req), false);
+            });
+
+            it('origin is null string and referrer is trusted', function () {
+                var req = {};
+                req.headers = {};
+                req.headers.origin = 'null';
+                req.method = "GET";
+                req.headers.referer = "abc.monsanto.com";
+
+                assert.equal(cors.shortCircuit(req), false);
+            });
         });
 
-        it('is not in effect if not options method', function () {
-            var req = {};
-            req.headers = {};
-            req.headers.origin =  "abc.monsanto.com";
-            req.headers['access-control-request-method'] = "PUT";
-            req.method = "GET";
+        describe('is in effect when', function(){
+            it('cors preflight is detected', function () {
+                var req = {};
+                req.headers = {};
+                req.headers.origin = "abc.monsanto.com";
+                req.headers['access-control-request-method'] = "PUT";
+                req.method = "OPTIONS";
 
-            assert.equal(cors.shortCircuit(req), false);
+                assert.equal(cors.shortCircuit(req), true);
+            });
+
+            it('origin is from an untrusted domain', function () {
+                var req = {};
+                req.headers = {};
+                req.headers.origin = "abc.untrusted.com";
+                req.method = "GET";
+
+                assert.equal(cors.shortCircuit(req), true);
+            });
+
+            it('origin is null string and referrer is untrusted', function () {
+                var req = {};
+                req.headers = {};
+                req.headers.origin = 'null';
+                req.method = "GET";
+                req.headers.referer = "abc.untrusted.com";
+
+                assert.equal(cors.shortCircuit(req), true);
+            });
         });
 
-        it('is not in effect if origin not set', function () {
-            var req = {};
-            req.headers = {};
-            req.headers['access-control-request-method'] = "PUT";
-            req.method = "OPTIONS";
-
-            assert.equal(cors.shortCircuit(req), false);
-        });
-
-        it('is not in effect if req method not set', function () {
-            var req = {};
-            req.headers = {};
-            req.headers.origin = "abc.monsanto.com";
-            req.method = "OPTIONS";
-
-            assert.equal(cors.shortCircuit(req), false);
-        });
-
-        it('is in effect for untrusted domains', function () {
-            var req = {};
-            req.headers = {};
-            req.headers.origin = "abc.monsanto.com";
-            req.method = "OPTIONS";
-
-            assert.equal(cors.shortCircuit(req), false);
-        });
     });
 
     describe('headers', function () {

@@ -5,7 +5,7 @@ originPortRegex = /(.*):\d+$/
 domains = config.get('cors-domains')
 
 endsWith = (str, suffix) ->
-    str.indexOf(suffix, str.length - suffix.length) != -1
+    str? and str.indexOf(suffix, str.length - suffix.length) != -1
 
 isTrustedOrigin = (origin, referer) ->
     isWhitelisted = (origin) ->
@@ -28,7 +28,7 @@ module.exports =
     setCorsHeaders: (req, res) ->
         {origin, referer} = req.headers
         isCorsRequest = -> origin?
-            
+
         headers = req.headers['access-control-request-headers']
         method = req.headers['access-control-request-method']
 
