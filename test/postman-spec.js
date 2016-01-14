@@ -4,13 +4,36 @@ var assert = require("assert"),
     postman = require("../src/auth/postman"),
     exchange = require("../src/auth/exchange"),
     https = require("https"),
-    config = require("config");
+    config = require("config"),
+    httpAgent = require('../src/http-agent'),
+    Promise = require('promise');
 
-var postmanMock, headerMock, configMock, httpsMock;
+var postmanMock, headerMock, configMock, httpsMock, agentMock;
+
+var createAgent = function(then){
+   return {
+       url: '',
+       typeValue: '',
+       data: {},
+       post: function (url) {
+           this.url = url;
+           return this;
+       },
+       type: function (typeValue) {
+           this.typeValue = typeValue;
+           return this;
+       },
+       send: function (data) {
+           this.data = merge(data, this.data);
+           return this;
+       },
+       then: then
+   }
+};
 
 describe('postman', function () {
     var pingUrl = "http://someurl/like/this";
-    var someQuery = "this=that";
+    var someQuery = {someKey: "someValue"};
     var myclient = "myclient";
     var mysecret = "mysecret";
 
@@ -18,79 +41,65 @@ describe('postman', function () {
         configMock = sinon.stub(config, 'get');
         configMock.withArgs('authentication.token-endpoint').returns(pingUrl);
 
-        httpsMock = createHttpsStub('{"some": "data"}');
-
-        postman.post(someQuery, myclient, mysecret).then(function () {
-            done();
-        }, function () {
-            assert.fail('post failed!');
-            done();
+        agent = createAgent(function (pass, fail) {
+            return Promise.resolve().then(function() {
+                    return pass({text: '{"pass": true}'});
+                }
+            );
         });
 
-        httpsArgs = httpsMock.args[0][0];
-        assert.equal(httpsArgs.host, "test.amp.monsanto.com");
-        assert.equal(httpsArgs.path, "/as/token.oauth2?this=that");
-        assert.equal(httpsArgs.method, "POST");
+        agentMock = sinon.stub(httpAgent, 'getAgent');
+        agentMock.withArgs().returns(agent);
+
+        postman.postAs(someQuery, myclient, mysecret).then(function () {
+            assert.equal(agent.typeValue, "form");
+            assert.equal(agent.data.someKey, "someValue");
+            assert.equal(agent.data['client_id'], myclient);
+            assert.equal(agent.data['client_secret'], mysecret);
+            done();
+        }, function () {
+            done('post failed');
+        });
     });
 
     it('returns error from json response', function (done) {
-        configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.token-endpoint').returns(pingUrl);
+        agent = createAgent(function (pass, fail) {
+            return Promise.resolve().then(function() {
+                    return pass({statusCode: 404, text: '{"error": "error message"}'});
+                }
+            );
+        });
 
-        httpsMock = createHttpsStub('{"error": "you suck"}');
+        agentMock = sinon.stub(httpAgent, 'getAgent');
+        agentMock.withArgs().returns(agent);
 
-        postman.post(someQuery, myclient, mysecret).then(function () {
-            assert.fail('post succeeded!');
-            done();
-        }, function (error) {
-            assert.equal(error, 'you suck');
+        postman.postAs(someQuery, myclient, mysecret).then(function () {
+            done('post should have failed');
+        }, function (err) {
+            assert.equal(err, 'HTTP 404: {"error": "error message"}');
+            assert.equal(agent.typeValue, "form");
+            assert.equal(agent.data.someKey, "someValue");
+            assert.equal(agent.data['client_id'], myclient);
+            assert.equal(agent.data['client_secret'], mysecret);
             done();
         });
     });
-
-    it('returns error if not json response', function (done) {
-        configMock = sinon.stub(config, 'get');
-        configMock.withArgs('authentication.token-endpoint').returns(pingUrl);
-
-        httpsMock = createHttpsStub('tartar sauce');
-
-        postman.post(someQuery, myclient, mysecret).then(function () {
-            assert.fail('post succeeded!');
-            done();
-        }, function (error) {
-            assert.equal(error, 'could not parse JSON response: tartar sauce');
-            done();
-        });
-    });
-
-    function createHttpsStub(data){
-        return sinon.stub(https, 'request', function(options, f){
-            var res = {};
-
-            res.on = function(thing, f){
-                if(thing === 'data'){
-                    f(data);
-                }
-                else{
-                    f();
-                }
-            };
-
-            res.setEncoding = function(encoding){
-                assert.equal(encoding, 'utf8');
-            };
-
-            f(res);
-        });
-    }
 
     afterEach(function () {
         restore(httpsMock);
         restore(postmanMock);
         restore(headerMock);
         restore(configMock);
+        restore(agentMock)
     });
 });
+
+function merge(obj1,obj2){
+    var obj3 = {};
+    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+    return obj3;
+}
 
 function restore(mockFunc) {
     if (mockFunc && mockFunc.restore) {
