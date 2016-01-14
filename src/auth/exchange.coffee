@@ -17,12 +17,11 @@ module.exports =
     accept: (req) -> req.url.indexOf('receive-auth-token') > -1
     authCodeFlow: (req, res, route) ->
         {query} = url.parse req.url, true
-        redirectUrl = getRedirectUrl query
-        code = query.code
+
         formData =
             grant_type: grantType
-            code: code
-            redirect_uri: redirectUrl
+            code: query.code
+            redirect_uri: getRedirectUrl query
 
         redirectToOriginalUri = (result) ->
             log.debug "Exchanged code for token for route #{route.route}; server response #{JSON.stringify result}"
@@ -32,8 +31,8 @@ module.exports =
                 response.send res, 307
 
         authCodeExchangeError = (err) ->
-            log.debug "Auth code exchange error for route #{route.route}: #{err}; for query #{JSON.stringify(formData)}"
-            response.send res, 500, err
+              log.debug "Auth code exchange error for route #{route.route}: #{err}; for query #{JSON.stringify(formData)}"
+              response.send res, 500, err
 
         log.debug "Attempting auth code exchange for route #{route.route} query #{JSON.stringify(formData)}"
         postman.post(formData, route)
