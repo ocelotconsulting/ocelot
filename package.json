@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=localhost supervisor -w .,src -e coffee bin/www",
     "test": "NODE_ENV=localhost mocha --compilers coffee:coffee-script/register --recursive --colors --full-trace --reporter list test",
     "test:dev": "NODE_ENV=localhost mocha --compilers coffee:coffee-script/register --recursive --colors --watch --reporter nyan test",
-    "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- -R spec"
+    "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- --compilers coffee:coffee-script/register --require coffee-coverage/register-istanbul --recursive --colors --reporter list test"
   },
   "author": "Chris Coffman",
   "license": "ISC",
@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "chai": "^3.3.0",
+    "coffee-coverage": "^1.0.0",
     "mocha": "^2.3.3",
     "sinon": "^1.17.1",
     "sinon-as-promised": "^4.0.0",

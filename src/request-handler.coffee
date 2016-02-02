@@ -32,12 +32,9 @@ authenticateAndProxy = (px, req, res, route, url) ->
     validate.authentication(req, route).then authFulfilled, authRejected
 
 handleDefaultRequest = (px, req, res) ->
+
     route = resolver.resolveRoute req.url, req.headers.host
     if not route?
-#        if config.has 'route-not-found-url'
-#            url = URL.parse config.get('route-not-found-url')
-#            proxy.request px, req, res, url
-#        else
         response.send res, 404, 'Route not found'
     else if exchange.accept req
         exchange.authCodeFlow req, res, route

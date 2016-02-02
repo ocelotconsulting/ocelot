@@ -23,6 +23,12 @@ describe('resolver', function () {
         assert.equal(resolver.resolveRoute("/abc", "abc.monsanto.com").route, 'abc.monsanto.com');
     });
 
+    it('returns route if found, strips query parameters', function () {
+        sinon.stub(facade, "getCachedRoutes").returns([{route: 'abc.monsanto.com'}]);
+
+        assert.equal(resolver.resolveRoute("?somecrap", "abc.monsanto.com").route, 'abc.monsanto.com');
+    });
+
     it('returns route if found, level 2', function () {
         sinon.stub(facade, "getCachedRoutes").returns([{route: 'abc.monsanto.com/def'}]);
 

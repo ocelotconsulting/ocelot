@@ -19,7 +19,6 @@ module.exports =
   'log-level': "debug"
 
   backend:
-    provider: "consul"
-    routes: "http://stludockersbx01.monsanto.com:8500/v1/kv/routes-np"
-    hosts: "http://stludockersbx01.monsanto.com:8500/v1/kv/services-np"
-
+    provider: "redis"
+    host: "192.168.99.100"
+    port: "6379"

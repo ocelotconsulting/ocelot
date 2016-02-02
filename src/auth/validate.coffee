@@ -39,7 +39,7 @@ getBearerToken = (req) ->
         Promise.resolve(token)
 
 exports.authentication = (req, route) ->
-    if not route?['require-auth']
+    if route and not route['require-auth']
         Promise.resolve()
     else
         authCodeFlowEnabled = false

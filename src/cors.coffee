@@ -31,7 +31,7 @@ module.exports =
         isCorsRequest = -> origin?
         isPreflightRequest = -> req.headers['access-control-request-method'] and req.method is 'OPTIONS'
 
-        isCorsRequest() and (isPreflightRequest() or (not isTrustedOrigin(origin, referer)))
+        isCorsRequest() and (isPreflightRequest() or not isTrustedOrigin(origin, referer))
 
     setCorsHeaders: (req, res) ->
         {origin, referer} = req.headers

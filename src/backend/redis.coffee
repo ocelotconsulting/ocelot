@@ -65,7 +65,6 @@ init = =>
 
   client.on "error", (err) ->
     log.error "Redis client error: #{err}"
-    init()
 
   reloadData()
   cron.scheduleJob '*/30 * * * * *', reloadData

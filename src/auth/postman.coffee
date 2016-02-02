@@ -23,8 +23,7 @@ handleErrorResult = (err) ->
     throwBadHttpResponse err.response
 
 postAs = (formData, client, secret) ->
-    agent.getAgent()
-    .post url
+    agent.post url
     .type 'form'
     .send formData
     .send

@@ -14,6 +14,7 @@ findRouteByPath = (url, pathDepth = 4) ->
 
 module.exports =
     resolveRoute: (url, host) ->
+        url = url.split('?')[0]
         closestRoute = findRouteByPath("#{host}#{url}")
         services = facade.getCachedHosts()
         closestRoute?.instances = _(closestRoute.services).chain().map((service) ->
