@@ -11,12 +11,15 @@ cors = require './cors'
 headers = require './auth/headers'
 tokenInfo = require './auth/token-info'
 upgrade = require './upgrade'
+clientWhitelist = require './auth/client-whitelist'
 URL = require 'url'
 
 authenticateAndProxy = (px, req, res, route, url) ->
     authFulfilled = (authentication) ->
         if tokenInfo.accept req
             tokenInfo.complete route, res
+        else if clientWhitelist.accept route, authentication
+            clientWhitelist.complete res
         else
             headers.addAuth req, route, authentication
             proxy.request px, req, res, url

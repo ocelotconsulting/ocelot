@@ -112,5 +112,3 @@ module.exports =
           reject "could not delete host #{id}: #{err}"
         else
           resolve()
-
-  reloadData: reloadData

@@ -73,8 +73,6 @@ module.exports =
         reload()
         cron.scheduleJob '*/30 * * * * *', reload
 
-    reloadData: reload
-
     getCachedRoutes: -> routes
     getRoutes: -> getRoutes()
     putRoute: (key, route) -> agent.put("#{routeUrl}/#{key}", route)

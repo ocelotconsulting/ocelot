@@ -1,4 +1,4 @@
-# latest: docker-registry.threega.com/ocelot:1.26
+# latest: docker-registry.threega.com/ocelot:1.27
 
 FROM alpine:3.1
 

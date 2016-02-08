@@ -12,8 +12,8 @@ router = express.Router()
 validationEnabled = config.has('api-clients')
 
 # route fields
-routeFields = ['capture-pattern', 'rewrite-pattern', 'services', 'require-auth']
-cookieFields = ['cookie-name', 'client-id', 'client-secret', 'user-header', 'client-header', 'scope', 'cookie-path', 'cookie-domain']
+routeFields = ['capture-pattern', 'rewrite-pattern', 'services', 'require-auth', 'client-whitelist', 'user-header', 'client-header']
+cookieFields = ['cookie-name', 'client-id', 'client-secret', 'scope', 'cookie-path', 'cookie-domain']
 
 # host fields
 hostFields = ['url']

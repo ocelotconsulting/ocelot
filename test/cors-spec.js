@@ -1,5 +1,5 @@
-var assert = require("assert"),
-    cors = require('../src/cors');
+var assert = require("assert");
+var cors = require('../src/cors');
 
 describe('cors', function () {
     describe('shortCircuit', function () {
