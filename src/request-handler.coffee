@@ -13,29 +13,31 @@ tokenInfo = require './auth/token-info'
 upgrade = require './upgrade'
 clientWhitelist = require './auth/client-whitelist'
 URL = require 'url'
+parseCookies = require './parseCookies'
 
 authenticateAndProxy = (px, req, res, route, url) ->
+    cookies = parseCookies req
+
     authFulfilled = (authentication) ->
         if tokenInfo.accept req
             tokenInfo.complete route, res
         else if clientWhitelist.accept route, authentication
             clientWhitelist.complete res
         else
-            headers.addAuth req, route, authentication
+            headers.addAuth req, route, authentication, cookies
             proxy.request px, req, res, url
 
-    authRejected = (authentication) ->
-        if authentication.refresh
-            refresh.token req, res, route
-        else if authentication.redirect
+    authRejected = ->
+        if refresh.accept route, cookies
+            refresh.token req, res, route, cookies
+        else if redirect.accept route
             redirect.startAuthCode req, res, route
         else
             response.send res, 403, 'Authorization missing or invalid'
 
-    validate.authentication(req, route).then authFulfilled, authRejected
+    validate.authentication(req, route, cookies).then authFulfilled, authRejected
 
 handleDefaultRequest = (px, req, res) ->
-
     route = resolver.resolveRoute req.url, req.headers.host
     if not route?
         response.send res, 404, 'Route not found'

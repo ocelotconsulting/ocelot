@@ -39,3 +39,5 @@ module.exports =
         res.setHeader 'Location', origUrl
         log.debug "Refreshing current page #{origUrl}"
         response.send res, 307
+    accept: (route) ->
+        route['require-auth'] and route['cookie-name']

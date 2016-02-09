@@ -13,7 +13,6 @@ beforeEach ->
 
 describe 'headers', ->
     it 'returns tokens with path equal to route key', ->
-
         res.setHeader = (name, value) ->
             @[name] = value
 
@@ -25,7 +24,6 @@ describe 'headers', ->
         authentication['id_token'] = 'ghi123'
         headers.setAuthCookies res, route, authentication
         .then ->
-            console.log res['Set-Cookie']
             assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
             assert.equal res['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/abc") > -1, true
             assert.equal res['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, true
@@ -78,15 +76,16 @@ describe 'headers', ->
           assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/zzz; domain=xyz') > -1, true
 
 describe 'auth headers', ->
-    it 'adds user header if oidc token exists and encodes a subject', ->
+    it 'adds user header if auth claims contains a subject', ->
         req = headers: {}
         req.headers.cookie = 'this=that'
         auth =
             client_id: 'some-app'
-            valid: true
+            claims:
+                sub: 'cjcoff'
         route['user-header'] = 'user-id'
         route['cookie-name'] = 'my-cookie'
-        req.headers['cookie'] = 'this=that; my-cookie_oidc=abc.eyJzdWIiOiJjamNvZmYifQ==.abc'
+        req.headers['cookie'] = 'this=that;'
         headers.addAuth req, route, auth
         assert.equal req.headers['user-id'], 'cjcoff'
 
@@ -95,7 +94,6 @@ describe 'auth headers', ->
         req.headers.cookie = 'this=that'
         auth =
             client_id: 'some-app'
-            valid: true
         route['user-header'] = 'user-id'
         route['cookie-name'] = 'my-cookie'
         req.headers['cookie'] = 'this=that;'
@@ -107,7 +105,6 @@ describe 'auth headers', ->
         req.headers.cookie = 'this=that'
         auth =
             client_id: 'some-app'
-            valid: true
         route['client-header'] = 'client-id'
         req.headers['cookie'] = 'this=that;'
         headers.addAuth req, route, auth
@@ -116,8 +113,19 @@ describe 'auth headers', ->
     it 'omits client header if missing from authorization', ->
         req = headers: {}
         req.headers.cookie = 'this=that'
-        auth = valid: true
+        auth = {}
         route['client-header'] = 'client-id'
         req.headers['cookie'] = 'this=that;'
         headers.addAuth req, route, auth
         assert.equal !req.headers['client-id'], true
+
+    it 'unsets request headers if collides with client or user id headers', ->
+        req = headers: {myclient: 'my_client', myuser: 'my_user'}
+        req.headers.cookie = 'this=that'
+        auth = {}
+        route['client-header'] = 'myclient'
+        route['user-header'] = 'myuser'
+        req.headers['cookie'] = 'this=that;'
+        headers.addAuth req, route, auth
+        assert.equal req.headers['myclient'], undefined
+        assert.equal req.headers['myuser'], undefined

@@ -1,16 +1,17 @@
 postman = require './postman'
 redirect = require './redirect'
-parseCookies = require '../parseCookies'
 headers = require './headers'
 crypt = require './crypt'
-_ = require 'underscore'
 log = require '../log'
 grantType = "refresh_token"
 
 module.exports =
-    token: (req, res, route) ->
-        cookies = parseCookies req
+    accept: (route, cookies)->
+        route['require-auth'] and route['cookie-name'] and cookies["#{route['cookie-name']}_rt"]?
+
+    token: (req, res, route, cookies) ->
         cookieName = "#{route['cookie-name']}_rt"
+
         refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']
         formData =
             grant_type: grantType

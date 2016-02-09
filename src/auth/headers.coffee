@@ -1,7 +1,6 @@
 _ = require 'underscore'
 crypt = require './crypt'
 wam = require '../backend/wam'
-parseCookies = require '../parseCookies'
 log = require '../log'
 Promise = require 'promise'
 
@@ -36,16 +35,17 @@ module.exports =
                 cookieChain = cookieChain.map((item) -> "#{item}; domain=#{route['cookie-domain']}")
 
             res.setHeader 'Set-Cookie', cookieChain.value()
-    addAuth: (req, route, authentication) ->
+
+    addAuth: (req, route, authentication, cookies) ->
         try
             userHeader = route['user-header']
             clientHeader = route['client-header']
-            oidc = parseCookies(req)[route['cookie-name'] + '_oidc']
-            if authentication?.valid and userHeader and oidc
-                stringToParse = new Buffer(oidc.split('.')[1], 'base64').toString('utf8')
-                oidcDecoded = JSON.parse(stringToParse)
-                req.headers[userHeader] = oidcDecoded.sub
-            if authentication?.valid and clientHeader and authentication?.client_id
-                req.headers[clientHeader] = authentication.client_id
+
+            req.headers[userHeader] = undefined if userHeader
+            req.headers[clientHeader] = undefined if clientHeader
+
+            req.headers[clientHeader] = authentication.client_id if authentication?.client_id and clientHeader
+            req.headers[userHeader] = authentication.claims.sub if authentication?.claims?.sub and userHeader
+
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack

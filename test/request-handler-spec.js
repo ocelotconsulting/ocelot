@@ -115,10 +115,9 @@ describe('request handler', function () {
     });
 
     it('tries refresh if auth fails and refresh is possible', function () {
-        req = {url: "http://someurl", headers: {host: ""}};
-        var route = {id: "my route"};
+        req = {url: "http://someurl", headers: {host: "", cookie: "mycookie_rt=somevalue"}};
+        var route = {id: "my route", 'require-auth': true, 'cookie-name': 'mycookie'};
         var rewrittenUrl = "http://someotherurl";
-        var auth = {refresh: true};
 
         preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
@@ -130,25 +129,20 @@ describe('request handler', function () {
         rewriteMock.withArgs(req.url, route).returns(rewrittenUrl);
 
         validateMock = sinon.stub(validate, "authentication");
-        validateMock.withArgs(req, route).returns(
-            {then: function(success, fail){
-                fail(auth);
-            }}
-        );
+        validateMock.withArgs(req, route).returns(Promise.reject());
 
         refreshMock = sinon.mock(refresh);
         refreshMock.expects("token").once().withArgs(req, res, route);
 
         handler(req, res);
 
-        refreshMock.verify();
+        setTimeout(refreshMock.verify, 200);
     });
 
     it('tries redirect if auth fails and refresh not possible', function () {
         req = {url: "http://someurl", headers: {host: ""}};
-        var route = {id: "my route"};
+        var route = {id: "my route", 'require-auth': true, 'cookie-name': 'some-cookie'};
         var rewrittenUrl = "http://someotherurl";
-        var auth = {refresh: false, redirect: true};
 
         preflightMock = sinon.stub(cors, "shortCircuit");
         preflightMock.withArgs(req).returns(false);
@@ -160,18 +154,15 @@ describe('request handler', function () {
         rewriteMock.withArgs(req.url, route).returns(rewrittenUrl);
 
         validateMock = sinon.stub(validate, "authentication");
-        validateMock.withArgs(req, route).returns(
-            {then: function(success, fail){
-                fail(auth);
-            }}
-        );
+
+        validateMock.withArgs(req, route, {}).returns(Promise.reject({}));
 
         redirectMock = sinon.mock(redirect);
         redirectMock.expects("startAuthCode").once().withArgs(req, res, route);
 
         handler(req, res);
 
-        redirectMock.verify();
+        setTimeout(redirectMock.verify, 200);
     });
 
     it('returns error if auth fails, no possible refresh or redirect', function () {

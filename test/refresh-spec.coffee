@@ -17,7 +17,7 @@ describe 'refresh', ->
     it 'refreshes if post is successful', ->
         secret = 'secret'
         unencrypted_refresh = 'abc'
-        req = headers: cookie: 'something_rt=' + crypt.encrypt(unencrypted_refresh, secret)
+        req = {}
         res = id: 'res'
         route = id: 'route'
         auth = id: 'auth'
@@ -38,14 +38,17 @@ describe 'refresh', ->
 
         redirectMock = sinon.stub(redirect, 'refreshPage');
         redirectMock.withArgs(req, res);
-        refresh.token req, res, route
+
+        cookies = {'something_rt': crypt.encrypt(unencrypted_refresh, secret)}
+
+        refresh.token req, res, route, cookies
         assert postmanMock.calledOnce == true
         assert redirectMock.calledOnce == true
 
     it 'redirects if post is unsuccessful', ->
         secret = 'secret'
         unencrypted_refresh = 'abc'
-        req = headers: cookie: 'something_rt=' + crypt.encrypt(unencrypted_refresh, secret)
+        req = {}
         res = id: 'res'
         route = id: 'route'
         auth = id: 'auth'
@@ -60,9 +63,11 @@ describe 'refresh', ->
         postmanMock.withArgs(postData, route).returns then: (s, f) ->
             f auth
 
+        cookies = {'something_rt': crypt.encrypt(unencrypted_refresh, secret)}
+
         redirectMock = sinon.stub(redirect, 'startAuthCode')
-        redirectMock.withArgs req, res, route
-        refresh.token req, res, route
+        redirectMock.withArgs req, res, route, cookies
+        refresh.token req, res, route, cookies
         assert postmanMock.calledOnce == true
         assert redirectMock.calledOnce == true
 
