@@ -1,8 +1,8 @@
 assert = require 'assert'
 config = require 'config'
-oidc = require '../src/auth/oidc'
+oidc = require '../../src/auth/oidc'
 sinon = require 'sinon'
-httpAgent = require '../src/http-agent'
+httpAgent = require '../../src/http-agent'
 Promise = require 'promise'
 jwt = require 'jsonwebtoken'
 cron = require 'node-crontab'
@@ -10,19 +10,19 @@ cron = require 'node-crontab'
 describe 'oidc', ->
 
   configGetStub = {}
-  httpAgentGetStub = {}
+  httpAgentStub = {}
   jwtVerifyStub = {}
   cronScheduleJobStub = {}
 
   beforeEach ->
     configGetStub = sinon.stub(config, 'get')
-    httpAgentGetStub = sinon.stub(httpAgent, 'get')
+    httpAgentStub = sinon.stub(httpAgent, 'getAgent')
     jwtVerifyStub = sinon.stub(jwt, 'verify')
     cronScheduleJobStub = sinon.stub(cron, 'scheduleJob')
 
   afterEach ->
     configGetStub.restore()
-    httpAgentGetStub.restore()
+    httpAgentStub.restore()
     jwtVerifyStub.restore()
     cronScheduleJobStub.restore()
 
@@ -47,7 +47,11 @@ describe 'oidc', ->
   it 'validates oidc signature if key found', (done) ->
     configGetStub.withArgs('jwks.url').returns 'http://someurl'
     keys = [{e: "AQAB", n: "qVtbZgG1Qkvx1XyLG8YdNxKbJVmEr3vkm8_l02qkYBn6IYdrnDYdmuw1i9xB9yKAZhsUXBfZzY1QYq2GpAZxHLFM9iSjwbK-3qmE2A5M5TdfkQ6B79E4yMwLbc0s1YQxnP7RZfivunRV2ZWQqMEcEET8jcGAa_27dHPge2_a4bMpQQzO_lJ_ea-bZ3UcKtuF1cIgN-mnO7_zpAT0F6WT51yG-nlRE-ER83xgGDIOMNjXihNQ1xJy-WjUdTPH7Wnm0magMWaK0iw5NwRowcYXw-QjfP5a0-9J3ynkKaySJLd_93JFvPLgYjSPresvbCYu_d98kF1jI2pcV4bciv0s0w", kid: "wkacn"}]
-    httpAgentGetStub.withArgs('http://someurl').returns Promise.resolve({body: {keys: keys}})
+
+    agentStub = sinon.stub()
+    agentStub.withArgs('http://someurl').returns(Promise.resolve({body: {keys: keys}}))
+
+    httpAgentStub.returns({get: (url) -> agentStub(url)})
     jwtVerifyStub.returns true
 
     oidc.init()

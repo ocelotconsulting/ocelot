@@ -1,10 +1,10 @@
 assert = require('assert')
 sinon = require('sinon')
-postman = require('../src/auth/postman')
-redirect = require('../src/auth/redirect')
-headers = require('../src/auth/headers')
-refresh = require('../src/auth/refresh')
-crypt = require('../src/auth/crypt')
+postman = require('../../src/auth/postman')
+redirect = require('../../src/auth/redirect')
+headers = require('../../src/auth/headers')
+refresh = require('../../src/auth/refresh')
+crypt = require('../../src/auth/crypt')
 postmanMock = undefined
 headersMock = undefined
 redirectMock = undefined

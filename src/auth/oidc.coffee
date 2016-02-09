@@ -11,7 +11,7 @@ jwksUrl = undefined
 module.exports =
     init: ->
         reloadData = ->
-            agent.get(jwksUrl).then (res) ->
+            agent.getAgent().get(jwksUrl).then (res) ->
               res.body.keys.forEach (key) ->
                 cache.put(key.kid, key, 86400000)
             .catch (error) ->

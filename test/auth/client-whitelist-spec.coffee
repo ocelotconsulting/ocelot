@@ -1,5 +1,5 @@
 assert = require 'assert'
-clientWhitelist = require '../src/auth/client-whitelist'
+clientWhitelist = require '../../src/auth/client-whitelist'
 
 describe 'client whitelist', ->
   it 'accepts requests that are authenticated but not whitelisted', ->

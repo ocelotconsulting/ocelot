@@ -1,8 +1,8 @@
 var assert = require("assert"),
     sinon = require("sinon"),
-    headers = require("../src/auth/headers"),
-    redirect = require("../src/auth/redirect"),
-    response = require("../src/response");
+    headers = require("../../src/auth/headers"),
+    redirect = require("../../src/auth/redirect"),
+    response = require("../../src/response");
 
 var responseMock;
 

@@ -1,8 +1,6 @@
 https = require 'https'
 url = require 'url'
 config = require 'config'
-_ = require 'underscore'
-Promise = require 'promise'
 agent = require('../http-agent')
 
 url = config.get 'authentication.token-endpoint'
@@ -23,7 +21,7 @@ handleErrorResult = (err) ->
     throwBadHttpResponse err.response
 
 postAs = (formData, client, secret) ->
-    agent.post url
+    agent.getAgent().post url
     .type 'form'
     .send formData
     .send

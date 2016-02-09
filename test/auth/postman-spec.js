@@ -1,11 +1,11 @@
 var assert = require("assert"),
     sinon = require("sinon"),
-    headers = require("../src/auth/headers"),
-    postman = require("../src/auth/postman"),
-    exchange = require("../src/auth/exchange"),
+    headers = require("../../src/auth/headers"),
+    postman = require("../../src/auth/postman"),
+    exchange = require("../../src/auth/exchange"),
     https = require("https"),
     config = require("config"),
-    httpAgent = require('../src/http-agent'),
+    httpAgent = require('../../src/http-agent'),
     Promise = require('promise');
 
 var postmanMock, headerMock, configMock, httpsMock, agentMock;

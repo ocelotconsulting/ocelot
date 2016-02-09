@@ -1,6 +1,6 @@
 assert = require('assert')
-headers = require('../src/auth/headers')
-crypt = require('../src/auth/crypt')
+headers = require('../../src/auth/headers')
+crypt = require('../../src/auth/crypt')
 res = {}
 route = {}
 authentication = {}
