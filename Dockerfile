@@ -1,4 +1,4 @@
-# latest: docker-registry.threega.com/ocelot:1.27
+# latest: docker-registry.threega.com/ocelot:<same as npm version>
 
 FROM alpine:3.1
 
