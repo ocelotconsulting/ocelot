@@ -38,9 +38,18 @@ authenticateAndProxy = (px, req, res, route, url) ->
 
     validate.authentication(req, route, cookies).then authFulfilled, authRejected
 
+redirectOrSend404 = (req, res, host) ->
+    if host.indexOf('www.') is 0
+        res.setHeader 'Location', "https://#{host.slice 4}#{req.url}"
+        response.send res, 301
+    else
+        response.send res, 404, 'Route not found'
+
 handleDefaultRequest = (px, req, res) ->
-    route = resolver.resolveRoute req.url, req.headers.host
+    {host} = req.headers
+    route = resolver.resolveRoute req.url, host
     if not route?
+        redirectOrSend404 req, res, host
         response.send res, 404, 'Route not found'
     else if exchange.accept req
         exchange.authCodeFlow req, res, route
