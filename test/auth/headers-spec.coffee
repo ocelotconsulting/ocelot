@@ -127,5 +127,5 @@ describe 'auth headers', ->
         route['user-header'] = 'myuser'
         req.headers['cookie'] = 'this=that;'
         headers.addAuth req, route, auth
-        assert.equal req.headers['myclient'], undefined
-        assert.equal req.headers['myuser'], undefined
+
+        assert(not req.headers.hasOwnProperty headerName) for headerName in ['myclient', 'myuser']
