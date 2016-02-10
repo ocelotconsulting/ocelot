@@ -6,10 +6,11 @@ log = require '../log'
 grantType = "refresh_token"
 
 module.exports =
-    accept: (route, cookies)->
-        route['require-auth'] and route['cookie-name'] and cookies["#{route['cookie-name']}_rt"]?
+    accept: (route, cookies, auth)->
+        route['require-auth'] and route['cookie-name'] and cookies["#{route['cookie-name']}_rt"]? and not auth?.invalid_oidc
 
     token: (req, res, route, cookies) ->
+        console.log 'going to refresh cookie for ', route.route
         cookieName = "#{route['cookie-name']}_rt"
 
         refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']

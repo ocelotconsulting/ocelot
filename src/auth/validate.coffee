@@ -3,15 +3,16 @@ Promise = require 'promise'
 oauth = require './oauth'
 oidc = require './oidc'
 
+oidc.init()
+
 exports.authentication = (req, route, cookies) ->
-  if not route?['require-auth']
+  if route and not route['require-auth']
     Promise.resolve()
   else
     oauth.getToken(req, route, cookies).then (oauthToken) ->
       oauth.validate(oauthToken).then (validationResult) ->
-        oidcToken = oidc.getToken req, cookies
-        if oidcToken
+        oidc.getToken(req, route, cookies).then (oidcToken) ->
           oidc.validate(oidcToken).then (claims) ->
-            Object.assign(validationResult, {claims: claims})
-        else
-          validationResult
+            validationResult.claims = claims
+            validationResult
+        , -> validationResult

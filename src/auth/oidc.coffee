@@ -8,6 +8,12 @@ NodeRSA = require 'node-rsa'
 cache = require 'memory-cache'
 jwksUrl = undefined
 
+promisify = (thing) ->
+  if not thing?
+    Promise.reject()
+  else
+    Promise.resolve(thing)
+
 module.exports =
     init: ->
         reloadData = ->
@@ -33,10 +39,11 @@ module.exports =
           claims = JSON.parse(new Buffer(parts[1], 'base64').toString('utf8'))
           Promise.resolve claims
         else
-          Promise.reject('key not found for ' + header?.kid)
+          Promise.reject({invalid_oidc: true})
       catch e
         console.log 'error validating jwt: ', e
-        Promise.reject()
+        Promise.reject({invalid_oidc: true})
 
     getToken: (req, route, cookies) ->
-      req.headers['x-oidc'] or cookies["#{route['cookie-name']}_oidc"]
+      token  = req.headers['x-oidc'] or cookies["#{route['cookie-name']}_oidc"]
+      promisify token

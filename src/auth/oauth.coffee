@@ -17,9 +17,9 @@ getBearerToken = (req) ->
   bearer = if authorization?.slice(0, 7).toLowerCase() is 'bearer ' then authorization.slice 7
   promisify bearer
 
-getCookieToken = (req, route) ->
+getCookieToken = (req, route, cookies) ->
   cookieName = route['cookie-name']
-  token = cookieName? and parseCookies(req)[cookieName]
+  token = cookies[cookieName] if cookieName
   promisify token
 
 module.exports =

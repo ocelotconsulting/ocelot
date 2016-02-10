@@ -36,7 +36,7 @@ module.exports =
 
             res.setHeader 'Set-Cookie', cookieChain.value()
 
-    addAuth: (req, route, authentication, cookies) ->
+    addAuth: (req, route, authentication) ->
         try
             userHeader = route['user-header']
             clientHeader = route['client-header']
