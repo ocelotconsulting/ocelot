@@ -50,7 +50,6 @@ handleDefaultRequest = (px, req, res) ->
     route = resolver.resolveRoute req.url, host
     if not route?
         redirectOrSend404 req, res, host
-        response.send res, 404, 'Route not found'
     else if exchange.accept req
         exchange.authCodeFlow req, res, route
     else
