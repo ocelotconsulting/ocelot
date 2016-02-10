@@ -41,11 +41,10 @@ module.exports =
             userHeader = route['user-header']
             clientHeader = route['client-header']
 
-            req.headers[userHeader] = undefined if userHeader
-            req.headers[clientHeader] = undefined if clientHeader
+            updateHeader = (name, value) ->
+                if value then req.headers[name] = value else delete req.headers[name]
 
-            req.headers[clientHeader] = authentication.client_id if authentication?.client_id and clientHeader
-            req.headers[userHeader] = authentication.claims.sub if authentication?.claims?.sub and userHeader
-
+            if clientHeader then updateHeader clientHeader, authentication?.client_id
+            if userHeader then updateHeader userHeader, authentication?.claims?.sub
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack
