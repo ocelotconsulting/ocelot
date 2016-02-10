@@ -19,16 +19,17 @@ authenticateAndProxy = (px, req, res, route, url) ->
     cookies = parseCookies req
 
     authFulfilled = (authentication) ->
+
         if tokenInfo.accept req
             tokenInfo.complete route, res
         else if clientWhitelist.accept route, authentication
             clientWhitelist.complete res
         else
-            headers.addAuth req, route, authentication, cookies
+            headers.addAuth req, route, authentication
             proxy.request px, req, res, url
 
-    authRejected = ->
-        if refresh.accept route, cookies
+    authRejected = (auth) ->
+        if refresh.accept route, cookies, auth
             refresh.token req, res, route, cookies
         else if redirect.accept route
             redirect.startAuthCode req, res, route
