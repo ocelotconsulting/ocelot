@@ -40,7 +40,7 @@ authenticateAndProxy = (px, req, res, route, url) ->
 
 redirectOrSend404 = (req, res, host) ->
     if host.indexOf('www.') is 0
-        res.setHeader 'Location', "https://#{host.slice 4}#{req.url}"
+        res.setHeader 'Location', "#{config.get('default-protocol')}://#{host.slice 4}#{req.url}"
         response.send res, 301
     else
         response.send res, 404, 'Route not found'
