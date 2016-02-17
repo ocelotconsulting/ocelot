@@ -22,6 +22,9 @@ server.listen port
 app = express()
 app.use bodyparser.json()
 apiPort = (parseInt(process.env.PORT) + 1) or 8081
-app.use '/api/v1', require('./api')
+app.use '/api/v1', require './api/validate-api-user'
+app.use '/api/v1/routes', require './api/routes'
+app.use '/api/v1/hosts', require './api/hosts'
+
 log.debug 'api listening on port ' + apiPort
 app.listen(apiPort);
