@@ -54,13 +54,17 @@ router.put /\/(.*)/, (req, res) ->
     for own k,v of req.body
       if cookieFields.indexOf(k) != -1 then newObj[k] = v
 
+  newObj['user-id'] = req.headers['user-id']
+
   Promise.resolve()
   .then ->
     if req.body['client-secret']
       getRoute(routeKey).then (route) ->
         if route['client-secret'] and newObj['client-secret'] == sha1sum(route['client-secret'])
           newObj['client-secret'] = route['client-secret']
-  .then -> facade.putRoute(routeKey, JSON.stringify(newObj))
+      , () ->
+  .then ->
+    facade.putRoute(routeKey, JSON.stringify(newObj))
   .then ->
     response.send res, 200
   .catch (err) ->
