@@ -45,5 +45,9 @@ module.exports =
         Promise.reject({invalid_oidc: true})
 
     getToken: (req, route, cookies) ->
-      token  = req.headers['x-oidc'] or cookies["#{route['cookie-name']}_oidc"]
+      token = if req.headers['x-oidc']
+          req.headers['x-oidc']
+        else if route?['cookie-name']
+          cookies["#{route['cookie-name']}_oidc"]
+          
       promisify token

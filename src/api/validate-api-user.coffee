@@ -11,4 +11,6 @@ module.exports = (req, res, next) ->
           res.status(403).send('Unauthorized')
         else
           next()
-      , res.status(403).send('Unauthorized')
+      , (err) ->
+        console.log 'error validating token ', err
+        res.status(403).send('Unauthorized')
