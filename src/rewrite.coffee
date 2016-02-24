@@ -7,7 +7,7 @@ pickRandomEndpoint = (allEndpoints) ->
     instanceUrlStr + (if instanceUrlStr.charAt(instanceUrlStr.length - 1) is '/' then '' else '/')
 
 rewriteUrl = (targetHost, incomingPath, route) ->
-    capture = new RegExp(route['capture-pattern']) or '(.*)'
+    capture = new RegExp(route['capture-pattern'] or '(.*)')
     rewrittenPath = route['rewrite-pattern'] or '$1'
 
     if capture.test(incomingPath)
