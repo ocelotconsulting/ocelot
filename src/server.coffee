@@ -6,6 +6,7 @@ express = require 'express'
 facade = require './backend/facade'
 bodyparser = require 'body-parser'
 log = require './log'
+prometheus = require './metrics/prometheus'
 
 px = httpProxy.createProxyServer {changeOrigin: true, autoRewrite: true}
 
@@ -25,6 +26,7 @@ apiPort = (parseInt(process.env.PORT) + 1) or 8081
 app.use '/api/v1', require './api/validate-api-user'
 app.use '/api/v1/routes', require './api/routes'
 app.use '/api/v1/hosts', require './api/hosts'
+app.get '/metrics', prometheus.metricsFunc()
 
 log.debug 'api listening on port ' + apiPort
 app.listen(apiPort);

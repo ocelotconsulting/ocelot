@@ -14,6 +14,7 @@ upgrade = require './upgrade'
 clientWhitelist = require './auth/client-whitelist'
 URL = require 'url'
 parseCookies = require './parseCookies'
+prometheus = require './metrics/prometheus'
 
 authenticateAndProxy = (px, req, res, route, url) ->
     cookies = parseCookies req
@@ -62,6 +63,12 @@ handleDefaultRequest = (px, req, res) ->
 module.exports =
     create: (px) ->
         (req, res) ->
+            prometheus.connectionOpened(req)
+            res.on 'finish', ->
+                prometheus.connectionClosed(req)
+            res.on 'close', ->
+                prometheus.connectionClosed(req)
+
             cors.setCorsHeaders req, res
             if cors.shortCircuit req then response.send res, 204
             else if upgrade.accept req then upgrade.complete req, res
