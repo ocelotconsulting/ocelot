@@ -24,7 +24,7 @@ module.exports =
               console.log 'could not load JWKS keys: ', error
         jwksUrl = config.get 'jwks.url'
         reloadData()
-        cron.scheduleJob '*/1 * * * * *', reloadData
+        cron.scheduleJob '*/5 * * * * *', reloadData
 
     validate: (token) ->
       try
@@ -45,9 +45,9 @@ module.exports =
         Promise.reject({invalid_oidc: true})
 
     getToken: (req, route, cookies) ->
-      token = if req.headers['x-oidc']
-          req.headers['x-oidc']
+      token = if req.headers['oidc']
+          req.headers['oidc']
         else if route?['cookie-name']
           cookies["#{route['cookie-name']}_oidc"]
-          
+
       promisify token

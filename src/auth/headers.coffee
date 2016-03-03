@@ -36,7 +36,7 @@ module.exports =
 
             res.setHeader 'Set-Cookie', cookieChain.value()
 
-    addAuth: (req, route, authentication) ->
+    addAuth: (req, route, authentication, cookies) ->
         try
             userHeader = route['user-header']
             clientHeader = route['client-header']
@@ -45,6 +45,8 @@ module.exports =
                 if value then req.headers[name] = value else delete req.headers[name]
 
             if clientHeader then updateHeader clientHeader, authentication?.client_id
-            if userHeader then updateHeader userHeader, authentication?.claims?.sub
+            if userHeader then updateHeader userHeader, (authentication?.claims?.sub or authentication?.user_id)
+            if not req.headers['oidc'] and route['cookie-name'] then updateHeader 'oidc', cookies["#{route['cookie-name']}_oidc"]
+
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack
