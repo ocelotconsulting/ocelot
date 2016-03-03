@@ -28,6 +28,7 @@ wamTokenPath = [
     'wsse:BinarySecurityToken'
     0
     #NOTE - original path ended in '_'.  looks like a mistake from what i can see
+    '_'
 ]
 
 findWAMTokenInXML = (source) ->
@@ -37,7 +38,9 @@ findWAMTokenInXML = (source) ->
         else
             find parent[wamTokenPath[index]], index + 1
 
-    find source, 0
+    wamToken = find source, 0
+    if wamToken?
+        wamToken.replace /^\s+|\s+$/g, ""
 
 # if an error occurs this will just resolve to undefined
 getWAMToken = (token) ->
