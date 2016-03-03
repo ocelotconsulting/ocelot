@@ -2,7 +2,7 @@ config = require 'config'
 httpplease = require 'httpplease'
 promises = require 'httpplease-promises'
 Promise = require 'promise'
-http = httpplease.use promises(Promise)
+agent = require('../http-agent')
 xml2js = require 'xml2js'
 
 wamConverterUrl = config.get 'wam.converter-url'
@@ -42,17 +42,31 @@ findWAMTokenInXML = (source) ->
     if wamToken?
         wamToken.replace /^\s+|\s+$/g, ""
 
-# if an error occurs this will just resolve to undefined
+handleSuccessResult = (res) ->
+    result = try
+        new Promise (resolve, reject) ->
+            xml2js.parseString res.text, (err, result) ->
+                if err then reject err else resolve findWAMTokenInXML(result)
+    catch e
+        throwBadHttpResponse res
+    if result.error
+        throwBadHttpResponse res
+    else result
+
+throwBadHttpResponse = (res) ->
+    throw "HTTP #{res.statusCode}: #{res.text}"
+
+handleErrorResult = (err) ->
+    throwBadHttpResponse err.response
+
 getWAMToken = (token) ->
-    options =
-        method: 'post'
-        url : wamConverterUrl
-        body : createSOAPReq token
-    http(options).then (resp) ->
-        if resp.status is 200
-            new Promise (resolve) ->
-                # according to xml2s docs you're not supposed to rely on sync execution
-                xml2js.parseString resp.body, (err, result) ->
-                    resolve findWAMTokenInXML(result)
+    agent.getAgent().post wamConverterUrl
+    .accept 'xml'
+    .buffer()
+    .type 'xml'
+    .send createSOAPReq token
+    .then handleSuccessResult, handleErrorResult
+
+# if an error occurs this will just resolve to undefined
 
 module.exports = {getWAMToken, findWAMTokenInXML}

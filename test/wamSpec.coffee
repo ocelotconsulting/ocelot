@@ -3,7 +3,7 @@ sinon = require 'sinon'
 xml2js = require 'xml2js'
 require 'sinon-as-promised'
 should = require('chai').should()
-{findWAMTokenInXML} = require '../src/backend/wam'
+{findWAMTokenInXML, getWAMToken} = require '../src/backend/wam'
 
 exampleXml = fs.readFileSync './test/example.xml', encoding: 'utf8'
 
@@ -23,5 +23,10 @@ describe 'wam', ->
         it 'returns undefined if token is not in expected path', ->
             xml = 's:Envelope':
                     's:Body': []
-
             should.not.exist findWAMTokenInXML(xml)
+
+        #Skipped, to do a live test, supply a valid token
+        it.skip 'returns token', ->
+            getWAMToken("Kksw6BEJlzF7NFWzOS74TocgmqAx").then (wam) ->
+                console.log 'The token looks like:', JSON.stringify(wam)
+                wam.should.equal 'WHATEVER A VALID WAM TOKEN IS, like AAAAA*'
