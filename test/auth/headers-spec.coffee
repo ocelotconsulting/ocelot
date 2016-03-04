@@ -130,11 +130,16 @@ describe 'auth headers', ->
 
         assert(not req.headers.hasOwnProperty headerName) for headerName in ['myclient', 'myuser']
 
-describe 'custom headers', ->
-  it 'adds custom headers specified in the route information', ->
-      req = headers: {}
-      route['custom-headers'] = [{'X-custom': 'X-header'}, {'X-another': 'X-header'}]
-      req.headers['cookie'] = 'this=that;'
-      headers.addCustomHeaders req, route
-      for {key, value} in route['custom-headers']
-          assert.equal req.headers[key], value
+describe.only 'custom headers', ->
+    it 'adds custom headers specified in the route information', ->
+        req = headers: {}
+        route['custom-headers'] = [{'X-custom': 'X-header'}, {'X-another': 'X-header'}]
+        req.headers['cookie'] = 'this=that;'
+        headers.addCustomHeaders req, route
+        for {key, value} in route['custom-headers']
+            assert.equal req.headers[key], value
+
+    it 'doesnt break if custom headers doesnt exist', ->
+        req = headers: {}
+        headers.addCustomHeaders req, route
+        assert.equal true, true

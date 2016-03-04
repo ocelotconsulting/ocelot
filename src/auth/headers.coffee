@@ -7,7 +7,8 @@ Promise = require 'promise'
 module.exports =
 
     addCustomHeaders: (req, route) ->
-        for {key, value} in route['custom-headers']
+        customHeaders = route['custom-headers'] or []
+        for {key, value} in customHeaders
             req.headers[key] = value
 
     #todo: wam sucks
