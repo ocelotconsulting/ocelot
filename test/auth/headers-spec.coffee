@@ -130,7 +130,7 @@ describe 'auth headers', ->
 
         assert(not req.headers.hasOwnProperty headerName) for headerName in ['myclient', 'myuser']
 
-describe.only 'custom headers', ->
+describe 'custom headers', ->
     it 'adds custom headers specified in the route information', ->
         req = headers: {}
         route['custom-headers'] = [{'X-custom': 'X-header'}, {'X-another': 'X-header'}]

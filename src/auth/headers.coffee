@@ -50,7 +50,7 @@ module.exports =
                 if value then req.headers[name] = value else delete req.headers[name]
 
             if clientHeader then updateHeader clientHeader, authentication?.client_id
-            if userHeader then updateHeader userHeader, (authentication?.claims?.sub or authentication?.user_id)
+            if userHeader then updateHeader userHeader, (authentication?.claims?.sub or authentication?.access_token?.user_id)
             if not req.headers['oidc'] and route['cookie-name'] then updateHeader 'oidc', cookies["#{route['cookie-name']}_oidc"]
 
         catch ex
