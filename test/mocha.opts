@@ -1,1 +1,4 @@
---compilers coffee:coffee-script/register --recursive --colors --full-trace --reporter list 
+--compilers coffee:coffee-script/register 
+--recursive 
+--colors 
+--reporter list 
