@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node bin/www",
     "dev": "NODE_ENV=localhost supervisor -w .,src -e coffee bin/www",
-    "test": "NODE_ENV=localhost mocha --compilers coffee:coffee-script/register --recursive --colors --full-trace --reporter list test",
-    "test:dev": "NODE_ENV=localhost mocha --compilers coffee:coffee-script/register --recursive --colors --watch --reporter nyan test",
-    "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- --compilers coffee:coffee-script/register --require coffee-coverage/register-istanbul --recursive --colors --reporter list test"
+    "test": "NODE_ENV=localhost mocha --full-trace test",
+    "test:dev": "NODE_ENV=localhost mocha --watch --reporter nyan test",
+    "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- --require coffee-coverage/register-istanbul test"
   },
   "author": "Chris Coffman",
   "license": "ISC",

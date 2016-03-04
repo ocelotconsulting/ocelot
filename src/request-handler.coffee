@@ -27,6 +27,7 @@ authenticateAndProxy = (px, req, res, route, url) ->
             clientWhitelist.complete res
         else
             headers.addAuth req, route, authentication, cookies
+            headers.addCustomHeaders req, route
             proxy.request px, req, res, url
 
     authRejected = (auth) ->

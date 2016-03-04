@@ -6,6 +6,10 @@ Promise = require 'promise'
 
 module.exports =
 
+    addCustomHeaders: (req, route) ->
+        for {key, value} in route['custom-headers']
+            req.headers[key] = value
+
     #todo: wam sucks
     setAuthCookies: (res, route, authentication) ->
         wamPromise = if route['wam-legacy'] then wam.getWAMToken authentication.access_token else Promise.resolve()

@@ -129,3 +129,12 @@ describe 'auth headers', ->
         headers.addAuth req, route, auth
 
         assert(not req.headers.hasOwnProperty headerName) for headerName in ['myclient', 'myuser']
+
+describe 'custom headers', ->
+  it 'adds custom headers specified in the route information', ->
+      req = headers: {}
+      route['custom-headers'] = [{'X-custom': 'X-header'}, {'X-another': 'X-header'}]
+      req.headers['cookie'] = 'this=that;'
+      headers.addCustomHeaders req, route
+      for {key, value} in route['custom-headers']
+          assert.equal req.headers[key], value
