@@ -30,6 +30,7 @@ beforeEach(function () {
     res = {};
     req.headers = [];
     req.origin = "abc.monsanto.com";
+    res.on = function(event, handler){};
     handler = requestHandler.create(px, presumeHost);
 });
 

@@ -27,20 +27,29 @@ describe 'oidc', ->
     cronScheduleJobStub.restore()
 
   it 'can get token by custom header', ->
-    req = {headers: {'x-oidc': 'sometoken'}}
+    req = {headers: {'oidc': 'sometoken'}}
     cookies = {}
     route = {}
-    assert.equal(oidc.getToken(req, route, cookies), 'sometoken')
+    oidc.getToken(req, route, cookies)
+      .then (token) ->
+        assert.equal(token, 'sometoken')
+      , (err) ->
+        assert.fail('token could not be retrieved')
+
 
   it 'can get token by cookie', ->
     req = {headers: {}}
     cookies = {'some_oidc': 'sometoken'}
     route = {'cookie-name': 'some'}
-    assert.equal(oidc.getToken(req, route, cookies), 'sometoken')
+    oidc.getToken(req, route, cookies)
+    .then (token) ->
+      assert.equal(token, 'sometoken')
+    , (err) ->
+      assert.fail('token could not be retrieved')
 
   it 'fails if no key found', (done) ->
     oidc.validate('eyJhbGciOiJSUzI1NiIsImtpZCI6IndrYWNuIn0.two.three').then(done).catch (err) ->
-      assert.equal(err, 'key not found for wkacn')
+      assert.equal(err.invalid_oidc, true)
       done()
     .catch(done)
 
