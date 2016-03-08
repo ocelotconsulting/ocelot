@@ -20,7 +20,6 @@ authenticateAndProxy = (px, req, res, route, url) ->
     cookies = parseCookies req
 
     authFulfilled = (authentication) ->
-
         if tokenInfo.accept req
             tokenInfo.complete route, res
         else if clientWhitelist.accept route, authentication

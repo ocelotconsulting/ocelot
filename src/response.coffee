@@ -3,6 +3,8 @@ send = (res, statusCode, text) ->
     if text
         res.write text
     res.end()
+    if res._ws
+      res._ws.destroy()
 
 module.exports =
     send: send
