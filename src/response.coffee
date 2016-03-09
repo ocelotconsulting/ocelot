@@ -1,4 +1,5 @@
 send = (res, statusCode, text) ->
+    res.setHeader 'server', 'ocelot'
     res.statusCode = statusCode
     if text
         res.write text

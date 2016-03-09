@@ -63,11 +63,12 @@ handleDefaultRequest = (px, req, res) ->
 module.exports =
     create: (px) ->
         (req, res) ->
-            prometheus.connectionOpened(req)
+            res.setHeader 'powered-by', 'ocelot'
+            prometheus.requestProcessing(req)
             res.on 'finish', ->
-                prometheus.connectionClosed(req)
+                prometheus.requestFinished(req)
             res.on 'close', ->
-                prometheus.connectionClosed(req)
+                prometheus.requestFinished(req)
 
             cors.setCorsHeaders req, res
             if cors.shortCircuit req then response.send res, 204

@@ -57,13 +57,13 @@ setInterval =>
 , 15000
 
 module.exports =
-    connectionOpened: (req)->
+    requestProcessing: (req)->
       #_ws signifies a websocket, omit timing and request count
       if not req._ws
         req._time = new Date().getTime()
         requestCount++
       currentRequests++
-    connectionClosed: (req) ->
+    requestFinished: (req) ->
       currentRequests--
       if req._time
         totalElapsedTime+=(new Date().getTime() - req._time)

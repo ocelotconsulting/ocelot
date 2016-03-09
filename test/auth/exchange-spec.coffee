@@ -26,6 +26,8 @@ describe 'exchange', ->
             ended: false
             write: (text) ->
                 @text = text
+            setHeader: (header) ->
+
         route = {}
         postmanMock = sinon.stub(postman, 'post')
 
@@ -59,9 +61,11 @@ describe 'exchange', ->
         exchange.authCodeFlow req, res, route
         assert.equal res.statusCode, 307
         assert.equal res.ended, true
-        assert.equal res.headers.length, 1
+        assert.equal res.headers.length, 2
         assert.equal res.headers[0].name, 'Location'
         assert.equal res.headers[0].value, 'test'
+        assert.equal res.headers[1].name, 'server'
+        assert.equal res.headers[1].value, 'ocelot'
 
     afterEach ->
         restore postmanMock

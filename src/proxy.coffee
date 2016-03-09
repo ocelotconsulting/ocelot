@@ -1,5 +1,3 @@
-log = require './log'
-
 module.exports =
     request: (px, req, res, url) ->
         req.url = url.path

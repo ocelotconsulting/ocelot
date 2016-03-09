@@ -30,6 +30,8 @@ beforeEach(function () {
     res = {};
     req.headers = [];
     req.origin = "abc.monsanto.com";
+    res.setHeader = function(name, value){this.headers[name] = value;};
+    res.headers = {};
     res.on = function(event, handler){};
     handler = requestHandler.create(px, presumeHost);
 });
@@ -228,6 +230,8 @@ describe('request handler', function () {
 
         responseMock.verify();
         headersProxy.verify();
+
+        assert.equal(res.headers['powered-by'], 'ocelot')
     });
 
     afterEach(function () {

@@ -14,6 +14,7 @@ describe('response', function () {
         res.end = function(){
             ended = true;
         };
+        res.setHeader = function(header){};
 
         response.send(res, 302, "abc");
 
@@ -34,6 +35,7 @@ describe('response', function () {
         res.end = function(){
             ended = true;
         };
+        res.setHeader = function(header){};
 
         response.send(res, 302);
 
