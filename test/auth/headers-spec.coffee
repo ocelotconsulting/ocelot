@@ -26,21 +26,6 @@ describe 'headers', ->
         .then ->
             assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
             assert.equal res['Set-Cookie'].indexOf("mycookie_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly; path=/abc") > -1, true
-            assert.equal res['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, true
-
-    it 'omit refresh or oidc token when not present', ->
-
-        res.setHeader = (name, value) ->
-            @[name] = value
-
-        route['cookie-name'] = 'mycookie'
-        route.route = 'domain/abc'
-        authentication['access_token'] = 'def123'
-        headers.setAuthCookies res, route, authentication
-        .then ->
-            assert.equal res['Set-Cookie'].indexOf('mycookie=def123; path=/abc') > -1, true
-            assert.equal res['Set-Cookie'].indexOf('mycookie_rt=abc123; path=/abc') > -1, false
-            assert.equal res['Set-Cookie'].indexOf('mycookie_oidc=ghi123; path=/abc') > -1, false
 
     it 'overrides the route key if you have a cookie path on your route', ->
 
@@ -88,17 +73,6 @@ describe 'auth headers', ->
         req.headers['cookie'] = 'this=that;'
         headers.addAuth req, route, auth
         assert.equal req.headers['user-id'], 'cjcoff'
-
-    it 'omits user header if oidc token missing', ->
-        req = headers: {}
-        req.headers.cookie = 'this=that'
-        auth =
-            client_id: 'some-app'
-        route['user-header'] = 'user-id'
-        route['cookie-name'] = 'my-cookie'
-        req.headers['cookie'] = 'this=that;'
-        headers.addAuth req, route, auth
-        assert.equal !req.headers['user-id'], true
 
     it 'adds client header if one exists on the validation payload', ->
         req = headers: {}

@@ -31,7 +31,6 @@ module.exports =
                       "#{cookieName}=#{authentication.access_token}"
                       if wamResult then "AXMSESSION=#{wamResult}"
                       if authentication.refresh_token then refreshTokenCookie()
-                      if authentication.id_token then "#{cookieName}_oidc=#{authentication.id_token}"
                   ]).chain().compact().map((item) ->
                       "#{item}; path=#{cookiePath}"
                   )
@@ -41,17 +40,16 @@ module.exports =
 
             res.setHeader 'Set-Cookie', cookieChain.value()
 
-    addAuth: (req, route, authentication, cookies) ->
+    addAuth: (req, route, authentication) ->
         try
-            userHeader = route['user-header']
-            clientHeader = route['client-header']
-
             updateHeader = (name, value) ->
                 if value then req.headers[name] = value else delete req.headers[name]
 
+            userHeader = route['user-header']
+            clientHeader = route['client-header']
             if clientHeader then updateHeader clientHeader, authentication?.client_id
             if userHeader then updateHeader userHeader, (authentication?.claims?.sub or authentication?.access_token?.user_id)
-            if not req.headers['oidc'] and route['cookie-name'] then updateHeader 'oidc', cookies["#{route['cookie-name']}_oidc"]
-
+            updateHeader 'claims', authentication?.claims
+            updateHeader 'entitlements', authentication?.entitlements
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack

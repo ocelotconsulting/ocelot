@@ -7,7 +7,7 @@ grantType = "refresh_token"
 
 module.exports =
     accept: (route, cookies, auth)->
-        route['require-auth'] and route['cookie-name'] and cookies["#{route['cookie-name']}_rt"]? and not auth?.invalid_oidc
+        route['require-auth'] and route['cookie-name'] and cookies["#{route['cookie-name']}_rt"]?
 
     token: (req, res, route, cookies) ->
         console.log 'going to refresh cookie for ', route.route
