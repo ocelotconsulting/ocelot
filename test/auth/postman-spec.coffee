@@ -44,7 +44,7 @@ describe 'postman', () ->
 
         agent = createAgent (pass, fail) ->
             return Promise.resolve().then () ->
-                  pass({text: '{"pass": true}'});
+                  pass({body: {"pass": true}});
 
         agentMock = sinon.stub(httpAgent, 'getAgent');
         agentMock.withArgs().returns(agent);
