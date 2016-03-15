@@ -10,7 +10,7 @@ module.exports =
         route['require-auth'] and route['cookie-name'] and cookies["#{route['cookie-name']}_rt"]?
 
     token: (req, res, route, cookies) ->
-        console.log 'going to refresh cookie for ', route.route
+        log.debug 'going to refresh cookie for ', route.route
         cookieName = "#{route['cookie-name']}_rt"
 
         refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']

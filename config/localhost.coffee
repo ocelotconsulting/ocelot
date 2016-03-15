@@ -5,6 +5,7 @@ module.exports =
     'validation-secret': "I7PM4yBf"
     'token-endpoint': "https://test.amp.monsanto.com/as/token.oauth2"
     'auth-endpoint': "https://test.amp.monsanto.com/as/authorization.oauth2"
+    'user-info': 'https://test.amp.monsanto.com/idp/userinfo.openid'
 
   jwks:
     url: "https://test.amp.monsanto.com/pf/JWKS"
@@ -20,5 +21,5 @@ module.exports =
 
   backend:
     provider: "redis"
-    host: "192.168.99.101"
+    host: "127.0.0.1"
     port: "6379"

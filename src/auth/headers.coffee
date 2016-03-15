@@ -45,11 +45,12 @@ module.exports =
             updateHeader = (name, value) ->
                 if value then req.headers[name] = value else delete req.headers[name]
 
+            userInfo = JSON.stringify(authentication['user-info']) if authentication?['user-info']
             userHeader = route['user-header']
             clientHeader = route['client-header']
             if clientHeader then updateHeader clientHeader, authentication?.client_id
             if userHeader then updateHeader userHeader, (authentication?.claims?.sub or authentication?.access_token?.user_id)
-            updateHeader 'claims', authentication?.claims
+            updateHeader 'user-info', userInfo
             updateHeader 'entitlements', authentication?.entitlements
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack

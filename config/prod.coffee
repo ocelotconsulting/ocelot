@@ -5,6 +5,7 @@ module.exports =
     'validation-secret': "oafkjpCDEryKoG6mA5OcUeGxaZIQrSx8cxQM8khzlEgKwCnbGfZN9an7hNjGaUpA"
     'token-endpoint': "https://amp.monsanto.com/as/token.oauth2"
     'auth-endpoint': "https://amp.monsanto.com/as/authorization.oauth2"
+    'user-info': 'https://amp.monsanto.com/idp/userinfo.openid'
 
   jwks:
     url: "https://amp.monsanto.com/pf/JWKS"

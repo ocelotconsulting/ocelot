@@ -23,7 +23,6 @@ log.debug 'proxy listening on port ' + proxyPort
 proxyServer.listen proxyPort
 
 proxyServer.on 'upgrade', (req, socket, head) ->
-  console.log 'upgrade requested'
   req._ws = socket
   req._head = head
   res = new ServerResponse(socket)

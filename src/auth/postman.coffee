@@ -1,24 +1,15 @@
-https = require 'https'
-url = require 'url'
-config = require 'config'
 agent = require('../http-agent')
-
+config = require 'config'
 url = config.get 'authentication.token-endpoint'
 
 throwBadHttpResponse = (res) ->
     throw "HTTP #{res.statusCode}: #{res.text}"
 
 handleSuccessResult = (res) ->
-    result = try
-        JSON.parse res.text
-    catch e
+    if not res.body or res.body.error
         throwBadHttpResponse res
-    if result.error
-        throwBadHttpResponse res
-    else result
-
-handleErrorResult = (err) ->
-    throwBadHttpResponse err.response
+    else
+      res.body
 
 postAs = (formData, client, secret) ->
     agent.getAgent().post url
@@ -27,7 +18,8 @@ postAs = (formData, client, secret) ->
     .send
         'client_id': client
         'client_secret': secret
-    .then handleSuccessResult, handleErrorResult
+    .then handleSuccessResult, (err) ->
+        throwBadHttpResponse err.response
 
 post = (formData, route) ->
     postAs formData, route['client-id'], route['client-secret']
