@@ -5,6 +5,7 @@ chai.use chaiAsPromised
 cache = require 'memory-cache'
 sinon = require 'sinon'
 agent = require('../../src/http-agent')
+config = require 'config'
 
 sandbox = sinon.sandbox.create()
 
