@@ -1,0 +1,25 @@
+config = require 'config'
+agent = require('../http-agent')
+cache = require 'memory-cache'
+log = require '../log'
+
+expectedResultTimeout = 7200000
+unexpectedResultTimeout = 5000
+url = config.get 'authentication.profile-endpoint' if config.has 'authentication.profile-endpoint'
+
+module.exports =
+  getProfile: (authentication, route, token) ->
+    Promise.resolve().then ->
+      userId = authentication.access_token?.user_id
+      appId = route['ent-app-id'] or ''
+      if url and userId
+        actualUrl = url.replace('$userId', userId).replace('$appId', appId)
+        tokenKey = 'ent-app-id_' + token
+        cache.get(tokenKey) or agent.getAgent().get(actualUrl).set('Authorization', 'Bearer ' + token).then (res) ->
+          profile = res.body
+          timeout = if profile then expectedResultTimeout else unexpectedResultTimeout
+          cache.put tokenKey, profile or {}, timeout
+          profile
+        , (err) ->
+          status = err.response.statusCode
+          cache.put tokenKey, {}, unexpectedResultTimeout

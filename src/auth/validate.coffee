@@ -1,6 +1,7 @@
 Promise = require 'promise'
 oauth = require './oauth'
 userInfo = require './user-info'
+profile = require './profile'
 log = require '../log'
 
 exports.authentication = (req, route, cookies) ->
@@ -8,12 +9,11 @@ exports.authentication = (req, route, cookies) ->
     Promise.resolve()
   else
     oauth.getToken(req, route, cookies).then (oauthToken) ->
-      validatePromise = oauth.validate(oauthToken)
-      userInfoPromise = userInfo.getUserInfo(oauthToken, route)
-      validatePromise.then (authentication) ->
-        userInfoPromise.then (userInfo) ->
-          authentication['user-info'] = userInfo if userInfo?.sub
+      oauth.validate(oauthToken).then (authentication) ->
+        profile.getProfile(authentication, route, oauthToken)
+        .then (profile) ->
+          if profile
+            authentication.profile = profile
           authentication
-        , (err) ->
-          log.error 'unexpected error loading user info', err
+        , () ->
           authentication

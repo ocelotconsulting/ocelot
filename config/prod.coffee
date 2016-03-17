@@ -5,7 +5,8 @@ module.exports =
     'validation-secret': "oafkjpCDEryKoG6mA5OcUeGxaZIQrSx8cxQM8khzlEgKwCnbGfZN9an7hNjGaUpA"
     'token-endpoint': "https://amp.monsanto.com/as/token.oauth2"
     'auth-endpoint': "https://amp.monsanto.com/as/authorization.oauth2"
-    'user-info': 'https://amp.monsanto.com/idp/userinfo.openid'
+    'user-info-endpoint': 'https://amp.monsanto.com/idp/userinfo.openid'
+    'profile-endpoint': 'https://profile.velocity.ag/v1/users/$userId?fields=id,firstName,middleName,lastName,entitlements,email,fullName&apps=$appId'
 
   jwks:
     url: "https://amp.monsanto.com/pf/JWKS"
