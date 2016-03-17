@@ -52,6 +52,6 @@ module.exports =
             if clientHeader then updateHeader clientHeader, authentication?.client_id
             if userHeader then updateHeader userHeader, (authentication?.claims?.sub or authentication?.access_token?.user_id)
             updateHeader 'user-info', userInfo
-            updateHeader 'profile', profile
+            updateHeader 'user-profile', profile
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack
