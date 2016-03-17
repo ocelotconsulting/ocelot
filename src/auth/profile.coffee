@@ -14,12 +14,11 @@ module.exports =
       appId = route['ent-app-id'] or ''
       if url and userId
         actualUrl = url.replace('$userId', userId).replace('$appId', appId)
-        tokenKey = 'ent-app-id_' + token
+        tokenKey = 'profile_' + token
         cache.get(tokenKey) or agent.getAgent().get(actualUrl).set('Authorization', 'Bearer ' + token).then (res) ->
           profile = res.body
           timeout = if profile then expectedResultTimeout else unexpectedResultTimeout
           cache.put tokenKey, profile or {}, timeout
           profile
-        , (err) ->
-          status = err.response.statusCode
+        , ->
           cache.put tokenKey, {}, unexpectedResultTimeout

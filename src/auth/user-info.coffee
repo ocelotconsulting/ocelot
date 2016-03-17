@@ -17,5 +17,6 @@ module.exports =
           cache.put tokenKey, res.body or {}, timeout
           res.body
         , (err) ->
+          status = err.response.statusCode
           timeout = if status == 403 or status == 401 then expectedResultTimeout else unexpectedResultTimeout
           cache.put tokenKey, {}, timeout
