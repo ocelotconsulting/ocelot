@@ -50,7 +50,7 @@ module.exports =
             userHeader = route['user-header']
             clientHeader = route['client-header']
             if clientHeader then updateHeader clientHeader, authentication?.client_id
-            if userHeader then updateHeader userHeader, (authentication?.claims?.sub or authentication?.access_token?.user_id)
+            if userHeader then updateHeader userHeader, (authentication?.claims?.sub?.toLowerCase() or authentication?.access_token?.user_id?.toLowerCase())
             updateHeader 'user-info', userInfo
             updateHeader 'user-profile', profile
         catch ex

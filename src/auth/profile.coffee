@@ -12,8 +12,8 @@ module.exports =
     Promise.resolve().then ->
       userId = authentication.access_token?.user_id
       appId = route['ent-app-id'] or ''
-      if url and userId
-        actualUrl = url.replace('$userId', userId).replace('$appId', appId)
+      if url and userId and appId
+        actualUrl = url.replace('$userId', encodeURIComponent(userId)).replace('$appId', encodeURIComponent(appId))
         tokenKey = 'profile_' + token
         cache.get(tokenKey) or agent.getAgent().get(actualUrl).set('Authorization', 'Bearer ' + token).then (res) ->
           profile = res.body

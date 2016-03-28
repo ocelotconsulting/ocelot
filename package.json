@@ -3,6 +3,9 @@
   "version": "1.4.2",
   "description": "proxy for velocity.ag and other projects",
   "private": false,
+  "engines": {
+    "node": "4.4.0"
+  },
   "scripts": {
     "start": "node bin/www",
     "dev": "PORT=3001 NODE_ENV=localhost supervisor -w .,src -e coffee bin/www",

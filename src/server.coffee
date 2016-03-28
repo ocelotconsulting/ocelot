@@ -9,7 +9,7 @@ log = require './log'
 prometheus = require './metrics/prometheus'
 ServerResponse = http.ServerResponse
 
-px = httpProxy.createProxyServer {changeOrigin: true, autoRewrite: true, ws: true}
+px = httpProxy.createProxyServer {secure: false, changeOrigin: true, autoRewrite: true, ws: true}
 
 px.on 'error', (err, req, res) ->
     response.send res, 500, 'Error during proxy: ' + err + ':' + err.stack
