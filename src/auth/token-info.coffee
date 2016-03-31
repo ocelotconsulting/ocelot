@@ -1,12 +1,16 @@
 response = require '../response'
 
-endsWith = (str, suffix) ->
-  str.indexOf(suffix, str.length - suffix.length) != -1
-
 module.exports =
   accept: (req) ->
-    endsWith(req.url.split('?')[0], 'auth-token-info')
-  complete: (route, res) ->
+    req.url.split('?')[0].endsWith('auth-token-info')
+  complete: (route, res, auth) ->
+    tokenAgeInSeconds = (new Date().getTime() - (auth.obtained_on)) / 1000
+    ttlSeconds = auth.expires_in - Math.round(tokenAgeInSeconds)
+    ttlSeconds = 0 if ttlSeconds < 0
+
     response.sendJSON(res, 200,
       'cookie-name': route['cookie-name'] or ''
-      'cookies-enabled': route['cookie-name'] and route['require-auth'])
+      'cookies-enabled': route['cookie-name'] and route['require-auth']
+      'expires_in' : ttlSeconds,
+      'access_token': auth.token
+    )

@@ -36,5 +36,8 @@ module.exports =
         token: token
 
       postman.postAs(formData, client, secret).then (authentication) ->
-        cache.put token, authentication, 300000
+        ttl = (authentication.expires_in * 1000) or 300000
+        cache.put token, authentication, ttl
+        authentication.token = token
+        authentication.obtained_on = new Date().getTime()
         authentication

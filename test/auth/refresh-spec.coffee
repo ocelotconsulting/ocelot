@@ -3,7 +3,7 @@ sinon = require('sinon')
 postman = require('../../src/auth/postman')
 redirect = require('../../src/auth/redirect')
 headers = require('../../src/auth/headers')
-refresh = require('../../src/auth/refresh')
+refresh = require('../../src/auth/refresh/auth-code-refresh')
 crypt = require('../../src/auth/crypt')
 postmanMock = undefined
 headersMock = undefined
@@ -41,7 +41,7 @@ describe 'refresh', ->
 
         cookies = {'something_rt': crypt.encrypt(unencrypted_refresh, secret)}
 
-        refresh.token req, res, route, cookies
+        refresh.complete req, res, route, cookies
         assert postmanMock.calledOnce == true
         assert redirectMock.calledOnce == true
 
@@ -67,7 +67,7 @@ describe 'refresh', ->
 
         redirectMock = sinon.stub(redirect, 'startAuthCode')
         redirectMock.withArgs req, res, route, cookies
-        refresh.token req, res, route, cookies
+        refresh.complete req, res, route, cookies
         assert postmanMock.calledOnce == true
         assert redirectMock.calledOnce == true
 

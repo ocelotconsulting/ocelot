@@ -6,7 +6,7 @@ var assert = require("assert"),
     rewrite = require("../src/rewrite"),
     exchange = require("../src/auth/exchange"),
     validate = require("../src/auth/validate"),
-    refresh = require("../src/auth/refresh"),
+    refresh = require("../src/auth/refresh/auth-code-refresh"),
     redirect = require("../src/auth/redirect"),
     proxy = require("../src/proxy"),
     headers = require("../src/auth/headers"),
@@ -135,7 +135,7 @@ describe('request handler', function () {
         validateMock.withArgs(req, route).returns(Promise.reject());
 
         refreshMock = sinon.mock(refresh);
-        refreshMock.expects("token").once().withArgs(req, res, route);
+        refreshMock.expects("complete").once().withArgs(req, res, route);
 
         handler(req, res);
 
