@@ -1,7 +1,5 @@
 http = require 'http'
-httpProxy = require 'http-proxy'
 response = require './response'
-requestHandler = require './request-handler'
 express = require 'express'
 facade = require './backend/facade'
 bodyparser = require 'body-parser'
@@ -9,25 +7,40 @@ log = require './log'
 prometheus = require './metrics/prometheus'
 ServerResponse = http.ServerResponse
 
-px = httpProxy.createProxyServer {secure: false, changeOrigin: true, autoRewrite: true, ws: true}
-
-px.on 'error', (err, req, res) ->
-    response.send res, 500, 'Error during proxy: ' + err + ':' + err.stack
-
 facade.init()
 
-requestHandler = requestHandler.create(px)
-proxyServer = http.createServer requestHandler
+proxyMiddleware = express.Router();
+proxyMiddleware.use require './middleware/prom'
+proxyMiddleware.use require './middleware/poweredby'
+proxyMiddleware.use require './middleware/cors'
+proxyMiddleware.use require './middleware/upgrade'
+
+proxyMiddleware.use (require 'cookie-parser')()
+
+proxyMiddleware.use require './middleware/route-resolver'
+proxyMiddleware.use require './middleware/exchange'
+proxyMiddleware.use require './middleware/token-refresh'
+
+proxyMiddleware.use require './middleware/backend-host-url'
+
+proxyMiddleware.use require './middleware/validate-authentication'
+proxyMiddleware.use require './middleware/token-info'
+proxyMiddleware.use require './middleware/client-whitelist'
+proxyMiddleware.use require './middleware/request-headers'
+proxyMiddleware.use require './middleware/proxy'
+
+proxy = express()
+proxy.use proxyMiddleware
 proxyPort = process.env.PORT or 80
 log.debug 'proxy listening on port ' + proxyPort
-proxyServer.listen proxyPort
+proxyHttpServer = proxy.listen proxyPort
 
-proxyServer.on 'upgrade', (req, socket, head) ->
+proxyHttpServer.on 'upgrade', (req, socket, head) ->
   req._ws = socket
   req._head = head
   res = new ServerResponse(socket)
   res._ws = socket
-  requestHandler req, res
+  proxyMiddleware req, res
 
 api = express()
 api.use bodyparser.json()
