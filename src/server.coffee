@@ -21,7 +21,7 @@ proxyMiddleware.use require './middleware/route-resolver'
 proxyMiddleware.use require './middleware/exchange'
 proxyMiddleware.use require './middleware/token-refresh'
 
-proxyMiddleware.use require './middleware/backend-host-url'
+proxyMiddleware.use require './middleware/backend-host'
 
 proxyMiddleware.use require './middleware/validate-authentication'
 proxyMiddleware.use require './middleware/token-info'
