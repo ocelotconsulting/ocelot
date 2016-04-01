@@ -57,14 +57,3 @@ describe 'prom middleware', ->
     expect(promStub.called).to.be.false
     expect(res.on.called).to.be.false
     expect(next.called).to.be.true
-
-# promMetrics = require '../metrics/prometheus'
-#
-# module.exports = (req, res, next) ->
-#   if not req._ws
-#     promMetrics.requestProcessing(req)
-#     res.on 'finish', ->
-#         promMetrics.requestFinished(req)
-#     res.on 'close', ->
-#         promMetrics.requestFinished(req)
-#   next()
