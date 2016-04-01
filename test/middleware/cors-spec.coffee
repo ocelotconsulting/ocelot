@@ -40,7 +40,9 @@ describe 'cors middleware', ->
 
     corsStub = sandbox.stub(cors, "setCorsHeaders")
     sandbox.stub(cors, "shortCircuit").withArgs(req).returns false
+    responseStub = sandbox.stub(response, "send")
 
     corsMiddleWare(req,res,next)
     expect(corsStub.calledWith(req, res)).to.be.true
     expect(next.called).to.be.true
+    expect(responseStub.called).to.be.false
