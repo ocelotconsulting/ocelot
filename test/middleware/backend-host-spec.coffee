@@ -8,7 +8,7 @@ expect = chai.expect
 sandbox = sinon.sandbox.create()
 
 describe 'backend host middleware', ->
-  beforeEach ->
+  afterEach ->
     sandbox.restore()
 
   it 'sends a 404 if route cannot be mapped', ->

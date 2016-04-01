@@ -8,7 +8,7 @@ expect = chai.expect
 sandbox = sinon.sandbox.create()
 
 describe 'client whitelist middleware', ->
-  beforeEach ->
+  afterEach ->
     sandbox.restore()
 
   describe 'passes when', ->

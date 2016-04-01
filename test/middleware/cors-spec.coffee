@@ -8,7 +8,7 @@ expect = chai.expect
 sandbox = sinon.sandbox.create()
 
 describe 'cors middleware', ->
-  beforeEach ->
+  afterEach ->
     sandbox.restore()
 
   it 'sets headers and completes request if short circuit detected', ->
