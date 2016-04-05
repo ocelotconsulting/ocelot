@@ -14,4 +14,6 @@ module.exports =
       beginAuthCodeFlow = (err) ->
         redirect.startAuthCode req, res, route
 
-      refresh.token(req, route, cookies).then browserRefresh, beginAuthCodeFlow
+      refresh.token(req, route, cookies)
+      .then browserRefresh
+      .catch beginAuthCodeFlow

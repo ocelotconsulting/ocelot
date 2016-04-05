@@ -2,6 +2,7 @@ headers = require '../headers'
 refresh = require './refresh'
 response = require '../../response'
 tokenInfo = require '../token-info'
+log = require '../../log'
 
 module.exports =
   accept: (req, route, cookies) ->
@@ -16,7 +17,7 @@ module.exports =
         tokenInfo.complete route, res, auth
 
     thingsAreNotOk = (err) ->
-      log.error "Refresh error for route #{route.route} when using cookie #{cookieName}: #{err}; for query #{formData}"
-      response(res, 500, err)
+      log.error "Refresh error for route #{route.route}"
+      response.send(res, 500)
 
     refresh.token(req, route, cookies).then thingsAreOk, thingsAreNotOk

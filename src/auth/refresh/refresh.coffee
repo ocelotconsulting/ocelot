@@ -12,9 +12,11 @@ module.exports =
     log.debug 'going to refresh cookie for ', route.route
     cookieName = "#{route['cookie-name']}_rt"
 
-    refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']
-    formData =
-        grant_type: grantType
-        refresh_token: refreshToken
+    Promise.resolve()
+    .then ->
+      refreshToken = crypt.decrypt cookies[cookieName], route['client-secret']
+      formData =
+          grant_type: grantType
+          refresh_token: refreshToken
 
-    postman.post formData, route
+      postman.post formData, route
