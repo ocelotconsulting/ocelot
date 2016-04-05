@@ -14,7 +14,7 @@ restore = (mockFunc) ->
         mockFunc.restore()
 
 describe 'refresh', ->
-    it 'refreshes if post is successful', ->
+    it 'refreshes if post is successful', (done) ->
         secret = 'secret'
         unencrypted_refresh = 'abc'
         req = {}
@@ -42,10 +42,13 @@ describe 'refresh', ->
         cookies = {'something_rt': crypt.encrypt(unencrypted_refresh, secret)}
 
         refresh.complete req, res, route, cookies
-        assert postmanMock.calledOnce == true
-        assert redirectMock.calledOnce == true
+        .then ->
+          assert postmanMock.calledOnce == true
+          assert redirectMock.calledOnce == true
+          done()
+        .catch done
 
-    it 'redirects if post is unsuccessful', ->
+    it 'redirects if post is unsuccessful', (done) ->
         secret = 'secret'
         unencrypted_refresh = 'abc'
         req = {}
@@ -68,8 +71,11 @@ describe 'refresh', ->
         redirectMock = sinon.stub(redirect, 'startAuthCode')
         redirectMock.withArgs req, res, route, cookies
         refresh.complete req, res, route, cookies
-        assert postmanMock.calledOnce == true
-        assert redirectMock.calledOnce == true
+        .then ->
+          assert postmanMock.calledOnce == true
+          assert redirectMock.calledOnce == true
+          done()
+        .catch done
 
     afterEach ->
         restore postmanMock
