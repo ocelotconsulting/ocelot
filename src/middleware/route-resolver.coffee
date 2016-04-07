@@ -1,5 +1,6 @@
 resolver = require '../resolver'
 response = require '../response'
+config = require 'config'
 
 redirectOrSend404 = (req, res, host) ->
     if host.indexOf('www.') is 0
