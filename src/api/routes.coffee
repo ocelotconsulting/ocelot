@@ -7,7 +7,7 @@ log = require '../log'
 config = require 'config'
 crypto = require('crypto')
 
-routeFields = ['capture-pattern', 'rewrite-pattern', 'services', 'require-auth', 'client-whitelist', 'user-header', 'client-header', 'user-id', 'custom-headers', 'ent-app-id']
+routeFields = ['capture-pattern', 'rewrite-pattern', 'services', 'require-auth', 'client-whitelist', 'user-header', 'client-header', 'user-id', 'custom-headers', 'ent-app-id', 'user-profile-enabled']
 cookieFields = ['cookie-name', 'client-id', 'client-secret', 'scope', 'cookie-path', 'cookie-domain']
 
 getRoute = (key) ->

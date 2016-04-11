@@ -11,6 +11,9 @@ module.exports =
     response.sendJSON(res, 200,
       'cookie-name': route['cookie-name'] or ''
       'cookies-enabled': route['cookie-name'] and route['require-auth']
-      'expires_in' : ttlSeconds,
+      'expires_in' : ttlSeconds
       'access_token': auth.token
+      'user-profile': auth['profile']
+      'user-id': auth.access_token?.user_id?.toLowerCase(),
+      'client-id': auth?.client_id
     )
