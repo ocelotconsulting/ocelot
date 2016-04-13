@@ -1,6 +1,6 @@
 url = require 'url'
 postman = require './postman'
-headers = require './headers'
+setCookies = require './set-cookies'
 response = require '../response'
 log = require '../log'
 
@@ -27,7 +27,7 @@ module.exports =
         redirectToOriginalUri = (result) ->
             log.debug "Exchanged code for token for route #{route.route}; server response #{JSON.stringify result}"
             res.setHeader 'Location', new Buffer(query.state, 'base64').toString('utf8')
-            headers.setAuthCookies(res, route, result).then ->
+            setCookies.setAuthCookies(res, route, result).then ->
                 log.debug "Completing the exchange for route #{route.route} with headers #{JSON.stringify res.headers}"
                 response.send res, 307
 

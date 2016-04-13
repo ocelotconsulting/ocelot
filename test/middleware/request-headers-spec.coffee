@@ -20,6 +20,7 @@ describe 'request header middleware', ->
 
     addAuthStub = sandbox.stub(headers, 'addAuth')
     addCustomStub = sandbox.stub(headers, 'addCustomHeaders')
+    addProxyHeadersStub = sandbox.stub(headers, 'addProxyHeaders')
 
     next = sandbox.stub()
 
@@ -27,4 +28,5 @@ describe 'request header middleware', ->
 
     expect(addAuthStub.calledWith(req, req._route, req._auth, req.cookies)).to.be.true
     expect(addCustomStub.calledWith(req, req._route)).to.be.true
+    expect(addProxyHeadersStub.calledWith(req)).to.be.true
     expect(next.called).to.be.true

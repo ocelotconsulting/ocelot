@@ -1,11 +1,12 @@
 assert = require 'assert'
 sinon = require 'sinon'
 headers = require '../../src/auth/headers'
+setCookies = require '../../src/auth/set-cookies'
 postman = require '../../src/auth/postman'
 exchange = require '../../src/auth/exchange'
 
 postmanMock = undefined
-headerMock = undefined
+setCookieMock = undefined
 
 restore = (mockFunc) ->
     if mockFunc and mockFunc.restore
@@ -55,8 +56,8 @@ describe 'exchange', ->
         postmanMock = sinon.stub(postman, 'post')
         postmanMock.withArgs(formData, route).returns then: (success, failure) ->
             success payload
-        headerMock = sinon.stub(headers, 'setAuthCookies')
-        headerMock.withArgs(res, route, payload).returns then: (s, f) ->
+        setCookieMock = sinon.stub(setCookies, 'setAuthCookies')
+        setCookieMock.withArgs(res, route, payload).returns then: (s, f) ->
             s res
         exchange.authCodeFlow req, res, route
         assert.equal res.statusCode, 307
@@ -69,4 +70,4 @@ describe 'exchange', ->
 
     afterEach ->
         restore postmanMock
-        restore headerMock
+        restore setCookieMock

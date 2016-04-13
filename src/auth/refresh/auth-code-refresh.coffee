@@ -1,5 +1,5 @@
 redirect = require '../redirect'
-headers = require '../headers'
+setCookies = require '../set-cookies'
 refresh = require './refresh'
 
 module.exports =
@@ -7,7 +7,7 @@ module.exports =
 
   complete: (req, res, route, cookies) ->
       browserRefresh = (result) ->
-        headers.setAuthCookies res, route, result
+        setCookies.setAuthCookies res, route, result
         .then () ->
             redirect.refreshPage req, res
 

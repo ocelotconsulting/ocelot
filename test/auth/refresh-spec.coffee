@@ -2,11 +2,11 @@ assert = require('assert')
 sinon = require('sinon')
 postman = require('../../src/auth/postman')
 redirect = require('../../src/auth/redirect')
-headers = require('../../src/auth/headers')
+setCookies = require('../../src/auth/set-cookies')
 refresh = require('../../src/auth/refresh/auth-code-refresh')
 crypt = require('../../src/auth/crypt')
 postmanMock = undefined
-headersMock = undefined
+setCookiesMock = undefined
 redirectMock = undefined
 
 restore = (mockFunc) ->
@@ -32,8 +32,8 @@ describe 'refresh', ->
         postmanMock.withArgs(postData, route).returns then: (s, f) ->
             s auth
 
-        headerMock = sinon.stub(headers, 'setAuthCookies')
-        headerMock.withArgs(res, route, auth).returns then: (s, f) ->
+        setCookiesMock = sinon.stub(setCookies, 'setAuthCookies')
+        setCookiesMock.withArgs(res, route, auth).returns then: (s, f) ->
             s res
 
         redirectMock = sinon.stub(redirect, 'refreshPage');
@@ -79,5 +79,5 @@ describe 'refresh', ->
 
     afterEach ->
         restore postmanMock
-        restore headersMock
+        restore setCookiesMock
         restore redirectMock

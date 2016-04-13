@@ -1,4 +1,4 @@
-headers = require '../headers'
+setCookies = require '../set-cookies'
 refresh = require './refresh'
 response = require '../../response'
 tokenInfo = require '../token-info'
@@ -12,7 +12,7 @@ module.exports =
     thingsAreOk = (auth) ->
       auth.token = auth.access_token
       auth.obtained_on = new Date().getTime()
-      headers.setAuthCookies res, route, auth
+      setCookies.setAuthCookies res, route, auth
       .then () ->
         tokenInfo.complete route, res, auth
 

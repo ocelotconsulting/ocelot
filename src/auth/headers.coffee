@@ -1,44 +1,10 @@
-_ = require 'underscore'
-crypt = require './crypt'
-wam = require '../backend/wam'
 log = require '../log'
-Promise = require 'promise'
 
 module.exports =
-
     addCustomHeaders: (req, route) ->
         customHeaders = route['custom-headers'] or []
         for {key, value} in customHeaders
             req.headers[key] = value
-
-    #todo: wam sucks
-    setAuthCookies: (res, route, authentication) ->
-        wamPromise = if route['wam-legacy'] then wam.getWAMToken authentication.access_token else Promise.resolve()
-        wamPromise.then (wamResult) ->
-            cookieName = route['cookie-name']
-            refreshTokenCookie = ->
-                "#{cookieName}_rt=#{crypt.encrypt(authentication.refresh_token, route['client-secret'])};HttpOnly"
-
-            cookiePath =
-                if route['cookie-path']
-                    route['cookie-path']
-                else if route.route.indexOf("/") != -1
-                    route.route.substring(route.route.indexOf("/"))
-                else
-                    "/"
-
-            cookieChain = _([
-                      "#{cookieName}=#{authentication.access_token}"
-                      if wamResult then "AXMSESSION=#{wamResult}"
-                      if authentication.refresh_token then refreshTokenCookie()
-                  ]).chain().compact().map((item) ->
-                      "#{item}; path=#{cookiePath}"
-                  )
-
-            if route['cookie-domain']
-                cookieChain = cookieChain.map((item) -> "#{item}; domain=#{route['cookie-domain']}")
-
-            res.setHeader 'Set-Cookie', cookieChain.value()
 
     addAuth: (req, route, authentication) ->
         try
@@ -55,3 +21,15 @@ module.exports =
             updateHeader 'user-profile', profile
         catch ex
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack
+
+    addProxyHeaders: (req) ->
+      addValueToHeader = (headerName, value) =>
+        if not req.headers[headerName]
+          req.headers[headerName] = value
+        #else req.headers[headerName] = "#{req.headers[headerName]} #{value}"
+
+      proto = if req.connection.secure then 'https' else 'http'
+
+      addValueToHeader 'x-forwarded-host', req.headers.host
+      addValueToHeader 'x-forwarded-proto', proto
+      addValueToHeader 'x-forwarded-for', req.connection.remoteAddress
