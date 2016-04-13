@@ -19,6 +19,9 @@ describe 'profile', ->
     sandbox.restore()
 
   describe 'resolves to empty', ->
+    it 'when user profile is false', ->
+      profile.getProfile({access_token: {user_id: 'cjcoff'}}, {'ent-app-id': 'myapp', 'user-profile-enabled': false}, 'abc').should.eventually.not.exist
+
     it 'when authentication does not contain a user id', ->
       profile.getProfile({}, {'ent-app-id': 'myapp'}, 'abc').should.eventually.not.exist
 
