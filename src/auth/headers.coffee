@@ -1,4 +1,5 @@
 log = require '../log'
+config = require 'config'
 
 module.exports =
     addCustomHeaders: (req, route) ->
@@ -23,13 +24,11 @@ module.exports =
             log.error 'error adding user/client header: ' + ex + '; ' + ex.stack
 
     addProxyHeaders: (req) ->
-      addValueToHeader = (headerName, value) =>
+      setHeaderIfMissing = (headerName, value) =>
         if not req.headers[headerName]
           req.headers[headerName] = value
-        #else req.headers[headerName] = "#{req.headers[headerName]} #{value}"
 
-      proto = if req.connection.secure then 'https' else 'http'
+      proto = if config.get('enforce-https') then 'https' else 'http'
 
-      addValueToHeader 'x-forwarded-host', req.headers.host
-      addValueToHeader 'x-forwarded-proto', proto
-      addValueToHeader 'x-forwarded-for', req.connection.remoteAddress
+      setHeaderIfMissing 'x-forwarded-host', req.headers.host
+      setHeaderIfMissing 'x-forwarded-proto', proto

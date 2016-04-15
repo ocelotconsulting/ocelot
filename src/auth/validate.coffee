@@ -10,6 +10,7 @@ exports.authentication = (req, route, cookies) ->
   else
     oauth.getToken(req, route, cookies).then (oauthToken) ->
       oauth.validate(oauthToken).then (authentication) ->
+        #todo: move this crap out
         profile.getProfile(authentication, route, oauthToken)
         .then (profile) ->
           if profile
