@@ -5,7 +5,7 @@ log = require '../log'
 module.exports = (req, res, next) ->
   tokenProvider.getToken()
   .then (token) ->
-    profile.getProfile(req._auth, req._route, token)
+    profile.getProfile(req, token)
     .then (profile) ->
       req._profile = profile
       next()

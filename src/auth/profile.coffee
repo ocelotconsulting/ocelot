@@ -2,15 +2,17 @@ config = require 'config'
 agent = require('../http-agent')
 cache = require 'memory-cache'
 log = require '../log'
+user = require './user'
 
 expectedResultTimeout = 7200000
 unexpectedResultTimeout = 5000
 url = config.get 'authentication.profile-endpoint' if config.has 'authentication.profile-endpoint'
 
 module.exports =
-  getProfile: (authentication, route, token) ->
+  getProfile: (req, token) ->
+    route = req._route
     Promise.resolve().then ->
-      userId = authentication.access_token?.user_id
+      userId = user.getUserId(req)
       appId = route['ent-app-id'] or ''
       if url and userId and route['user-profile-enabled']
         actualUrl = url.replace('$userId', encodeURIComponent(userId)).replace('$appId', encodeURIComponent(appId))

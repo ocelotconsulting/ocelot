@@ -1,5 +1,6 @@
 log = require '../log'
 config = require 'config'
+user = require './user'
 
 module.exports =
     addCustomHeaders: (req, route) ->
@@ -17,7 +18,7 @@ module.exports =
             userHeader = route['user-header']
             clientHeader = route['client-header']
             if clientHeader then updateHeader clientHeader, authentication?.client_id
-            if userHeader then updateHeader userHeader, (authentication?.claims?.sub?.toLowerCase() or authentication?.access_token?.user_id?.toLowerCase())
+            if userHeader then updateHeader userHeader, (user.getUserId(req))
             updateHeader 'user-info', userInfo
             updateHeader 'user-profile', profile
         catch ex

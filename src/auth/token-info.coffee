@@ -1,4 +1,5 @@
 response = require '../response'
+user = require './user'
 
 module.exports =
   accept: (req) ->
@@ -18,6 +19,6 @@ module.exports =
       'expires_in' : ttlSeconds
       'access_token': auth.token
       'user-profile': profile
-      'user-id': auth.access_token?.user_id?.toLowerCase(),
+      'user-id': user.getUserId(req),
       'client-id': auth?.client_id
     )

@@ -12,19 +12,6 @@ beforeEach ->
     auth = {}
 
 describe 'auth headers', ->
-    it 'adds user header if auth claims contains a subject', ->
-        req = headers: {}
-        req.headers.cookie = 'this=that'
-        auth =
-            client_id: 'some-app'
-            claims:
-                sub: 'cjcoff'
-        route['user-header'] = 'user-id'
-        route['cookie-name'] = 'my-cookie'
-        req.headers['cookie'] = 'this=that;'
-        headers.addAuth req, route, auth
-        assert.equal req.headers['user-id'], 'cjcoff'
-
     it 'adds client header if one exists on the validation payload', ->
         req = headers: {}
         req.headers.cookie = 'this=that'
