@@ -12,9 +12,10 @@ module.exports =
     thingsAreOk = (auth) ->
       auth.token = auth.access_token
       auth.obtained_on = new Date().getTime()
+      req._auth = auth
       setCookies.setAuthCookies res, route, auth
       .then () ->
-        tokenInfo.complete route, res, auth
+        tokenInfo.complete req, res
 
     thingsAreNotOk = (err) ->
       log.error "Refresh error for route #{route.route}"
