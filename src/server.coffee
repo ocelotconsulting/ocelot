@@ -24,6 +24,9 @@ proxyMiddleware.use require './middleware/token-refresh'
 proxyMiddleware.use require './middleware/backend-host'
 
 proxyMiddleware.use require './middleware/validate-authentication'
+
+proxyMiddleware.use require './middleware/profile'
+
 proxyMiddleware.use require './middleware/token-info'
 proxyMiddleware.use require './middleware/client-whitelist'
 proxyMiddleware.use require './middleware/request-headers'

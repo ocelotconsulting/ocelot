@@ -22,3 +22,4 @@ module.exports =
           profile
         , ->
           cache.put tokenKey, {}, unexpectedResultTimeout
+          {}

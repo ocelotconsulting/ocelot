@@ -32,7 +32,7 @@ describe 'profile', ->
       agentStub.then = (success, fail) -> fail()
 
       sandbox.stub(agent, 'getAgent').returns(agentStub)
-      profile.getProfile({access_token: {user_id: 'cjcoff'}}, {'ent-app-id': 'myapp', 'user-profile-enabled': true}, 'def').should.eventually.not.exist
+      profile.getProfile({access_token: {user_id: 'cjcoff'}}, {'ent-app-id': 'myapp', 'user-profile-enabled': true}, 'def').should.eventually.eql {}
 
   describe 'resolves profile information', ->
     it 'when user id and profile url present and profile info resolves', ->
