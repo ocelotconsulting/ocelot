@@ -10,6 +10,7 @@ expect = chai.expect
 sandbox = sinon.sandbox.create()
 
 describe 'profile middleware', (done) ->
+
   afterEach ->
     sandbox.restore()
 
@@ -51,7 +52,7 @@ describe 'profile middleware', (done) ->
 
     profileMiddleware(req,res,next)
 
-    setTimeout 200, () ->
+    setTimeout 300, () ->
       expect(next.called).to.be.true
       expect(req._profile).to.not.exist
       done()
