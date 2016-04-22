@@ -13,9 +13,14 @@ promisify = (thing) ->
       Promise.resolve(thing)
 
 getBearerToken = (req) ->
-  {authorization} = req.headers
-  bearer = if authorization?.slice(0, 7).toLowerCase() is 'bearer ' then authorization.slice 7
-  promisify bearer
+  getBearerTokenByHeader = (headerName) ->
+    console.log req
+    headerValue = req.headers[headerName]
+    bearer = if headerValue?.slice(0, 7).toLowerCase() is 'bearer ' then headerValue.slice 7
+    console.log headerName, bearer
+    bearer
+
+  promisify(getBearerTokenByHeader('alt-auth') or getBearerTokenByHeader('authorization'))
 
 getCookieToken = (req, route, cookies) ->
   cookieName = route['cookie-name']
