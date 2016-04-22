@@ -1,6 +1,6 @@
 {
   "name": "ocelot-proxy",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "proxy for velocity.ag and other projects",
   "private": false,
   "engines": {
