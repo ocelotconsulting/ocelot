@@ -22,8 +22,8 @@ module.exports =
         cache.get(tokenKey) or agent.getAgent().get(actualUrl).set('Authorization', 'Bearer ' + token).then (res) ->
           profile = res.body
           timeout = if profile then (tokenUtil.getExpirationSeconds(req._auth) * 1000) else unexpectedResultTimeout
-          cache.put tokenKey, profile or {}, timeout
-          profile
+          cache.put tokenKey, profile, timeout
+          profile or {}
         , ->
           cache.put tokenKey, {}, unexpectedResultTimeout
           {}

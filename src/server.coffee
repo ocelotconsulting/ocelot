@@ -9,31 +9,41 @@ ServerResponse = http.ServerResponse
 
 facade.init()
 
-proxyMiddleware = express.Router();
-proxyMiddleware.use require './middleware/prom'
-proxyMiddleware.use require './middleware/poweredby'
-proxyMiddleware.use require './middleware/cors'
-proxyMiddleware.use require './middleware/upgrade'
+proxyRoutes = (router) =>
+  router = router or express.Router()
+  router.use require './middleware/prom'
+  router.use require './middleware/poweredby'
+  router.use require './middleware/cors'
+  router.use require './middleware/upgrade'
 
-proxyMiddleware.use (require 'cookie-parser')()
+  # sets req.cookies by parsing the cookie header
+  router.use (require 'cookie-parser')()
 
-proxyMiddleware.use require './middleware/route-resolver'
-proxyMiddleware.use require './middleware/exchange'
-proxyMiddleware.use require './middleware/token-refresh'
+  # sets req._route (required), the route configuration json
+  router.use require './middleware/route-resolver'
 
-proxyMiddleware.use require './middleware/backend-host'
+  router.use require './middleware/exchange'
+  router.use require './middleware/token-refresh'
+  router.use require './middleware/internal-filter'
 
-proxyMiddleware.use require './middleware/validate-authentication'
+  # sets req._auth (optional), the validation response from the authentication server
+  router.use require './middleware/validate-authentication'
 
-proxyMiddleware.use require './middleware/profile'
+  # sets req._profile (optional), the profile system response
+  router.use require './middleware/profile'
 
-proxyMiddleware.use require './middleware/token-info'
-proxyMiddleware.use require './middleware/client-whitelist'
-proxyMiddleware.use require './middleware/request-headers'
-proxyMiddleware.use require './middleware/proxy'
+  router.use require './middleware/token-info'
+  router.use require './middleware/client-whitelist'
+  router.use require './middleware/request-headers'
+
+  # sets req._url (required), the url to the backend server
+  router.use require './middleware/backend-host'
+
+  router.use require './middleware/proxy'
+  router
 
 proxy = express()
-proxy.use proxyMiddleware
+proxy.use proxyRoutes()
 proxyPort = process.env.PORT or 80
 log.debug 'proxy listening on port ' + proxyPort
 proxyHttpServer = proxy.listen proxyPort
@@ -55,3 +65,13 @@ api.use '/api/v1/hosts', require './api/hosts'
 apiPort = (parseInt(process.env.PORT) + 1) or 81
 log.debug 'api listening on port ' + apiPort
 api.listen(apiPort);
+
+internalRouter = express.Router()
+internalRouter.use require './middleware/internalize'
+proxyRoutes(internalRouter)
+
+internalProxy = express()
+internalProxy.use internalRouter
+internalPort = (parseInt(process.env.PORT) + 2) or 82
+log.debug 'internal proxy listening on port ' + internalPort
+internalProxy.listen internalPort
