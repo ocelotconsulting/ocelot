@@ -8,6 +8,7 @@ module.exports = (req, res, next) ->
     else
       validate.authentication(req).then (validation) ->
         if config.get('api-clients').indexOf(validation['client_id']) == -1
+          console.log 'client is unauthorized', validation['client_id']
           res.status(403).send('Unauthorized')
         else
           next()

@@ -14,10 +14,8 @@ promisify = (thing) ->
 
 getBearerToken = (req) ->
   getBearerTokenByHeader = (headerName) ->
-    console.log req
     headerValue = req.headers[headerName]
     bearer = if headerValue?.slice(0, 7).toLowerCase() is 'bearer ' then headerValue.slice 7
-    console.log headerName, bearer
     bearer
 
   promisify(getBearerTokenByHeader('alt-auth') or getBearerTokenByHeader('authorization'))
