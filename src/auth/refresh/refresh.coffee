@@ -9,7 +9,7 @@ module.exports =
     route['require-auth'] and route['cookie-name'] and cookies["#{route['cookie-name']}_rt"]?
 
   token: (req, route, cookies) ->
-    log.debug 'going to refresh cookie for ', route.route
+    log.debug 'refreshing cookie for', route.route
     cookieName = "#{route['cookie-name']}_rt"
 
     Promise.resolve()
