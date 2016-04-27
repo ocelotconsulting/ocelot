@@ -1,14 +1,19 @@
 {
-  "name": "ocelot-proxy",
+  "name": "@monsantoit/ocelot",
   "version": "1.5.5",
   "description": "proxy for velocity.ag and other projects",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git@github.platforms.engineering:CJCOFF/ocelot.git"
+  },
   "engines": {
     "node": "4.4.0"
   },
   "scripts": {
     "start": "node bin/www",
     "dev": "PORT=80 NODE_ENV=localhost supervisor -w .,src -e coffee bin/www",
+    "developer": "PORT=80 NODE_ENV=developer node bin/www",
     "test": "NODE_ENV=localhost mocha --full-trace test",
     "test:dev": "NODE_ENV=localhost mocha --watch --reporter nyan test",
     "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- --require coffee-coverage/register-istanbul test"
@@ -49,5 +54,6 @@
     "sinon": "^1.17.1",
     "sinon-as-promised": "^4.0.0",
     "supervisor": "^0.9.1"
-  }
+  },
+  "bin": "src/bin/bin.js"
 }
