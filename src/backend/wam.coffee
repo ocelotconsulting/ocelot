@@ -5,13 +5,15 @@ Promise = require 'promise'
 agent = require('../http-agent')
 xml2js = require 'xml2js'
 
-wamConverterUrl = config.get 'wam.converter-url'
-
-soapRequestTemplate = do ->
-    rawTemplate = new Buffer(config.get('wam.converter-soap-req'), 'base64').toString 'utf8'
-    rawTemplate.replace /WAM_CONVERTER_URL/, wamConverterUrl
+wamConverterUrl = config.get 'wam.converter-url' if config.has 'wam.converter-url'
+soapRequestTemplate = null
 
 createSOAPReq = (token) ->
+    if not soapRequestTemplate
+      soapRequestTemplate = do ->
+        rawTemplate = new Buffer(config.get('wam.converter-soap-req'), 'base64').toString 'utf8'
+        rawTemplate.replace /WAM_CONVERTER_URL/, wamConverterUrl
+
     base64Token = new Buffer(token, 'utf8').toString 'base64'
     soapRequestTemplate.replace /BASE64_ENCODED_OAUTH_TOKEN/, base64Token
 

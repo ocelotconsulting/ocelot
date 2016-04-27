@@ -3,7 +3,7 @@ _ = require 'underscore'
 log = require './log'
 
 pickRandomEndpoint = (allEndpoints) ->
-    instanceUrlStr = allEndpoints[getRandomInt 0, allEndpoints.length - 1].url
+    instanceUrlStr = allEndpoints[getRandomInt 0, allEndpoints.length - 1]
     instanceUrlStr + (if instanceUrlStr.charAt(instanceUrlStr.length - 1) is '/' then '' else '/')
 
 rewriteUrl = (targetHost, incomingPath, route) ->
@@ -21,9 +21,12 @@ rewriteUrl = (targetHost, incomingPath, route) ->
     targetHost + rewrittenPath
 
 getAllEndpoints = (route) ->
-    _(route.services).chain().map((service) ->
-        route.instances[service]
-    ).flatten().compact().value()
+    hosts = route.hosts or []
+    serviceHosts = route.services or []
+    serviceHosts.reduce (prev, serviceName) ->
+        prev.concat route.instances[serviceName].map (service) ->
+          service.url
+      , hosts
 
 getRandomInt = (min, max) ->
     Math.floor(Math.random() * (max - min + 1)) + min

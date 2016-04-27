@@ -6,6 +6,7 @@ bodyparser = require 'body-parser'
 log = require './log'
 prometheus = require './metrics/prometheus'
 ServerResponse = http.ServerResponse
+config = require 'config'
 
 facade.init()
 
@@ -73,5 +74,17 @@ proxyRoutes(internalRouter)
 internalProxy = express()
 internalProxy.use internalRouter
 internalPort = (parseInt(process.env.PORT) + 2) or 82
-log.debug 'internal proxy listening on port ' + internalPort
+log.debug 'internal route proxy listening on port ' + internalPort
 internalProxy.listen internalPort
+
+console.log """
+                       (`.-,')
+                     .-'     ;
+                 _.-'   , `,-
+           _ _.-'     .'  /._
+         .' `  _.-.  /  ,'._;)
+        (       .  )-| (
+         )`,_ ,'_,'  \_;)
+ ('_  _,'.'  (___,))
+  `-:;.-'
+"""

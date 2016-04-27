@@ -65,7 +65,7 @@ parseHosts = (consulJson) ->
 
 module.exports =
     detect: ->
-        config.get('backend.provider') == "consul"
+        config.has('backend.provider') and config.get('backend.provider') == "consul"
 
     init: ->
         routeUrl = config.get 'backend.routes'

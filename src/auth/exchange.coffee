@@ -25,10 +25,9 @@ module.exports =
             redirect_uri: getRedirectUrl query
 
         redirectToOriginalUri = (result) ->
-            log.debug "Exchanged code for token for route #{route.route}; server response #{JSON.stringify result}"
+            log.debug "Exchanged code #{query.code} for route #{route.route}"
             res.setHeader 'Location', new Buffer(query.state, 'base64').toString('utf8')
             setCookies.setAuthCookies(res, route, result).then ->
-                log.debug "Completing the exchange for route #{route.route} with headers #{JSON.stringify res.headers}"
                 response.send res, 307
 
         authCodeExchangeError = (err) ->

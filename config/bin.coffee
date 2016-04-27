@@ -1,5 +1,4 @@
 module.exports =
-
   authentication:
     'validation-client': "TPS_VALIDATOR"
     'validation-secret': "I7PM4yBf"
@@ -11,13 +10,7 @@ module.exports =
     url: "https://test.amp.monsanto.com/pf/JWKS"
 
   'cors-domains': ["localhost"]
-  'api-clients': ["OCELOT-UI"]
   'default-protocol': "http"
   'enforce-https': false
-  'cors-domains': ["velocity.ag", "https://velocity.ag", "monsanto.com", "threega.com", "localhost", "velocity-np.ag", "https://velocity-np.ag", "http://localhost"]
+  'cors-domains': ["localhost"]
   'log-level': "debug"
-
-  backend:
-    provider: "redis"
-    host: "127.0.0.1"
-    port: "6379"

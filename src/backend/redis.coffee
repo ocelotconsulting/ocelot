@@ -71,7 +71,7 @@ init = =>
 
 module.exports =
   detect: ->
-    config.get('backend.provider') == "redis"
+    config.has('backend.provider') and config.get('backend.provider') == "redis"
 
   init: -> init()
 
