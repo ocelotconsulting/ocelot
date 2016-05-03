@@ -25,13 +25,15 @@ isTrustedOrigin = (origin, referer) ->
 
 
 module.exports =
-    shortCircuit: (req) ->
-        {origin, referer} = req.headers
-
-        isCorsRequest = -> origin?
+    isPreflightRequest: (req) ->
+        isCorsRequest = -> req.headers.origin?
         isPreflightRequest = -> req.headers['access-control-request-method'] and req.method is 'OPTIONS'
+        if isCorsRequest() and isPreflightRequest() then true else false
 
-        isCorsRequest() and (isPreflightRequest() or not isTrustedOrigin(origin, referer))
+    isOriginUntrusted: (req) ->
+        {origin, referer} = req.headers
+        isCorsRequest = -> origin?
+        if isCorsRequest() and not isTrustedOrigin(origin, referer) then true else false
 
     setCorsHeaders: (req, res) ->
         {origin, referer} = req.headers

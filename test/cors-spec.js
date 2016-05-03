@@ -2,7 +2,7 @@ var assert = require("assert");
 var cors = require('../src/cors');
 
 describe('cors', function () {
-    describe('shortCircuit', function () {
+    describe('preflight', function () {
         describe('is not in effect when', function(){
             it('request method is not options', function () {
                 var req = {};
@@ -11,7 +11,7 @@ describe('cors', function () {
                 req.headers['access-control-request-method'] = "PUT";
                 req.method = "GET";
 
-                assert.equal(cors.shortCircuit(req), false);
+                assert.equal(cors.isPreflightRequest(req), false);
             });
 
             it('origin is not set', function () {
@@ -20,7 +20,7 @@ describe('cors', function () {
                 req.headers['access-control-request-method'] = "PUT";
                 req.method = "OPTIONS";
 
-                assert.equal(cors.shortCircuit(req), false);
+                assert.equal(cors.isPreflightRequest(req), false);
             });
 
             it('request method is not set', function () {
@@ -29,7 +29,7 @@ describe('cors', function () {
                 req.headers.origin = "abc.monsanto.com";
                 req.method = "OPTIONS";
 
-                assert.equal(cors.shortCircuit(req), false);
+                assert.equal(cors.isPreflightRequest(req), false);
             });
 
             it('origin is null string and referrer is trusted', function () {
@@ -39,7 +39,7 @@ describe('cors', function () {
                 req.method = "GET";
                 req.headers.referer = "http://abc.monsanto.com/blah";
 
-                assert.equal(cors.shortCircuit(req), false);
+                assert.equal(cors.isPreflightRequest(req), false);
             });
         });
 
@@ -51,7 +51,7 @@ describe('cors', function () {
                 req.headers['access-control-request-method'] = "PUT";
                 req.method = "OPTIONS";
 
-                assert.equal(cors.shortCircuit(req), true);
+                assert.equal(cors.isPreflightRequest(req), true);
             });
 
             it('origin is from an untrusted domain', function () {
@@ -60,7 +60,7 @@ describe('cors', function () {
                 req.headers.origin = "abc.untrusted.com";
                 req.method = "GET";
 
-                assert.equal(cors.shortCircuit(req), true);
+                assert.equal(cors.isOriginUntrusted(req), true);
             });
 
             it('origin is null string and referrer is untrusted', function () {
@@ -70,7 +70,7 @@ describe('cors', function () {
                 req.method = "GET";
                 req.headers.referer = "http://abc.untrusted.com/blah";
 
-                assert.equal(cors.shortCircuit(req), true);
+                assert.equal(cors.isOriginUntrusted(req), true);
             });
         });
 
