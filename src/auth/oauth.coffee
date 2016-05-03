@@ -2,6 +2,7 @@ postman = require './postman'
 config = require 'config'
 cache = require 'memory-cache'
 Promise = require 'promise'
+log = require '../log'
 client = config.get 'authentication.validation-client'
 secret = config.get 'authentication.validation-secret'
 grantType = 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
@@ -32,6 +33,7 @@ module.exports =
   validate: (token) ->
     cachedValidation = cache.get token
     if cachedValidation
+      log.debug 'cache hit for token starting with', token.substring(0,5)
       Promise.resolve cachedValidation
     else
       formData =
@@ -39,6 +41,7 @@ module.exports =
         token: token
 
       postman.postAs(formData, client, secret).then (authentication) ->
+        log.debug 'validation passed for token starting with', token.substring(0,5)
         ttl = (authentication.expires_in * 1000) or 300000
         cache.put token, authentication, ttl
         authentication.token = token

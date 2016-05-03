@@ -40,4 +40,4 @@ module.exports =
         log.debug "Refreshing current page #{origUrl}"
         response.send res, 307
     accept: (route) ->
-        route['require-auth'] and route['cookie-name']
+        route?['require-auth'] and route['cookie-name']

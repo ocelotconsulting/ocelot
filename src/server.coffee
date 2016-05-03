@@ -59,7 +59,11 @@ proxyHttpServer.on 'upgrade', (req, socket, head) ->
 api = express()
 api.use bodyparser.json()
 api.get '/api/v1/metrics', prometheus.metricsFunc()
-api.use '/api/v1', require './api/validate-api-user'
+
+api.use '/api/v1', require './middleware/api/auth-validation'
+api.use '/api/v1', require './middleware/api/client-whitelist'
+api.use '/api/v1', require './middleware/api/audit'
+
 api.use '/api/v1/routes', require './api/routes'
 api.use '/api/v1/hosts', require './api/hosts'
 
