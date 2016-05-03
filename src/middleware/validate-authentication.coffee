@@ -17,6 +17,6 @@ module.exports = (req, res, next) ->
       else if redirect.accept route
           redirect.startAuthCode req, res, route
       else
-          response.send res, 403, 'Authorization missing or invalid'
+          response.send res, 401, 'Unauthorized'
 
   validate.authentication(req, route, cookies).then authAccepted, authRejected

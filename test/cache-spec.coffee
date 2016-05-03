@@ -22,9 +22,9 @@ describe 'facade', ->
     detectStub.returns(true)
 
     sinon.stub consul, 'init'
-    sinon.stub(consul, 'getRoutes').returns 'result': 'success'
+    sinon.stub(consul, 'getCachedRoutes').returns 'result': 'success'
     facade.init()
-    routes = facade.getRoutes()
+    routes = facade.getCachedRoutes()
     assert.equal routes.result, 'success'
 
   it 'loads services from consul backend', ->
@@ -32,10 +32,10 @@ describe 'facade', ->
     detectStub.returns(true)
     sinon.stub consul, 'init'
 
-    sinon.stub(consul, 'getHosts').returns 'result': 'success'
+    sinon.stub(consul, 'getCachedHosts').returns 'result': 'success'
 
     facade.init()
-    services = facade.getHosts()
+    services = facade.getCachedHosts()
     assert.equal services.result, 'success'
 
   it 'throws exception if there is no backend defined', ->
