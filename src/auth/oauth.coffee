@@ -33,7 +33,7 @@ module.exports =
   validate: (token) ->
     cachedValidation = cache.get token
     if cachedValidation
-      log.debug 'cache hit for token starting with', token.substring(0,5)
+      log.debug "cache hit for token #{token.substring(0,5)}"
       Promise.resolve cachedValidation
     else
       formData =
@@ -41,7 +41,7 @@ module.exports =
         token: token
 
       postman.postAs(formData, client, secret).then (authentication) ->
-        log.debug 'validation passed for token starting with', token.substring(0,5)
+        log.debug "token validated #{token.substring(0,5)}"
         ttl = (authentication.expires_in * 1000) or 300000
         cache.put token, authentication, ttl
         authentication.token = token
