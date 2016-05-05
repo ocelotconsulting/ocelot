@@ -23,8 +23,8 @@ module.exports =
 
     getCachedRoutes: -> datastore.getCachedRoutes()
     getRoutes: -> Promise.resolve().then -> datastore.getRoutes()
-    putRoute: (key, route) -> Promise.resolve().then -> Promise.resolve datastore.putRoute(key, route)
-    deleteRoute: (key) -> Promise.resolve().then -> Promise.resolve datastore.deleteRoute(key)
+    putRoute: (key, route) -> Promise.resolve().then -> datastore.putRoute(key, route)
+    deleteRoute: (key) -> Promise.resolve().then -> datastore.deleteRoute(key)
 
     getCachedHosts: -> datastore.getCachedHosts()
     getHosts: -> Promise.resolve().then -> datastore.getHosts()
