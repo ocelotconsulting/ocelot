@@ -18,7 +18,7 @@ module.exports =
         tokenInfo.complete req, res
 
     thingsAreNotOk = (err) ->
-      log.error "Refresh error for route #{route.route}"
+      log.error "Refresh error for route #{route.route}", err
       response.send(res, 500)
 
     refresh.token(req, route, cookies).then thingsAreOk, thingsAreNotOk
