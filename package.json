@@ -55,5 +55,9 @@
     "sinon-as-promised": "^4.0.0",
     "supervisor": "^0.9.1"
   },
-  "bin": "src/bin/bin.js"
+  "bin": "src/bin/bin.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.platforms.engineering/CJCOFF/ocelot"
+  }
 }
