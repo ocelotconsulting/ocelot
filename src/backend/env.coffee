@@ -1,11 +1,3 @@
-redis = require 'redis'
-config = require 'config'
-cron = require 'node-crontab'
-{client, routes, hosts} = {}
-hostRegex = /(.+)\/(.+)/
-log = require '../log'
-Promise = require 'promise'
-
 routes = []
 
 module.exports =

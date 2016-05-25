@@ -1,23 +1,18 @@
 consul = require './consul'
 redis = require './redis'
 env = require './env'
+couch = require './couch'
 config = require 'config'
-datastore = undefined
 log = require '../log'
+
+backends = [redis, consul, couch, env]
+datastore = null
 
 module.exports =
     init: ->
-        if consul.detect()
-            log.debug 'Consul backend detected'
-            datastore = consul
-        else if redis.detect()
-            log.debug 'Redis backend detected'
-            datastore = redis
-        else if env.detect()
-            log.debug 'Environment backend detected'
-            datastore = env
-        else
-            throw 'no datastore backend found in configuration'
+        datastore = backends.find (backend) -> backend.detect()
+        if not datastore
+          throw 'no datastore backend found in configuration'
 
         datastore.init()
 

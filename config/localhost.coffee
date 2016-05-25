@@ -18,6 +18,5 @@ module.exports =
   'log-level': "debug"
 
   backend:
-    provider: "redis"
-    host: "127.0.0.1"
-    port: "6379"
+    provider: "couch"
+    url: "http://127.0.0.1:5984"
