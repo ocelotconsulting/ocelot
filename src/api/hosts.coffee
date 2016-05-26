@@ -7,7 +7,7 @@ log = require '../log'
 config = require 'config'
 
 # host fields
-hostFields = ['url', 'user-id']
+hostFields = ['url', 'user-id', '_rev']
 
 router.get '/', (req, res) ->
   facade.getHosts()

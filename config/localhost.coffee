@@ -11,7 +11,7 @@ module.exports =
     url: "https://test.amp.monsanto.com/pf/JWKS"
 
   'cors-domains': ["localhost"]
-  'api-clients': ["OCELOT-UI"]
+  'api-clients': ["OCELOT-UI", "TPS_TEST"]
   'default-protocol': "http"
   'enforce-https': false
   'cors-domains': ["velocity.ag", "https://velocity.ag", "monsanto.com", "threega.com", "localhost", "velocity-np.ag", "https://velocity-np.ag", "http://localhost"]

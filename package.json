@@ -14,6 +14,7 @@
     "start": "node bin/www",
     "dev": "PORT=80 NODE_ENV=localhost supervisor -w .,src -e coffee bin/www",
     "developer": "PORT=80 NODE_ENV=developer node bin/www",
+    "migrate:couch": "NODE_ENV=migration coffee migration/couch.coffee",
     "test": "NODE_ENV=localhost mocha --full-trace test",
     "test:dev": "NODE_ENV=localhost mocha --watch --reporter nyan test",
     "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- --require coffee-coverage/register-istanbul test"

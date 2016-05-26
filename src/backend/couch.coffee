@@ -58,14 +58,14 @@ module.exports =
     reload()
     cron.scheduleJob '*/30 * * * * *', reload
 
-  getCachedRoutes: -> this.routes
+  getCachedRoutes: -> routes
   getRoutes: () -> getRoutes()
   putRoute: (id, route) ->
     agent.put "#{url}/routes/#{encodeURIComponent(id)}", route
   deleteRoute: (id) ->
     agent.del "#{url}/routes/#{encodeURIComponent(id)}"
 
-  getCachedHosts: () -> this.hosts
+  getCachedHosts: () -> hosts
   getHosts: () -> getHosts()
   putHost: (group, id, host) ->
     agent.put "#{url}/services/#{encodeURIComponent(id)}", host
