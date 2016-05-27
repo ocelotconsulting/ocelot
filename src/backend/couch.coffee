@@ -63,11 +63,17 @@ module.exports =
   putRoute: (id, route) ->
     agent.put "#{url}/routes/#{encodeURIComponent(id)}", route
   deleteRoute: (id) ->
-    agent.del "#{url}/routes/#{encodeURIComponent(id)}"
+    agent.get "#{url}/routes/#{encodeURIComponent(id)}"
+    .set 'Accept', 'application/json'
+    .then (res) ->
+      agent.del "#{url}/routes/#{encodeURIComponent(id)}?rev=#{res.body._rev}"
 
   getCachedHosts: () -> hosts
   getHosts: () -> getHosts()
   putHost: (group, id, host) ->
     agent.put "#{url}/services/#{encodeURIComponent(id)}", host
   deleteHost: (group, id) ->
-    agent.del "#{url}/services/#{encodeURIComponent(id)}"
+    agent.get "#{url}/services/#{encodeURIComponent(id)}"
+    .set 'Accept', 'application/json'
+    .then (res) ->
+      agent.del "#{url}/services/#{encodeURIComponent(id)}?rev=#{res.body._rev}"
