@@ -43,8 +43,9 @@ proxyRoutes = (router) =>
   router.use require './middleware/proxy'
   router
 
+routeMiddleware = proxyRoutes()
 proxy = express()
-proxy.use proxyRoutes()
+proxy.use routeMiddleware
 proxyPort = process.env.PORT or 80
 log.debug 'proxy listening on port ' + proxyPort
 proxyHttpServer = proxy.listen proxyPort
@@ -54,7 +55,7 @@ proxyHttpServer.on 'upgrade', (req, socket, head) ->
   req._head = head
   res = new ServerResponse(socket)
   res._ws = socket
-  proxyMiddleware req, res
+  routeMiddleware req, res
 
 api = express()
 api.use bodyparser.json()

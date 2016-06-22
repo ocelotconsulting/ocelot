@@ -57,7 +57,7 @@ router.put /\/(.*)/, (req, res) ->
     for own k,v of req.body
       if cookieFields.indexOf(k) != -1 then newObj[k] = v
 
-  newObj['user-id'] = req.headers['user-id']
+  newObj['user-id'] = req._auth?.access_token?.user_id or 'unknown'
 
   Promise.resolve()
   .then ->
