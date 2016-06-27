@@ -1,0 +1,57 @@
+{
+  "name": "ocelot-proxy",
+  "version": "1.5.9",
+  "description": "lightweight proxy",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:MonsantoCo/ocelot.git"
+  },
+  "engines": {
+    "node": "4.4.0"
+  },
+  "scripts": {
+    "start": "node bin/www",
+    "dev": "PORT=80 NODE_ENV=localhost supervisor -w .,src -e coffee bin/www",
+    "test": "NODE_ENV=test mocha --full-trace test",
+    "test:dev": "NODE_ENV=localhost mocha --watch --reporter nyan test",
+    "test:coverage": "NODE_ENV=localhost istanbul cover _mocha -- --require coffee-coverage/register-istanbul test"
+  },
+  "author": "Chris Coffman",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "coffee-script": "^1.9.3",
+    "config": "^1.14.0",
+    "cookie": "^0.2.2",
+    "cookie-parser": "^1.4.1",
+    "express": "^4.13.3",
+    "http-cors": "^1.0.1",
+    "http-proxy": "^1.11.1",
+    "httpplease": "^0.16.4",
+    "httpplease-promises": "^0.3.0",
+    "jsonwebtoken": "^5.5.4",
+    "log": "^1.4.0",
+    "memory-cache": "^0.1.4",
+    "node-crontab": "0.0.8",
+    "node-forge": "^0.6.34",
+    "node-rsa": "^0.3.2",
+    "prometheus-client": "^0.1.1",
+    "redis": "^2.4.2",
+    "superagent": "^1.4.0",
+    "superagent-promise": "^1.0.3",
+    "underscore": "^1.8.3",
+    "xml2js": "^0.4.9"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "coffee-coverage": "^1.0.0",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.1",
+    "sinon-as-promised": "^4.0.0",
+    "supervisor": "^0.9.1"
+  },
+  "bin": "src/bin/bin.js"
+}
