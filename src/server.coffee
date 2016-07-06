@@ -23,6 +23,7 @@ proxyRoutes = (router) ->
   router.use require './middleware/poweredby'
   router.use require './middleware/cors'
   router.use require './middleware/upgrade'
+  router.use require './middleware/host-filter'
 
   # sets req.cookies by parsing the cookie header
   router.use (require 'cookie-parser')()
