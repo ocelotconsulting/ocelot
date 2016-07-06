@@ -55,7 +55,7 @@ reloadData = ->
   .catch (err) ->
     log.error("error loading hosts #{err}")
 
-init = =>
+init = ->
   host = config.get 'backend.host'
   port = config.get 'backend.port'
   client = redis.createClient

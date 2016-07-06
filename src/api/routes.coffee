@@ -6,11 +6,15 @@ log = require '../log'
 config = require 'config'
 crypto = require('crypto')
 
-routeFields = ['capture-pattern', 'rewrite-pattern', 'services', 'require-auth', 'client-whitelist',
-  'user-header', 'client-header', 'user-id', 'custom-headers', 'ent-app-id', 'user-profile-enabled',
+routeFields = ['capture-pattern', 'rewrite-pattern',
+  'services', 'require-auth', 'client-whitelist',
+  'user-header', 'client-header', 'user-id',
+  'custom-headers', 'ent-app-id', 'user-profile-enabled',
   'elevated-trust', 'internal', 'hosts', '_rev']
 
-cookieFields = ['cookie-name', 'client-id', 'client-secret', 'scope', 'cookie-path', 'cookie-domain']
+cookieFields = ['cookie-name', 'client-id',
+  'client-secret', 'scope', 'cookie-path',
+  'cookie-domain']
 
 getRoute = (key) ->
   facade.getRoutes()
@@ -20,14 +24,14 @@ getRoute = (key) ->
     if routes.length == 1
       routes[0]
     else
-      throw "route not found: #{key}"
+      throw new Error "route not found: #{key}"
 
 sha1sum = (str) -> crypto.createHash('sha1').update(str).digest('hex')
 
 router.get '/', (req, res) ->
   facade.getRoutes()
   .then (routes) ->
-    routes.sort (a, b) => a.route.localeCompare(b.route)
+    routes.sort (a, b) -> a.route.localeCompare(b.route)
     for route in routes
       route['client-secret'] = sha1sum(route['client-secret']) if route['client-secret']
     res.json routes
@@ -39,8 +43,8 @@ router.get /\/(.*)/, (req, res)->
   routeKey = req.params[0]
   getRoute(routeKey)
   .then (route) ->
-      route['client-secret'] = sha1sum(route['client-secret']) if route['client-secret']
-      res.json route
+    route['client-secret'] = sha1sum(route['client-secret']) if route['client-secret']
+    res.json route
   , (err) ->
     response.send res, 404
   .catch (err) ->

@@ -5,46 +5,45 @@ originPortRegex = /(.*):\d+$/
 domains = config.get('cors-domains')
 
 endsWith = (str, suffix) ->
-    str.indexOf(suffix, str.length - suffix.length) != -1
+  str.indexOf(suffix, str.length - suffix.length) != -1
 
 isTrustedOrigin = (origin, referer) ->
-    isWhitelisted = (origin) ->
-        if originPortRegex.test origin
-            origin = originPortRegex.exec(origin)[1]
-        domains.filter((domain) -> endsWith(origin, ".#{domain}")).length > 0 or
-          domains.indexOf(origin) > -1
+  isWhitelisted = (origin) ->
+    if originPortRegex.test origin
+      origin = originPortRegex.exec(origin)[1]
+    domains.filter((domain) -> endsWith(origin, ".#{domain}")).length > 0 or
+      domains.indexOf(origin) > -1
 
-    isRefererWhitelisted = () ->
-        if referer?
-            url = URL.parse(referer).host
-            url and isWhitelisted(URL.parse(referer).host)
-        else
-            false
+  isRefererWhitelisted = () ->
+    if referer?
+      url = URL.parse(referer).host
+      url and isWhitelisted(URL.parse(referer).host)
+    else
+      false
 
-    isWhitelisted(origin) or origin == 'null' and isRefererWhitelisted()
-
+  isWhitelisted(origin) or origin == 'null' and isRefererWhitelisted()
 
 module.exports =
-    isPreflightRequest: (req) ->
-        isCorsRequest = -> req.headers.origin?
-        isPreflightRequest = -> req.headers['access-control-request-method'] and req.method is 'OPTIONS'
-        if isCorsRequest() and isPreflightRequest() then true else false
+  isPreflightRequest: (req) ->
+    isCorsRequest = -> req.headers.origin?
+    isPreflightRequest = -> req.headers['access-control-request-method'] and req.method is 'OPTIONS'
+    if isCorsRequest() and isPreflightRequest() then true else false
 
-    isOriginUntrusted: (req) ->
-        {origin, referer} = req.headers
-        isCorsRequest = -> origin?
-        if isCorsRequest() and not isTrustedOrigin(origin, referer) then true else false
+  isOriginUntrusted: (req) ->
+    {origin, referer} = req.headers
+    isCorsRequest = -> origin?
+    if isCorsRequest() and not isTrustedOrigin(origin, referer) then true else false
 
-    setCorsHeaders: (req, res) ->
-        {origin, referer} = req.headers
-        isCorsRequest = -> origin?
+  setCorsHeaders: (req, res) ->
+    {origin, referer} = req.headers
+    isCorsRequest = -> origin?
 
-        headers = req.headers['access-control-request-headers']
-        method = req.headers['access-control-request-method']
+    headers = req.headers['access-control-request-headers']
+    method = req.headers['access-control-request-method']
 
-        if isCorsRequest() and isTrustedOrigin(origin, referer)
-            res.setHeader 'Access-Control-Allow-Origin', origin
-            res.setHeader 'Access-Control-Max-Age', '1728000'
-            res.setHeader 'Access-Control-Allow-Credentials', 'true'
-        if headers then res.setHeader 'Access-Control-Allow-Headers', headers
-        if method then res.setHeader 'Access-Control-Allow-Methods', method
+    if isCorsRequest() and isTrustedOrigin(origin, referer)
+      res.setHeader 'Access-Control-Allow-Origin', origin
+      res.setHeader 'Access-Control-Max-Age', '1728000'
+      res.setHeader 'Access-Control-Allow-Credentials', 'true'
+    if headers then res.setHeader 'Access-Control-Allow-Headers', headers
+    if method then res.setHeader 'Access-Control-Allow-Methods', method

@@ -9,10 +9,10 @@ module.exports =
 
   getCachedRoutes: -> routes
   getRoutes: -> routes
-  putRoute: (id, route) -> throw 'Method not supported'
-  deleteRoute: (id) -> throw 'Method not supported'
+  putRoute: (id, route) -> throw new Error 'Method not supported'
+  deleteRoute: (id) -> throw new Error 'Method not supported'
 
   getCachedHosts: -> {}
   getHosts: -> {}
-  putHost: (group, id, host) -> throw 'Method not supported'
-  deleteHost: (group, id) -> throw 'Method not supported'
+  putHost: (group, id, host) -> throw new Error 'Method not supported'
+  deleteHost: (group, id) -> throw new Error 'Method not supported'

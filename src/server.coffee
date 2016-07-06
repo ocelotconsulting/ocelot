@@ -9,12 +9,15 @@ ServerResponse = http.ServerResponse
 config = require 'config'
 
 if config.util.getConfigSources().length == 0
-  throw 'No server configuration found. Ocelot is configured using the "config" NPM package.
-  Specify NODE_CONFIG_DIR and NODE_ENV to configure using files or specify NODE_CONFIG to
+  msg = 'No server configuration found.
+  Ocelot is configured using the "config" NPM package.
+  Specify NODE_CONFIG_DIR and NODE_ENV or  NODE_CONFIG to
   configure using a JSON formatted environment variable.'
+  throw new Error msg
+
 facade.init()
 
-proxyRoutes = (router) =>
+proxyRoutes = (router) ->
   router = router or express.Router()
   router.use require './middleware/prom'
   router.use require './middleware/poweredby'
@@ -31,7 +34,8 @@ proxyRoutes = (router) =>
   router.use require './middleware/token-refresh'
   router.use require './middleware/internal-filter'
 
-  # sets req._auth (optional), the validation response from the authentication server
+  # sets req._auth (optional),
+  # the validation response from the authentication server
   router.use require './middleware/validate-authentication'
 
   # sets req._profile (optional), the profile system response
@@ -75,7 +79,7 @@ api.use '/api/v1/hosts', require './api/hosts'
 
 apiPort = (parseInt(process.env.PORT) + 1) or 81
 log.debug 'api listening on port ' + apiPort
-api.listen(apiPort);
+api.listen(apiPort)
 
 internalRouter = express.Router()
 internalRouter.use require './middleware/internalize'

@@ -8,9 +8,9 @@ grantType = 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
 
 promisify = (thing) ->
   if not thing?
-      Promise.reject()
+    Promise.reject()
   else
-      Promise.resolve(thing)
+    Promise.resolve(thing)
 
 getBearerToken = (req) ->
   getBearerTokenByHeader = (headerName) ->

@@ -8,17 +8,17 @@ superagent = require('superagent')
 agent = require('superagent-promise')(superagent, Promise)
 
 reload = ->
-    getRoutes()
-    .then (stuff) ->
-        routes = stuff
-    .catch (err) ->
-        log.error "unable to load routes: #{err}"
+  getRoutes()
+  .then (stuff) ->
+    routes = stuff
+  .catch (err) ->
+    log.error "unable to load routes: #{err}"
 
-    getHosts()
-    .then (stuff) ->
-        hosts = stuff
-    .catch (err) ->
-        log.error "unable to load hosts: #{err}"
+  getHosts()
+  .then (stuff) ->
+    hosts = stuff
+  .catch (err) ->
+    log.error "unable to load hosts: #{err}"
 
 getRoutes = ->
   agent.get "#{url}/routes/_design/routes/_view/all?include_docs=true"

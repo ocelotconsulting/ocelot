@@ -9,7 +9,7 @@ accept = (route, authentication) ->
   else false
 
 complete = (res) ->
-    response.send res, 403, 'Client Unauthorized'
+  response.send res, 403, 'Client Unauthorized'
 
 module.exports = (req, res, next) ->
   if accept req._route, req._auth

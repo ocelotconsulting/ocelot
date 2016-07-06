@@ -1,5 +1,5 @@
 module.exports =
-  getExpirationSeconds: (auth) =>
+  getExpirationSeconds: (auth) ->
     if auth and auth.obtained_on and auth.expires_in
       tokenAgeInSeconds = (new Date().getTime() - (auth.obtained_on)) / 1000
       ttlSeconds = auth.expires_in - Math.round(tokenAgeInSeconds)

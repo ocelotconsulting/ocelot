@@ -6,7 +6,7 @@ log = require '../log'
 px = httpProxy.createProxyServer {secure: false, changeOrigin: true, autoRewrite: true, ws: true}
 
 px.on 'error', (err, req, res) ->
-    response.send res, 500, 'Error during proxy: ' + err + ':' + err.stack
+  response.send res, 500, 'Error during proxy: ' + err + ':' + err.stack
 
 module.exports = (req, res, next) ->
   log.debug 'proxying', req.headers.host + req.path, 'to', req._url.href
