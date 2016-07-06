@@ -3,6 +3,7 @@ module.exports =
   authentication:
     'validation-client': "MY_FAKE_CLIENT_ID"
     'validation-secret': "MY_FAKE_SECRET_ID"
+    'validation-grant-type': "MY_VALIDATION_GRANT_TYPE"
     'token-endpoint': "https://testy.local/as/token.oauth2"
     'auth-endpoint': "https://testy.local/as/authorization.oauth2"
     'profile-endpoint': 'https://profile.local/v1/users/$userId?fields=id,firstName,middleName,lastName,entitlements,email,fullName&apps=$appId'

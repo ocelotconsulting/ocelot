@@ -67,7 +67,8 @@ describe 'postman', () ->
 
         postman.postAs(someQuery, myclient, mysecret).then () ->
             done('post should have failed');
-        , (err) ->
+        , (error) ->
+            err = error.message
             assert.equal(err, 'HTTP 404: {"error": "error message"}');
             assert.equal(agent.typeValue, "form");
             assert.equal(agent.data.someKey, "someValue");

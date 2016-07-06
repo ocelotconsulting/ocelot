@@ -4,7 +4,7 @@ cache = require 'memory-cache'
 log = require '../log'
 client = config.get 'authentication.validation-client'
 secret = config.get 'authentication.validation-secret'
-grantType = 'urn:pingidentity.com:oauth2:grant_type:validate_bearer'
+grantType = config.get 'authentication.validation-grant-type'
 
 promisify = (thing) ->
   if not thing?

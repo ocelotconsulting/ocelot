@@ -12,8 +12,8 @@ rewriteUrl = (targetHost, incomingPath, route) ->
 
   if capture.test(incomingPath)
     match = capture.exec(incomingPath)
-    rewrittenPath = (rewrittenPath.replace('$' + i, match[i]) for i in [1 ... match.length])
-    targetHost = (targetHost.replace('$' + i, match[i]) for i in [1 ... match.length])
+    rewrittenPath = rewrittenPath.replace('$' + i, match[i]) for i in [1 ... match.length]
+    targetHost = targetHost.replace('$' + i, match[i]) for i in [1 ... match.length]
 
   while rewrittenPath.indexOf('/') == 0
     rewrittenPath = rewrittenPath.substring(1)
@@ -24,9 +24,9 @@ getAllEndpoints = (route) ->
   hosts = route.hosts or []
   serviceHosts = route.services or []
   serviceHosts.reduce (prev, serviceName) ->
-    prev.concat route.instances[serviceName].map (service) ->
-      service.url
-  , hosts
+      prev.concat route.instances[serviceName].map (service) ->
+        service.url
+    , hosts
 
 getRandomInt = (min, max) ->
   Math.floor(Math.random() * (max - min + 1)) + min
