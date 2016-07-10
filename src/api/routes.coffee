@@ -4,7 +4,7 @@ facade = require '../backend/facade'
 response = require '../response'
 log = require '../log'
 config = require 'config'
-crypto = require('crypto')
+crypto = require 'crypto'
 
 routeFields = ['capture-pattern', 'rewrite-pattern',
   'services', 'require-auth', 'client-whitelist',

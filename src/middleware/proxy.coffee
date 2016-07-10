@@ -9,5 +9,4 @@ px.on 'error', (err, req, res) ->
   response.send res, 500, 'Error during proxy: ' + err + ':' + err.stack
 
 module.exports = (req, res, next) ->
-  log.debug 'proxying', req.headers.host + req.path, 'to', req._url.href
   proxy.request px, req, res, req._url

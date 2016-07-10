@@ -20,6 +20,7 @@ facade.init()
 proxyRoutes = (router) ->
   router = router or express.Router()
   router.use require './middleware/prom'
+  router.use require './middleware/audit'
   router.use require './middleware/poweredby'
   router.use require './middleware/cors'
   router.use require './middleware/upgrade'
@@ -73,7 +74,7 @@ api.get '/api/v1/metrics', prometheus.metricsFunc()
 api.use '/api/v1', require './middleware/cors'
 api.use '/api/v1', require './middleware/api/auth-validation'
 api.use '/api/v1', require './middleware/api/client-whitelist'
-api.use '/api/v1', require './middleware/api/audit'
+api.use require './middleware/audit'
 
 api.use '/api/v1/routes', require './api/routes'
 api.use '/api/v1/hosts', require './api/hosts'
