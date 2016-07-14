@@ -13,8 +13,10 @@ module.exports =
   'default-protocol': "http"
   'enforce-https': false
   'cors-domains': ["localhost", "testy.com"]
-  'log-level': "debug"
 
   backend:
     provider: "couch"
     url: "http://user:pass@127.0.0.1:5984"
+
+  log:
+    level: "debug"

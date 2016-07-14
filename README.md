@@ -8,7 +8,8 @@ Router settings are read by using the NPM 'config' package, so you usually set t
 #### Router settings
 Since router settings are read with the 'config' package, it can be provided in a variety of formats. Typically JSON and YAML are used.
 
-* **log-level (String):** The level at which to output logs. Usually set to "debug"
+* **log (Object):**
+  * **level (String):** The level at which to output logs. Usually set to "debug"
 * **cors-domain (Array of Strings):** Ocelot will try to handle CORS requests. Use this list as a domain whitelist for which to allow CORS requests from. You can specify something that matches the Origin header exactly (http://abc.mydomain.com:8080) but it will allow any port by default (http://abc.mydomain.com) or you can just whitelist the top level domain (mydomain.com).
 * **enforce-https (Boolean):** Ocelot will try to redirect to https if accessed over http. I usually terminate SSL before getting to Ocelot (like in an AWS ELB) so the original protocol can be found in the x-forwarded-proto.
 default-protocol: This is the protocol you want to use to redirect Browsers back to Ocelot after redirecting to the login page.
@@ -47,10 +48,10 @@ module.exports =
 ```
 
 ## Backends
-The backend is a property in the router config that specifies the datastore where route and service configurations are held. Each datastore is a little different and some assume seperate 'tables' or 'collections' called specifically 'routes' or 'hosts' while others ask for a URL or file path for routes and hosts seperately. 
+The backend is a property in the router config that specifies the datastore where route and service configurations are held. Each datastore is a little different and some assume seperate 'tables' or 'collections' called specifically 'routes' or 'hosts' while others ask for a URL or file path for routes and hosts seperately.
 
-* **Consul:** Consul backend has two properties, routes and hosts. Both are URLs to a key value location. Ocelot slaps /?recurse to the endpoints and grabs all kvs under each every 30 seconds. The 'hosts' property refers to the service hosts, as referenced by each route's service property. 
-* 
+* **Consul:** Consul backend has two properties, routes and hosts. Both are URLs to a key value location. Ocelot slaps /?recurse to the endpoints and grabs all kvs under each every 30 seconds. The 'hosts' property refers to the service hosts, as referenced by each route's service property.
+*
   * Example:
   ```
   backend:
@@ -59,7 +60,7 @@ The backend is a property in the router config that specifies the datastore wher
    hosts: "http://consul.local:8500/v1/kv/hosts"
   ```
 
-* **Couch:** Couch has one property, url. Couch, unlike the consul backend, expects to find two databases, routes and services. Each database is expected to have a design document named the same as the database with a view called 'all'. Ocelot executes each view every 30 seconds. The 'services' database refers to the service hosts, as referenced by each route's service property. 
+* **Couch:** Couch has one property, url. Couch, unlike the consul backend, expects to find two databases, routes and services. Each database is expected to have a design document named the same as the database with a view called 'all'. Ocelot executes each view every 30 seconds. The 'services' database refers to the service hosts, as referenced by each route's service property.
   * Example:
   ```
   backend:
@@ -86,7 +87,7 @@ The backend is a property in the router config that specifies the datastore wher
 #### Route configuration
 * **capture-pattern (String):** A regular expression used to 'capture' the incoming path. It defaults to '(.*)' to capture the entire path but can be set to '/something(.*)' to strip 'something' off something before proxying to the backend. Path manipulation can be helpful, but it can really screw up UIs. This is not a common property to set.
 * **rewrite-pattern (String):** The companion to capture-pattern. It is used to create the proxy path by using placeholders to refer to the capture regex capture groups and is usually defaulted to $1. You can add 'something' to the path by setting this to '/something$1'. Path manipulation can be helpful, but it can really screw up UIs. This is not a common property to set.
-* **services (Array of Strings):** This is used for service discovery. When using service discovery, multiple services should be able to register themselves without updating the route record directly to avoid conflicts. Services are collections of hosts stored in the backend and the service name is simply the key referring to a particular collection of hosts. 
+* **services (Array of Strings):** This is used for service discovery. When using service discovery, multiple services should be able to register themselves without updating the route record directly to avoid conflicts. Services are collections of hosts stored in the backend and the service name is simply the key referring to a particular collection of hosts.
 * **require-auth (Boolean)**: Validation of authorization token is required before proxying. OAuth tokens are by default expected to be in the format 'Authorization: Bearer <token>'.
 * **client-whitelist (Array of Strings):** Which OAuth client IDs are allowed to hit the Ocelot API. This should be locked down to Ocelot UI and service discovery endpoints. If left blank, allows all clients (danger)!
 * **user-header (String):** When the user can be determined by successful validation of the OAuth token, the user's ID will be added to the proxied request in an HTTP header with this name.
@@ -188,7 +189,7 @@ Ocelot has a very simply to use API. It usually runs on port 81. The API PUTs on
 ## Environment Variables
 The main router config is read using the 'config' NPM package. Some of these environment variables come directly from that project. Routes (not router) configuration is either read from a 'backend' property  in the router configuration, or it can come directly from an environment variable/ flat file.
 
-* **NODE_CONFIG:** Set this to provide router configuration in a JSON formatted environment variable. This can be used in place of or in conjunction with NODE_ENV. 
+* **NODE_CONFIG:** Set this to provide router configuration in a JSON formatted environment variable. This can be used in place of or in conjunction with NODE_ENV.
 * **NODE_CONFIG_DIR:** Use this environment variable to set the directory where ocelot router configuration files are held.
 * **NODE_ENV:** Set this to use router configuration from a file with a given name, found in the directory specified by NODE_CONFIG_DIR.
 * **OCELOT_ROUTES_PATH:** The path to the route configuration flat file.

@@ -13,11 +13,12 @@ transports = [new winston.transports.Console(
 
 esSettings = config.get 'log.es'
 if esSettings
+  esSettings.transformer = require './es-transformer'
   transports.push new Elasticsearch(esSettings)
   console.log 'Initializing Elasticsearch log transport'
 
 winstonOpts =
-  level: config.get['log-level'] or 'debug'
+  level: config.get['log.level'] or 'debug'
   transports: transports
 
 module.exports = new winston.Logger(winstonOpts)
