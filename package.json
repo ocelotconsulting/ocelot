@@ -1,11 +1,11 @@
 {
-  "name": "ocelot-proxy",
+  "name": "@monsantoit/ocelot",
   "version": "1.5.9",
-  "description": "lightweight proxy",
+  "description": "proxy for velocity.ag and other projects",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "git@github.com:MonsantoCo/ocelot.git"
+    "url": "git@github.platforms.engineering:CJCOFF/ocelot.git"
   },
   "engines": {
     "node": "4.4.0"
