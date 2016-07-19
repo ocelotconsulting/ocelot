@@ -10,6 +10,7 @@ Since router settings are read with the 'config' package, it can be provided in 
 
 * **log (Object):**
   * **level (String):** The level at which to output logs. Usually set to "debug"
+  * **es (String):** An object used to configure the Winston Elasticsearch transport. Only use this if you want to index your logs in Elasticsearch.
 * **cors-domain (Array of Strings):** Ocelot will try to handle CORS requests. Use this list as a domain whitelist for which to allow CORS requests from. You can specify something that matches the Origin header exactly (http://abc.mydomain.com:8080) but it will allow any port by default (http://abc.mydomain.com) or you can just whitelist the top level domain (mydomain.com).
 * **enforce-https (Boolean):** Ocelot will try to redirect to https if accessed over http. I usually terminate SSL before getting to Ocelot (like in an AWS ELB) so the original protocol can be found in the x-forwarded-proto.
 default-protocol: This is the protocol you want to use to redirect Browsers back to Ocelot after redirecting to the login page.
@@ -17,6 +18,7 @@ default-protocol: This is the protocol you want to use to redirect Browsers back
 * **authentication (Object):**
   * **validation-client (String):** The client ID that is used to validate tokens
   * **validation-secret (String):** The client secret used to validate tokens
+  * **validation-grant-type (String):** An OAuth grant type that can be used for validation of tokens. Token validation is not part of the OAuth spec and may vary depending on provider. Ocelot expects the token endpoint to handle validations by sending this grant_type along with the token passed in a query parameter.
   * **token-endpoint (String):** The OAuth token endpoint URL
   * **auth-endpoint (String):** The OAuth auth endpoint URL
   * **profile-endpoint (String):** If a user can be determined, load the user details by using this URL template. Use $userId and $appId to format the URL appropriately.
@@ -29,18 +31,23 @@ Example (local.coffee):
 module.exports =
 
   authentication:
-    'validation-client': "MY_VALIDATOR_CLIENT"
-    'validation-secret': "THIS_IS_NOT_A_REAL_SECRET"
-    'token-endpoint': "https://authserver.local/as/token.oauth2"
-    'auth-endpoint': "https://autherserver.local/as/authorization.oauth2"
-    'profile-endpoint': 'https://profileapi.local/users/$userId?fields=id,firstName,lastName,entitlements,email,fullName&apps=$appId'
+    "validation-client": "MY_VALIDATOR_CLIENT"
+    "validation-secret": "THIS_IS_NOT_A_REAL_SECRET"
+    "token-endpoint": "https://authserver.local/as/token.oauth2"
+    "auth-endpoint": "https://autherserver.local/as/authorization.oauth2"
+    "profile-endpoint": "https://profileapi.local/users/$userId?fields=id,firstName,lastName,entitlements,email,fullName&apps=$appId"
 
-  'cors-domains': ["localhost"]
-  'api-clients': ["OCELOT-UI"]
-  'default-protocol': "http"
-  'enforce-https': false
-  'cors-domains': ["localhost", "mydomainiown.com", "https://someothertrustedcomain.com"]
-  'log-level': "debug"
+  "cors-domains": ["localhost"]
+  "api-clients": ["OCELOT-UI"]
+  "default-protocol": "http"
+  "enforce-https": false
+  "cors-domains": ["localhost", "mydomainiown.com", "https://someothertrustedcomain.com"]
+  log:
+    level: "debug"
+    es:
+      clientOpts:
+        host: "localhost:9200"
+      level: "verbose"
 
   backend:
     provider: "couch"
