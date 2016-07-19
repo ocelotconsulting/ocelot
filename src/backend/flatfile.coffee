@@ -1,8 +1,9 @@
+log = require '../log'
 routes = []
 
 module.exports =
   detect: ->
-    process.env.OCELOT_ROUTES?
+    process.env.OCELOT_ROUTES? or process.env.OCELOT_ROUTES_PATH?
 
   init: ->
     fs = require 'fs'
@@ -21,8 +22,8 @@ module.exports =
         try
           routes=JSON.parse fs.readFileSync(configPath, 'utf8')
           log.debug 'Found static routes configuration'
-        catch
-          log.debug 'Could not read static route file'
+        catch e
+          log.debug 'Could not read or parse static route file', e
 
   getCachedRoutes: -> routes
   getRoutes: -> routes
