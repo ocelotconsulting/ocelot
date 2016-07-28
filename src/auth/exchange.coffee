@@ -19,6 +19,8 @@ module.exports =
   authCodeFlow: (req, res, route) ->
     {query} = url.parse req.url, true
 
+    log.debug "No auth code found in request query for route #{route.route}" if not query.code
+
     formData =
       grant_type: grantType
       code: query.code
@@ -31,6 +33,8 @@ module.exports =
         response.send res, 307
 
     authCodeExchangeError = (err) ->
+      # superagent mutates the formdata object to contain the client_secret
+      formData.client_secret = formData.client_secret.substring(0, 5) if formData.client_secret
       log.debug "Auth code exchange error for route #{route.route}: #{err}; for query #{JSON.stringify(formData)}"
       response.send res, 500, err
 
