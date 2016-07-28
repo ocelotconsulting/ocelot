@@ -1,6 +1,6 @@
 {
   "name": "ocelot-proxy",
-  "version": "12",
+  "version": "1.6.4",
   "description": "lightweight proxy",
   "private": false,
   "repository": {
