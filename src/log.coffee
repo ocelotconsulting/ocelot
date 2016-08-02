@@ -1,7 +1,24 @@
 winston = require 'winston'
-Elasticsearch = require 'winston-elasticsearch'
 config = require './config'
 moment = require 'moment'
+AgentKeepAlive = require 'agentkeepalive'
+BulkWriter = require 'winston-elasticsearch/bulk_writer'
+
+console.log BulkWriter.prototype.tick
+
+# fixing a bug in winston-elasticsearch
+# without this, any error writing to es
+# is non recoverable
+BulkWriter.prototype.tick = () ->
+  thiz = this;
+  if not this.running
+    Promise.resolve()
+  else
+    this.flush()
+    .catch (e) =>
+      console.log 'unable to write to elasticsearch'
+    .then () =>
+      thiz.schedule()
 
 console.log 'Initializing Console log transport'
 transports = [new winston.transports.Console(
@@ -14,6 +31,8 @@ transports = [new winston.transports.Console(
 esSettings = config.get 'log.es'
 if esSettings
   esSettings.transformer = require './es-transformer'
+  Elasticsearch = require 'winston-elasticsearch'
+
   transports.push new Elasticsearch(esSettings)
   console.log 'Initializing Elasticsearch log transport'
 
@@ -21,4 +40,8 @@ winstonOpts =
   level: config.get['log.level'] or 'debug'
   transports: transports
 
-module.exports = new winston.Logger(winstonOpts)
+logger = new winston.Logger(winstonOpts)
+logger.on 'error', (err) ->
+  console.error 'err', err
+
+module.exports = logger
