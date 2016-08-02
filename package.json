@@ -1,6 +1,6 @@
 {
   "name": "@monsantoit/ocelot",
-  "version": "1.6.6",
+  "version": "1.6.9",
   "description": "proxy for velocity.ag and other projects",
   "private": false,
   "repository": {
