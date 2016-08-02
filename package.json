@@ -1,6 +1,6 @@
 {
   "name": "@monsantoit/ocelot",
-  "version": "1.6.9",
+  "version": "1.6.11",
   "description": "proxy for velocity.ag and other projects",
   "private": false,
   "repository": {
@@ -32,7 +32,6 @@
     "jsonwebtoken": "^5.5.4",
     "log": "^1.4.0",
     "memory-cache": "^0.1.4",
-    "merge-descriptors": "^1.0.1",
     "node-crontab": "0.0.8",
     "node-forge": "^0.6.34",
     "node-rsa": "^0.3.2",
