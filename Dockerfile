@@ -2,7 +2,9 @@ FROM alpine
 
 RUN apk add --update nodejs
 
-ADD ./ ./
+WORKDIR /ocelot
+
+ADD ./ /ocelot/
 
 CMD npm start
 
