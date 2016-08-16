@@ -1,10 +1,7 @@
 winston = require 'winston'
 config = require './config'
 moment = require 'moment'
-AgentKeepAlive = require 'agentkeepalive'
 BulkWriter = require 'winston-elasticsearch/bulk_writer'
-
-console.log BulkWriter.prototype.tick
 
 # fixing a bug in winston-elasticsearch
 # without this, any error writing to es

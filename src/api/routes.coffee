@@ -26,14 +26,14 @@ getRoute = (key) ->
     else
       throw new Error "route not found: #{key}"
 
-sha1sum = (str) -> crypto.createHash('sha1').update(str).digest('hex')
+shasum = (str) -> crypto.createHash('sha256').update(str).digest('hex')
 
 router.get '/', (req, res) ->
   facade.getRoutes()
   .then (routes) ->
     routes.sort (a, b) -> a.route.localeCompare(b.route)
     for route in routes
-      route['client-secret'] = sha1sum(route['client-secret']) if route['client-secret']
+      route['client-secret'] = shasum(route['client-secret']) if route['client-secret']
     res.json routes
   .catch (err) ->
     log.error "unable to load routes: #{err}"
@@ -43,7 +43,7 @@ router.get /\/(.*)/, (req, res)->
   routeKey = req.params[0]
   getRoute(routeKey)
   .then (route) ->
-    route['client-secret'] = sha1sum(route['client-secret']) if route['client-secret']
+    route['client-secret'] = shasum(route['client-secret']) if route['client-secret']
     res.json route
   , (err) ->
     response.send res, 404
@@ -66,7 +66,7 @@ router.put /\/(.*)/, (req, res) ->
   .then ->
     if req.body['client-secret']
       getRoute(routeKey).then (route) ->
-        if route['client-secret'] and newObj['client-secret'] == sha1sum(route['client-secret'])
+        if route['client-secret'] and newObj['client-secret'] == shasum(route['client-secret'])
           newObj['client-secret'] = route['client-secret']
       , () ->
   .then ->
