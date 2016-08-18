@@ -43,6 +43,7 @@ proxyRoutes = (router) ->
   # sets req._profile (optional), the profile system response
   router.use require './middleware/profile'
 
+  router.user require './middlware/user-profile-policy'
   router.use require './middleware/token-info'
   router.use require './middleware/client-whitelist'
   router.use require './middleware/request-headers'

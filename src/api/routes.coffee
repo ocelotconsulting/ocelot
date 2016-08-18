@@ -11,7 +11,7 @@ routeFields = ['capture-pattern', 'rewrite-pattern',
   'services', 'require-auth', 'client-whitelist',
   'user-header', 'client-header', 'user-id',
   'custom-headers', 'ent-app-id', 'user-profile-enabled',
-  'elevated-trust', 'internal', 'hosts', '_rev']
+  'elevated-trust', 'internal', 'hosts', 'user-profile-policy', '_rev']
 
 cookieFields = ['cookie-name', 'client-id',
   'client-secret', 'scope', 'cookie-path',
