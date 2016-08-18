@@ -30,11 +30,14 @@ describe 'profile policy middleware', ->
       _profile:
         user: 'cjcoff'
       _route:
-        'user-profile-policy': [
-            pathOperand: 'user'
-            operator: 'equals'
-            valueOperand: 'cjcoff'
-        ]
+        'user-profile-policy':
+          rules:
+            [
+              pathOperand: 'user'
+              operator: 'equals'
+              valueOperand: 'cjcoff'
+            ]
+
     next = sinon.stub()
 
     userProfilePolicy(req, res, next)
@@ -46,27 +49,58 @@ describe 'profile policy middleware', ->
       _profile:
         user: 'dbtand'
       _route:
-        'user-profile-policy': [
-            pathOperand: 'user'
-            operator: 'equals'
-            valueOperand: 'cjcoff'
-        ]
+        'user-profile-policy':
+          rules:
+            [
+              pathOperand: 'user'
+              operator: 'equals'
+              valueOperand: 'cjcoff'
+            ]
+
     next = sinon.stub()
 
     userProfilePolicy(req, res, next)
 
     expect(next.called).to.be.false
+    expect(response.send.calledWith(res, 403, 'Forbidden: The request failed to match the security policy for resource access')).to.be.true
+
+  it 'can redirect when policy is not satisfied', ->
+    req =
+      _profile:
+        user: 'dbtand'
+      _route:
+        'user-profile-policy':
+          rules:
+            [
+              pathOperand: 'user'
+              operator: 'equals'
+              valueOperand: 'cjcoff'
+            ]
+          redirect: 'http://some/place'
+    next = sinon.stub()
+
+    res = {
+      set: sinon.stub()
+    }
+    userProfilePolicy(req, res, next)
+
+    expect(next.called).to.be.false
+    expect(res.set.calledWith('Location','http://some/place')).to.be.true
+    expect(response.send.calledWith(res, 303)).to.be.true
 
   it 'allows in list policies', ->
     req =
       _profile:
         entitlements: ['user', 'admin']
       _route:
-        'user-profile-policy': [
-            pathOperand: 'entitlements'
-            operator: 'contains'
-            valueOperand: 'user'
-        ]
+        'user-profile-policy':
+          rules:
+            [
+              pathOperand: 'entitlements'
+              operator: 'contains'
+              valueOperand: 'user'
+            ]
+
     next = sinon.stub()
 
     userProfilePolicy(req, res, next)
@@ -78,11 +112,14 @@ describe 'profile policy middleware', ->
       _profile:
         user: 'CjcoFF'
       _route:
-        'user-profile-policy': [
-            pathOperand: 'user'
-            operator: 'equalsIgnoreCase'
-            valueOperand: 'cjcoff'
-        ]
+        'user-profile-policy':
+          rules:
+            [
+              pathOperand: 'user'
+              operator: 'equalsIgnoreCase'
+              valueOperand: 'cjcoff'
+            ]
+
     next = sinon.stub()
 
     userProfilePolicy(req, res, next)
@@ -94,11 +131,14 @@ describe 'profile policy middleware', ->
       _profile:
         user: 'cjcoff'
       _route:
-        'user-profile-policy': [
-            pathOperand: 'user'
-            operator: 'inList'
-            valueOperand: ['dbtand', 'cjcoff']
-        ]
+        'user-profile-policy':
+          rules:
+            [
+              pathOperand: 'user'
+              operator: 'inList'
+              valueOperand: ['dbtand', 'cjcoff']
+            ]
+
     next = sinon.stub()
 
     userProfilePolicy(req, res, next)
@@ -113,14 +153,21 @@ describe 'profile policy middleware', ->
         user: 'cjcoff'
 
       _route:
-        'user-profile-policy': [
-            pathOperand: 'my.entitlements'
-            operator: 'contains'
-            valueOperand: 'admin',
-            pathOperand: 'user'
-            operator: 'equals'
-            valueOperand: 'cjcoff'
-        ]
+        'user-profile-policy':
+          rules:
+            [
+              {
+                pathOperand: 'my.entitlements'
+                operator: 'contains'
+                valueOperand: 'admin'
+              },
+              {
+                pathOperand: 'user'
+                operator: 'equals'
+                valueOperand: 'cjcoff'
+              }
+            ]
+
     next = sinon.stub()
 
     userProfilePolicy(req, res, next)
@@ -135,18 +182,19 @@ describe 'profile policy middleware', ->
         user: 'cjcoff'
 
       _route:
-        'user-profile-policy': [
-            {
-              pathOperand: 'my.entitlements'
-              operator: 'contains'
-              valueOperand: 'admin'
-            }
-            {
-              pathOperand: 'user'
-              operator: 'equals'
-              valueOperand: 'dbtand'
-            }
-        ]
+        'user-profile-policy':
+          rules: [
+              {
+                pathOperand: 'my.entitlements'
+                operator: 'contains'
+                valueOperand: 'admin'
+              }
+              {
+                pathOperand: 'user'
+                operator: 'equals'
+                valueOperand: 'dbtand'
+              }
+            ]
     next = sinon.stub()
 
     userProfilePolicy(req, res, next)

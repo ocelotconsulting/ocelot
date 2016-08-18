@@ -6,7 +6,7 @@ module.exports = (req, res, next) ->
   policy = route['user-profile-policy']
 
   if policy
-    pass = policy.reduce (prev, curr) ->
+    pass = (policy.rules or []).reduce (prev, curr) ->
       if prev == true
         true  # if any rule is true, allow
       else
@@ -24,7 +24,11 @@ module.exports = (req, res, next) ->
     , null
 
     if not pass
-      response.send res, 403, 'Forbidden: The request failed to match the security policy for resource access'
+      if policy.redirect
+        res.set 'Location', policy.redirect
+        response.send res, 303
+      else
+        response.send res, 403, 'Forbidden: The request failed to match the security policy for resource access'
     else
       next()
   else
