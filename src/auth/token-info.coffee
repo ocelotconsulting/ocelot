@@ -1,5 +1,5 @@
 response = require '../response'
-user = require './user'
+context = require './context'
 
 module.exports =
   accept: (req) ->
@@ -19,6 +19,6 @@ module.exports =
       'expires_in' : ttlSeconds
       'access_token': auth.token
       'user-profile': profile
-      'user-id': user.getUserId(req),
-      'client-id': auth?.client_id
+      'user-id': context.getUserId(req),
+      'client-id': context.getClientId(req)
     )

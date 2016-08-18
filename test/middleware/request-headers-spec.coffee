@@ -26,7 +26,7 @@ describe 'request header middleware', ->
 
     requestHeaderMiddleware(req,res,next)
 
-    expect(addAuthStub.calledWith(req, req._route, req._auth, req.cookies)).to.be.true
-    expect(addCustomStub.calledWith(req, req._route)).to.be.true
+    expect(addAuthStub.calledWith(req)).to.be.true
+    expect(addCustomStub.calledWith(req)).to.be.true
     expect(addProxyHeadersStub.calledWith(req)).to.be.true
     expect(next.called).to.be.true

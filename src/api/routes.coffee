@@ -5,6 +5,7 @@ response = require '../response'
 log = require '../log'
 config = require 'config'
 crypto = require 'crypto'
+context = require '../auth/context'
 
 routeFields = ['capture-pattern', 'rewrite-pattern',
   'services', 'require-auth', 'client-whitelist',
@@ -60,7 +61,7 @@ router.put /\/(.*)/, (req, res) ->
     for own k,v of req.body
       if cookieFields.indexOf(k) != -1 then newObj[k] = v
 
-  newObj['user-id'] = req._auth?.access_token?.user_id or 'unknown'
+  newObj['user-id'] = context.getUserId(req) or 'unknown'
 
   Promise.resolve()
   .then ->

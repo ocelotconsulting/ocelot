@@ -2,9 +2,9 @@ config = require 'config'
 agent = require('../http-agent')
 cache = require 'memory-cache'
 log = require '../log'
-user = require './user'
+context = require './context'
 tokenUtil = require './token-util'
-
+Promise = require 'Promise'
 unexpectedResultTimeout = 5000
 url = config.get 'authentication.profile-endpoint' if config.has 'authentication.profile-endpoint'
 
@@ -12,7 +12,7 @@ module.exports =
   getProfile: (req, token) ->
     route = req._route
     Promise.resolve().then ->
-      userId = user.getUserId(req)
+      userId = context.getUserId(req)
       appId = route['ent-app-id'] or ''
       requestToken = req._auth?.token
 

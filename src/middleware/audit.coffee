@@ -1,13 +1,13 @@
 log = require '../log'
-user = require '../auth/user'
+context = require '../auth/context'
 
 module.exports = (req, res, next) ->
   if not req._ws
     doAudit = ->
       metadata =
         address: req.header('x-forwarded-for') or req.connection.remoteAddress or "unknown"
-        clientId: req._auth?.client_id or "unknown"
-        userId: user.getUserId(req) or "unknown"
+        clientId: context.getClientId(req) or "unknown"
+        userId: context.getUserId(req) or "unknown"
         path: req.url
         host: req.headers.host or "unknown"
         method: req.method

@@ -35,6 +35,7 @@
     "node-crontab": "0.0.8",
     "node-forge": "^0.6.34",
     "node-rsa": "^0.3.2",
+    "object-path": "^0.11.1",
     "prometheus-client": "^0.1.1",
     "redis": "^2.4.2",
     "superagent": "^1.4.0",
