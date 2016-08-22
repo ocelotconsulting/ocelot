@@ -15,11 +15,11 @@ module.exports = (req, res, next) ->
           when 'equals'
             pathOperand == curr.valueOperand
           when 'equalsIgnoreCase'
-            pathOperand?.toLowerCase() == curr.valueOperand
-          when 'contains'
-            pathOperand? and pathOperand.includes curr.valueOperand
+            pathOperand?.toLowerCase? and pathOperand?.toLowerCase() == curr.valueOperand
+          when 'includes'
+            pathOperand?.includes? and pathOperand.includes curr.valueOperand
           when 'inList'
-            curr.valueOperand.includes pathOperand
+            curr.valueOperand.includes? and curr.valueOperand.includes pathOperand
           else false
     , null
 
@@ -28,7 +28,7 @@ module.exports = (req, res, next) ->
         res.set 'Location', policy.redirect
         response.send res, 303
       else
-        response.send res, 403, 'Forbidden: The request failed to match the security policy for resource access'
+        response.send res, 403, 'Forbidden: The request failed to match the policy for this route'
     else
       next()
   else

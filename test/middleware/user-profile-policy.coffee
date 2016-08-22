@@ -62,7 +62,7 @@ describe 'profile policy middleware', ->
     userProfilePolicy(req, res, next)
 
     expect(next.called).to.be.false
-    expect(response.send.calledWith(res, 403, 'Forbidden: The request failed to match the security policy for resource access')).to.be.true
+    expect(response.send.calledWith(res, 403, 'Forbidden: The request failed to match the policy for this route')).to.be.true
 
   it 'can redirect when policy is not satisfied', ->
     req =
@@ -97,7 +97,7 @@ describe 'profile policy middleware', ->
           rules:
             [
               pathOperand: 'entitlements'
-              operator: 'contains'
+              operator: 'includes'
               valueOperand: 'user'
             ]
 
@@ -158,7 +158,7 @@ describe 'profile policy middleware', ->
             [
               {
                 pathOperand: 'my.entitlements'
-                operator: 'contains'
+                operator: 'includes'
                 valueOperand: 'admin'
               },
               {
@@ -186,7 +186,7 @@ describe 'profile policy middleware', ->
           rules: [
               {
                 pathOperand: 'my.entitlements'
-                operator: 'contains'
+                operator: 'includes'
                 valueOperand: 'admin'
               }
               {
