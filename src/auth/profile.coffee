@@ -4,7 +4,6 @@ cache = require 'memory-cache'
 log = require '../log'
 context = require './context'
 tokenUtil = require './token-util'
-Promise = require 'Promise'
 unexpectedResultTimeout = 5000
 url = config.get 'authentication.profile-endpoint' if config.has 'authentication.profile-endpoint'
 
