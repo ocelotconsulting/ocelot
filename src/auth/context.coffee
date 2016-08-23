@@ -15,8 +15,8 @@ module.exports =
         client_id = objectPath.get req?._auth, clientPath
         allowElevatedTrust = client_id and
           route['user-header'] and
-          route['elevated-trust'].includes(client_id) and
-          route['client-whitelist'].includes(client_id)
+          (route['elevated-trust'] == true or (route['elevated-trust'].includes? and route['elevated-trust'].includes(client_id))) and
+          route['client-whitelist'].includes? and route['client-whitelist'].includes(client_id)
         req.headers[route['user-header']] if allowElevatedTrust
 
     (getAuthUser() or getUserHeader())?.toLowerCase()
